@@ -7,4 +7,5 @@ ZKFlag provides a **feature flags as a service** solution through a centralized 
 
 The platform provides a significant security advantage over other feature flag platforms by integrating **Zero Knowledge Proof (ZKP)** technology. Through ZKP, we can evaluate flags based on sensitive information, without explicitly disclosing this data to the feature flags server.
 
-![Arhitecture Diagram](./images/arhitecture_diagram.png =300x200)
+<img src="./images/arhitecture_diagram.png" alt="Architecture Diagram" width="300" height="200">
+
