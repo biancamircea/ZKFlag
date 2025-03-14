@@ -1,0 +1,52 @@
+/* Tema Light - păstrează totul ca în CSS inițial */
+body {
+    background-size: cover;
+    background-position: center;
+    font-size: 50px;
+    align-items: center;
+    background-attachment: fixed;
+    overflow-x: hidden;
+    height: max-content;
+}
+
+.totRouter {
+    min-height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Tema Dark - adăugăm doar stiluri pentru elementele existente */
+
+body[data-bs-theme="dark"] {
+    background-color: #121212;
+    color: #e0e0e0;
+}
+
+body[data-bs-theme="dark"] h1 {
+    color: #e0e0e0; /* Culoare text pentru h1 în tema dark */
+}
+
+body[data-bs-theme="dark"] .custom-button {
+    background: rgba(50, 50, 50, 0.7); /* Fundal mai întunecat */
+    color: #e0e0e0;
+}
+
+body[data-bs-theme="dark"] .custom-button:hover {
+    background-color: #444;
+}
+
+body[data-bs-theme="dark"] .custom-button:active {
+    background-color: #003f7f;
+}
+
+/* Pagina Home */
+body[data-bs-theme="dark"] .home-container {
+    background-color: #1a1a1a; /* Fundal întunecat pentru container */
+}
+
+body[data-bs-theme="dark"] .home-image {
+    filter: brightness(0.8);
+}
+
+/* Adaugă aici alte stiluri dark pentru paginile specifice (similar cu Home) */

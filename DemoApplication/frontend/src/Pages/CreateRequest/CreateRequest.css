@@ -1,0 +1,204 @@
+.request-form {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    z-index: 1;
+    font-size: 20px;
+    max-width: 500px;
+    padding: 20px;
+    border-radius: 15px;
+    background-color: rgba(128, 128, 128, 0.4);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    box-sizing: border-box;
+    width: 100%;
+}
+
+.request-form h2 {
+    text-align: center;
+    color: var(--primary-text-color);
+    margin-bottom: 20px;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: var(--primary-text-color);
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    resize: vertical;
+}
+
+.date-picker-container {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    flex-wrap: wrap;
+}
+
+.date-picker-container span {
+    align-self: center;
+    padding: 0 10px;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.date-picker {
+    width: 48%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+}
+
+.button-group-create {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    margin-top: 20px;
+    flex-wrap: wrap;
+}
+
+.button-group-create button {
+    padding: 10px 20px;
+    background-color: rgba(255, 255, 255, 0.5);
+    color: var(--primary-text-color);
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 48%;
+    margin-bottom: 10px;
+}
+
+.button-group-create button.cancel-btn {
+    background-color: #6c757d;
+}
+
+.button-group-create button:hover {
+    background-color: var(--bs-btn-hover-bg);
+}
+
+.button-group-create button.cancel-btn:hover {
+    background-color: #5a6268;
+}
+
+.error-message {
+    color: var(--primary-text-color);
+    text-align: center;
+    margin-bottom: 15px;
+}
+
+.date-picker-container .react-datepicker-wrapper {
+    width: 100%;
+}
+
+.react-datepicker__input-container input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    font-size: 16px;
+    background-color: #f9f9f9;
+}
+
+.react-datepicker__day--selected,
+.react-datepicker__day:hover {
+    background-color: #d4e8d0;
+}
+
+.react-datepicker__header {
+    background-color: #4caf50;
+    border-bottom: none;
+    color: var(--primary-text-color);
+    font-weight: bold;
+}
+
+.react-datepicker__month-text {
+    font-weight: bold;
+}
+
+.subTitluri {
+    font-size: 30px;
+}
+
+.error-message {
+    color: var(--primary-text-color);
+    font-size: 16px;
+    text-align: center;
+}
+
+
+@media only screen and (max-width: 768px) {
+    .request-form {
+        width: 80%;
+        padding: 15px;
+        margin-top: 40px;
+    }
+
+    .form-group label {
+        font-size: 18px;
+    }
+
+    .date-picker-container {
+        flex-direction: column;
+    }
+
+    .date-picker {
+        width: 100%;
+        margin-bottom: 10px;
+    }
+
+    .button-group-create button {
+        width: 100%;
+    }
+
+    .subTitluri {
+        font-size: 24px;
+    }
+}
+
+@media only screen and (max-width: 480px) {
+    .request-form {
+        width: 80%;
+        padding: 10px;
+    }
+
+    .form-group textarea {
+        font-size: 14px;
+        padding: 12px;
+    }
+
+    .date-picker {
+        width: 100%;
+        padding: 8px;
+    }
+
+    .button-group-create button {
+        font-size: 14px;
+        padding: 8px 15px;
+    }
+
+    .subTitluri {
+        font-size: 20px;
+    }
+}

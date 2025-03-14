@@ -1,0 +1,80 @@
+.modify-commander {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    max-width: 800px;
+    margin: 50px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    background-color: rgba(128, 128, 128, 0.4);
+    font-size:25px;
+    margin-top: 100px;
+}
+
+.modify-commander h2 {
+    font-size: 35px;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.modify-commander form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.modify-commander label {
+    margin-bottom: 8px;
+    font-weight: bold;
+    margin-left: 50px;
+}
+
+.modify-commander select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    margin: 20px;
+    font-size: 16px;
+    transition: border-color 0.3s;
+    margin-left: 40px;
+    height: 30px;
+}
+
+.modify-commander select:focus {
+    border-color: black;
+    outline: none;
+}
+
+.modify-commander button {
+    background-color: rgba(255, 255, 255, 0.5);;
+    color: var(--primary-text-color);
+    border: none;
+    padding: 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s;
+    margin-left: 40px;
+}
+
+.modify-commander button:hover {
+    background-color: #716d6d;
+}
+
+.update-button {
+    margin-left: 0px;
+}
+
+
+@media (max-width: 760px) {
+    .modify-commander{
+        display: flex;
+        justify-content: center;
+        width: 80%;
+        align-items: center;
+        text-align: center;
+    }
+}

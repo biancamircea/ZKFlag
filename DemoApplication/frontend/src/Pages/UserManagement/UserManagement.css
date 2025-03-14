@@ -1,0 +1,168 @@
+
+h2 {
+    margin-bottom: 20px;
+    color: var(--primary-text-color);
+}
+
+.table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 4px;
+    text-align: left;
+}
+
+th {
+    background-color: #4CAF50;
+    color: var(--primary-text-color);
+    text-align: center;
+}
+
+button {
+    padding: 8px 12px;
+    margin-right: 10px;
+    background-color: cornsilk;
+    color: var(--primary-text-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: beige;
+}
+
+.error-message {
+    color: red;
+    margin-bottom: 15px;
+}
+
+.create-user-button {
+    padding: 10px;
+    background-color: #5a6268;
+    color: var(--primary-text-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 25px;
+    margin-top: 40px;
+    max-width: 350px;
+    margin-left: 550px;
+    width: 100%;
+}
+
+.create-user-button3 {
+    padding: 10px;
+    background-color: #5a6268;
+    color: var(--primary-text-color);
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 25px;
+    margin-top: 40px;
+    max-width: 350px;
+    width: 100%;
+    align-items: center;
+    margin-left: 15px;
+}
+
+.create-user-button:hover {
+    background-color: var(--bs-btn-hover-bg);
+}
+
+.create-user-button3:hover {
+    background-color: var(--bs-btn-hover-bg);
+}
+
+.btn_delete {
+    background-color: var(--bs-btn-hover-bg);
+    width: 65px;
+}
+
+.btn-user-mng:hover {
+    background-color: var(--bs-btn-hover-bg);
+}
+
+.user-management{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    margin-top: 30px;
+}
+
+
+@media (max-width: 1024px) {
+    .user-table-container {
+        width: 100%;
+    }
+
+    .user-table {
+        font-size: 14px;
+    }
+
+    .create-user-button, .create-user-button3 {
+        font-size: 20px;
+        margin-left: 50px;
+    }
+}
+
+@media (max-width: 768px) {
+    .user-table-container {
+        width: 100%;
+    }
+
+    .user-table {
+        font-size: 12px;
+    }
+
+    .create-user-button, .create-user-button3 {
+        font-size: 18px;
+        margin: 15px;
+
+    }
+
+    .user-management {
+        padding: 10px;
+    }
+
+    .btn_delete{
+        padding: 6px 10px;
+        width:60px
+    }
+}
+
+@media (max-width: 480px) {
+    .user-table-container {
+        overflow-x: scroll;
+        margin-bottom: 20px;
+    }
+
+    .user-table {
+        font-size: 12px;
+        min-width: 400px;
+    }
+
+    .create-user-button, .create-user-button3 {
+        font-size: 16px;
+        padding: 10px;
+    }
+
+    .user-table th, .user-table td {
+        font-size: 9px;
+        padding: 2px;
+    }
+
+    .btn_delete {
+        padding: 6px 10px;
+        width:50px
+    }
+
+    .create-user-button, .create-user-button3 {
+        width: 100%;
+        margin: 15px;
+    }
+}
