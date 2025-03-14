@@ -1,0 +1,85 @@
+version: '3.8'
+
+networks:
+  app_network:
+    driver: bridge
+
+services:
+  postgresql:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_DB: toggle_system
+      POSTGRES_USER: bianca
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bianca -d toggle_system"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app_network
+
+  backend:
+    build:
+      context: ./api
+    container_name: feature-flag-system-backend
+    image: feature-flag-system-backend
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/toggle_system
+      SPRING_DATASOURCE_USERNAME: bianca
+      SPRING_DATASOURCE_PASSWORD: 1234
+      MINIO_ENDPOINT: http://minio:9000
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: admin123
+      MINIO_BUCKET_NAME: my-bucket
+    ports:
+      - "8080:8080"
+    depends_on:
+      postgresql:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    networks:
+      - app_network
+
+  frontend:
+    build:
+      context: ./frontend
+    image: feature-flag-system-frontend
+    container_name: feature-flag-system-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
+  minio:
+    image: quay.io/minio/minio
+    container_name: minio
+    environment:
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: admin123
+      MINIO_BROWSER: "on"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 5s
+      timeout: 2s
+      retries: 5
+    networks:
+      - app_network
+
+volumes:
+  postgres_data:
+  minio_data:
