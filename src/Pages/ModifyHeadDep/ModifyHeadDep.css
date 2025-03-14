@@ -1,0 +1,102 @@
+.modify-head-dep {
+    max-width: 90%;
+    width: 400px;
+    margin: 50px auto;
+    padding: 20px;
+    font-family: Arial, sans-serif;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+    background-color: rgba(128, 128, 128, 0.5);
+    font-size: 18px;
+    color: var(--primary-text-color);
+    text-align: center;
+}
+
+.modify-head-dep h2 {
+    color: var(--primary-text-color);
+    font-size: 1.5em;
+    margin-bottom: 1em;
+}
+
+.modify-head-dep label {
+    font-weight: bold;
+    color: var(--primary-text-color);
+    display: block;
+    margin-bottom: 8px;
+    text-align: left;
+}
+
+.label_mod_userdep {
+    width: 100%;
+    padding: 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    background-color:transparent;
+    color: black; /* Text negru în dropdown */
+    outline: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 10px;
+}
+
+.label_mod_userdep:hover {
+    background-color: beige;
+}
+
+.label_mod_userdep:focus {
+    background-color: #e9f5ec;
+}
+
+.label_mod_userdep option {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #f2f2f2;
+    color: black;
+}
+
+.btn-update-head {
+    width: 100%;
+    padding: 12px;
+    font-size: 18px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+}
+
+.btn-update-head:hover {
+    background-color: #3e8e41;
+}
+
+@media (max-width: 768px) {
+    .modify-head-dep {
+        width: 90%;
+        padding: 15px;
+        font-size: 16px;
+    }
+
+    .label_mod_userdep {
+        font-size: 14px;
+        background-color: transparent;
+    }
+
+    .btn-update-head {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .modify-head-dep {
+        width: 95%;
+        padding: 10px;
+        font-size: 14px;
+    }
+
+    .btn-update-head {
+        font-size: 14px;
+        padding: 10px;
+    }
+}
