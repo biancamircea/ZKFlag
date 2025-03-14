@@ -1,0 +1,80 @@
+.request-details {
+    padding: 20px;
+    max-width: 600px;
+    margin: 0 auto;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: rgba(128, 128, 128, 0.3);
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    margin-top: 60px;
+    color: var(--primary-text-color);;
+}
+
+.request-title {
+    font-size: 30px;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 80px;
+}
+
+.request-info {
+    margin-bottom: 10px;
+    font-size: 25px;
+}
+
+.reason-label {
+    font-size: 16px;
+    color: var(--primary-text-color);
+    margin-top: 10px;
+}
+
+.reason-input {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    font-size: 16px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.button-group1 {
+    display: flex;
+    gap: 10px;
+
+}
+
+.button {
+    margin-top: 80px;
+    margin-left: 40px;
+    padding: 10px 20px;
+    font-size: 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    border: none;
+    color: var(--primary-text-color);
+    transition: background-color 0.3s;
+}
+
+.button-accept {
+    background-color: #4CAF50;
+}
+
+.button-accept:hover {
+    background-color: #45a049;
+}
+
+.button-decline {
+    background-color: #f44336;
+}
+
+.button-decline:hover {
+    background-color: #d32f2f;
+}
+
+.button-confirm {
+    background-color: #ff9800;
+}
+
+.button-confirm:hover {
+    background-color: #fb8c00;
+}
