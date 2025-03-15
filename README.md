@@ -27,6 +27,16 @@ docker-compose up
 
 Once the services are up and running, you can manage the server at: http://localhost:5173
 
+### Initial Setup
+Initially, the database will contain a single user with the role of "System Admin". This role ensures secure and controlled access to all server resources. Specifically, the System Admin can create and delete users, projects, instances, and environments, and assign users to projects/instances based on their roles.
+
+### User Roles
+
+There are 3 types of roles:
+
+System Admin: Full control over the server's resources.
+Project Admin: Can create toggles and set activation constraints within their projects.
+Instance Admin: Can enable/disable toggles at the project level, based on available environments. Additionally, the Instance Admin can set a payload at the environment level and modify constraint values based on the instance's needs.
 
 ## 2. Integrating with Client Applications
 ### 2.1. Integration with SDK
