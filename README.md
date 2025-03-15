@@ -17,10 +17,12 @@ To install and use our app, clone the repository using the following command:
 
 ```bash
 git clone https://github.com/biancamircea/ZKFlag.git
+```
 
 Next, navigate to the ZKFlag folder inside the repository and start the feature flags server along with the admin dashboard and the necessary services:
 
 ```bash
 docker-compose up
+```
 
 Once the services are up and running, you can manage the server at: http://localhost:5173
