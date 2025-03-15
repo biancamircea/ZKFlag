@@ -11,3 +11,9 @@ The platform provides a significant security advantage over other feature flag p
   <img src="./images/arhitecture_diagram.png" alt="Architecture Diagram" width="600">
 </div>
 
+## 1. Starting Server
+
+To install and use our app, clone the repository using the following command:
+
+```bash
+git clone https://github.com/biancamircea/ZKFlag.git
