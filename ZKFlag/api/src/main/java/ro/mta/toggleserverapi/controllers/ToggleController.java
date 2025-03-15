@@ -10,6 +10,7 @@ import ro.mta.toggleserverapi.enums.ActionType;
 import ro.mta.toggleserverapi.repositories.*;
 import ro.mta.toggleserverapi.services.*;
 
+import java.time.ZoneId;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -369,7 +370,8 @@ public class ToggleController {
                 toggleScheduleDTO.getStartOn(),
                 toggleScheduleDTO.getStartOff(),
                 toggleScheduleDTO.getStartDate(),
-                toggleScheduleDTO.getEndDate()
+                toggleScheduleDTO.getEndDate(),
+                ZoneId.of("Europe/Bucharest")
         );
         return ResponseEntity.ok(updatedToggleEnvironment);
     }
