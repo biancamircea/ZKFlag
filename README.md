@@ -1,4 +1,4 @@
-# ZKFlag: Feature Flags as a Service
+# ZKFlag: Privacy-First Feature Flags with Zero-Knowledge Proofs
 
 Feature flags are mechanisms that provide flexible deployment by 
 enabling or disabling certain features of an application in real-time without modifying its source code. This technology helps developers accelerate the delivery of new features while reducing the risks associated with implementation through strategies such as progressive rollout.
