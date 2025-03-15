@@ -30,7 +30,7 @@ function SystemAdminHome() {
 
         const fetchEmails = async () => {
             try {
-                const emailsData = await getAllUserEmails(); // Așteaptă răspunsul corect
+                const emailsData = await getAllUserEmails();
                 setEmails(emailsData);
             } catch (error) {
                 console.error('Failed to fetch emails:', error);
@@ -126,9 +126,12 @@ function SystemAdminHome() {
                             ) : (
                                 roles.map((r) => (
                                     <option key={r} value={r}>
-                                        {r}
+                                        {r.replace(/([a-z])([A-Z])/g, "$1 $2")
+                                            .toLowerCase()
+                                            .replace(/^([a-z])/, (match) => match.toUpperCase())}
                                     </option>
                                 ))
+
                             )}
                         </select>
                     </div>

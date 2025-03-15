@@ -275,6 +275,7 @@ public class ToggleService {
     @Scheduled(fixedRate = 60000)
     public void checkAndToggleFlags() {
         List<ToggleEnvironment> toggleEnvironments = toggleEnvironmentService.findAllToggleEnvironments();
+        System.out.println("Checking and toggling flags");
 
         LocalTime now = LocalTime.now();
         LocalDate today = LocalDate.now();

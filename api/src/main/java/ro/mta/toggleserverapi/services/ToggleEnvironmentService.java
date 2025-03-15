@@ -14,8 +14,7 @@ import ro.mta.toggleserverapi.repositories.ToggleEnvironmentRepository;
 import ro.mta.toggleserverapi.repositories.ToggleRepository;
 import ro.mta.toggleserverapi.util.ConstraintUtil;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -27,14 +26,6 @@ public class ToggleEnvironmentService {
     private final EnvironmentRepository environmentRepository;
     private final EventService eventService;
     private final InstanceRepository instanceRepository;
-
-    public void createToggleEnvironment(Toggle toggle, Environment environment, Instance instance) {
-        ToggleEnvironment toggleEnvironment = new ToggleEnvironment();
-        toggleEnvironment.setEnvironment(environment);
-        toggleEnvironment.setToggle(toggle);
-        toggleEnvironment.setInstance(instance);
-        toggleEnvironmentRepository.save(toggleEnvironment);
-    }
 
 
     public Environment fetchEnvironmentById(Long environmentId){
@@ -51,12 +42,6 @@ public class ToggleEnvironmentService {
                 .orElseThrow(() -> new ToggleEnvNotFoundException(toggleId, envId, instanceId));
     }
 
-
-    public ToggleEnvironment fetchByToggleIdAndEnvNameAndInstanceId(Long toggleId, String envName, Long instanceId) {
-        return toggleEnvironmentRepository.findByToggleIdAndEnvironmentNameAndInstanceId(toggleId, envName, instanceId)
-                .orElseThrow(() -> new ToggleEnvNotFoundException(toggleId, envName, instanceId));
-    }
-
     public Boolean fetchByToggleAndEnvIdAndInstanceId(Toggle toggle, Long environmentId, Long instanceId) {
         Environment environment = fetchEnvironmentById(environmentId);
         Instance instance = instanceRepository.findById(instanceId)
@@ -66,14 +51,6 @@ public class ToggleEnvironmentService {
            return toggle_env.getEnabled();
          return false;
 
-    }
-
-
-    @Transactional
-    public void enableByToggleIdAndEnvIdAndInstanceId(Long toggleId, Long environmentId, Long instanceId) {
-        ToggleEnvironment toggleEnvironment = fetchByToggleIdAndEnvIdAndInstanceId(toggleId, environmentId, instanceId);
-        toggleEnvironment.setEnabled(Boolean.TRUE);
-        toggleEnvironmentRepository.save(toggleEnvironment);
     }
 
 
@@ -103,14 +80,6 @@ public class ToggleEnvironmentService {
         toggleEnvironment.setDisabledValue(disabledValue);
 
         return toggleEnvironmentRepository.save(toggleEnvironment);
-    }
-
-
-    @Transactional
-    public void disableByToggleIdEnvIdAndInstanceId(Long toggleId, Long environmentId, Long instanceId) {
-        ToggleEnvironment toggleEnvironment = fetchByToggleIdAndEnvIdAndInstanceId(toggleId, environmentId, instanceId);
-        toggleEnvironment.setEnabled(Boolean.FALSE);
-        toggleEnvironmentRepository.save(toggleEnvironment);
     }
 
     @Transactional
@@ -170,17 +139,6 @@ public class ToggleEnvironmentService {
         }
     }
 
-
-    public void deleteEnvironmentToggleAssociations(Environment environment) {
-        toggleEnvironmentRepository.deleteAllByEnvironment(environment);
-    }
-
-    @Transactional
-    public void deleteEnvironmentToggleByProjectAndEnvIdAndInstanceId(Project project, Long envId, Long instanceId) {
-        Environment environment = fetchEnvironmentById(envId);
-        toggleEnvironmentRepository.deleteAllByToggle_ProjectAndEnvironmentAndInstance(project, environment, instanceId);
-    }
-
     @Transactional
     public void removePayload(Toggle toggle, Long environmentId, Long instanceId) {
         ToggleEnvironment toggleEnvironment = fetchByToggleIdAndEnvIdAndInstanceId(toggle.getId(), environmentId, instanceId);
@@ -200,21 +158,24 @@ public class ToggleEnvironmentService {
 
     public ToggleEnvironment setToggleSchedule(Long toggleId, Long environmentId, Long instanceId,
                                                LocalTime startOn, LocalTime startOff,
-                                               LocalDate startDate, LocalDate endDate) {
+                                               LocalDate startDate, LocalDate endDate,
+                                               ZoneId userZone) {
         ToggleEnvironment toggleEnvironment = fetchByToggleIdAndEnvIdAndInstanceId(toggleId, environmentId, instanceId);
 
-        toggleEnvironment.setStartOn(startOn);
-        toggleEnvironment.setStartOff(startOff);
+        LocalTime startOnUtc = (startOn != null)
+                ? startOn.atDate(LocalDate.now()).atZone(userZone).toOffsetDateTime().withOffsetSameInstant(ZoneOffset.UTC).toLocalTime()
+                : null;
+
+        LocalTime startOffUtc = (startOff != null)
+                ? startOff.atDate(LocalDate.now()).atZone(userZone).toOffsetDateTime().withOffsetSameInstant(ZoneOffset.UTC).toLocalTime()
+                : null;
+
+        toggleEnvironment.setStartOn(startOnUtc);
+        toggleEnvironment.setStartOff(startOffUtc);
         toggleEnvironment.setStartDate(startDate);
         toggleEnvironment.setEndDate(endDate);
 
         return toggleEnvironmentRepository.save(toggleEnvironment);
-    }
-
-
-    public List<ToggleEnvironment> findAllByToggleId(Long toggleId) {
-        List<ToggleEnvironment> te=  toggleEnvironmentRepository.findAllByToggleId(toggleId);
-        return te;
     }
 
 
@@ -243,11 +204,6 @@ public class ToggleEnvironmentService {
             toggleEnvironment.setEnabled(false);
             toggleEnvironmentRepository.save(toggleEnvironment);
         }
-    }
-
-    public ToggleEnvironment fetchByToggleEnvAndInstanceId(Toggle toggle, Long envId, Long instanceId) {
-        return toggleEnvironmentRepository.findByToggleIdAndEnvIdAndInstanceId(toggle.getId(), envId, instanceId)
-                .orElse(null);
     }
 
     public void deleteEnvironmentToggleByProjectEnvAndInstanceId(Project project, Long envId, Long instanceId) {

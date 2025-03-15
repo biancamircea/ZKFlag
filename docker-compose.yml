@@ -16,6 +16,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./00_schema.sql:/docker-entrypoint-initdb.d/00_schema.sql
+      - ./01_init-db.sql:/docker-entrypoint-initdb.d/01_init-db.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bianca -d toggle_system"]
       interval: 5s
@@ -23,6 +25,7 @@ services:
       retries: 5
     networks:
       - app_network
+
 
   backend:
     build:
@@ -71,7 +74,7 @@ services:
       - "9001:9001"
     volumes:
       - minio_data:/data
-    command: server /data --console-address ":9001"
+    command: minio server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 5s
@@ -79,6 +82,22 @@ services:
       retries: 5
     networks:
       - app_network
+
+  minio-init:
+    image: quay.io/minio/mc
+    container_name: minio-init
+    environment:
+      MINIO_ACCESS_KEY: admin
+      MINIO_SECRET_KEY: admin123
+    command: >
+      mc alias set myminio http://minio:9000 admin admin123 && \
+      mc mb myminio/public-bucket && \
+      mc policy set public myminio/public-bucket
+    depends_on:
+      - minio
+    networks:
+      - app_network
+
 
 volumes:
   postgres_data:
