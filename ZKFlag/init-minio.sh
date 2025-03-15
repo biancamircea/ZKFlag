@@ -1,8 +1,15 @@
 #!/bin/sh
+set -e  # Oprește scriptul la prima eroare
 
-sleep 10
+minio server /data --console-address ":9001" &
 
-mc alias set myminio http://minio:9000 admin admin123
-mc mb myminio/public-bucket
+until mc alias list | grep -q myminio; do
+  echo "Aștept initializarea Minio..."
+  sleep 1
+  mc alias set myminio http://localhost:9000 admin admin123 --insecure
+done
 
-mc policy set public myminio/public-bucket
+mc mb myminio/public-bucket --insecure
+mc policy set public myminio/public-bucket --insecure
+
+fg %1
