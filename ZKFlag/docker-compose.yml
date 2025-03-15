@@ -16,6 +16,8 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+      - ./schema.sql:/docker-entrypoint-initdb.d/schema.sql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U bianca -d toggle_system"]
       interval: 5s
@@ -23,6 +25,7 @@ services:
       retries: 5
     networks:
       - app_network
+
 
   backend:
     build:
@@ -71,7 +74,8 @@ services:
       - "9001:9001"
     volumes:
       - minio_data:/data
-    command: server /data --console-address ":9001"
+      - ./init-minio.sh:/docker-entrypoint-initdb.d/init-minio.sh
+    command: sh /docker-entrypoint-initdb.d/init-minio.sh && minio server /data --console-address ":9001"
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
       interval: 5s
@@ -79,6 +83,7 @@ services:
       retries: 5
     networks:
       - app_network
+
 
 volumes:
   postgres_data:
