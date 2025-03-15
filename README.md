@@ -35,7 +35,7 @@ Initially, the database will contain a single user with the role of "System Admi
 There are 3 types of roles:
 
 - **System Admin**: Full control over the server's resources.
-- **Project Admin**: Can create toggles and set activation constraints within their projects.
+- **Project Admin**: Can create toggles and set activation constraints for them within their projects.
 - **Instance Admin**: Can enable/disable toggles at the project level, based on available environments. Additionally, the Instance Admin can set a payload at the environment level and modify constraint values based on the instance's needs.
 
 ## 2. Integrating with Client Applications
