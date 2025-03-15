@@ -26,3 +26,80 @@ docker-compose up
 ```
 
 Once the services are up and running, you can manage the server at: http://localhost:5173
+
+
+## 2. Integrating with Client Applications
+### 2.1. Integration with SDK
+
+To integrate the server with Java applications, use the following steps:
+
+1. In the pom.xml file of your client application, add the dependency:
+```bash
+<dependency>
+  <groupId>ro.mta.sdk</groupId>
+  <artifactId>toggle-system</artifactId>
+  <version>1.0.3</version>
+</dependency>
+```
+
+2. Add the repository to your pom.xml file:
+
+```bash
+maven {
+    url = uri("https://maven.pkg.github.com/biancamircea/Licenta-Java-Client")
+    credentials {
+        username = project.findProperty("mavenUsername") ?: System.getenv("MAVEN_USERNAME")
+        password = project.findProperty("mavenPassword") ?: System.getenv("MAVEN_PASSWORD")
+    }
+}
+```
+
+3. To create a client instance, use the following code:
+
+```bash
+ToggleSystemConfig toggleSystemConfig = ToggleSystemConfig.builder()
+            .toggleServerAPI("http://localhost:8080")
+            .apiKey("<api-key>")
+            .build();
+ToggleSystemClient toggleSystem = new ToggleSystemClient(toggleSystemConfig);
+```
+
+The API key is created by the Instance Admin and represents a specific project, instance, and environment.
+
+4. To evaluate a flag, you have two options:
+With constraints:
+
+```bash
+ToggleSystemContext context = ToggleSystemContext.builder()
+                .addProperty("key", "value")
+                .build();
+boolean isEnabled = toggleSystemClient.isEnabled("toggle_name", context);
+```
+
+Without constraints:
+
+```bash
+boolean isEnabled = toggleSystemClient.isEnabled("toggle_name");
+```
+
+5. To retrieve the associated payload:
+
+```bash
+toggleSystem.getPayload("toggle_name");  // Without context
+toggleSystem.getPayload("toggle_name", context);  // With context
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
