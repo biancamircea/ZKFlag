@@ -90,8 +90,39 @@ toggleSystem.getPayload("toggle_name");  // Without context
 toggleSystem.getPayload("toggle_name", context);  // With context
 ```
 
+### 2.2 Integration with REST API
+
+For integrating the server into frontend applications or other programming languages, you can use  REST API.
+An example of integration in JavaScript:
+
+```bash
+const response = await fetch("http://localhost:8080/client/evaluate", {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.REACT_APP_API_TOKEN}`,
+    },
+    body: JSON.stringify({
+        toggleName: featureName,
+        contextFields: contextFields,
+    }),
+});
+
+if (!response.ok) {
+    throw new Error(`Failed to fetch feature ${featureName}`);
+}
+
+const data = await response.json();
+console.log(`Feature status for ${featureName}:`, data.enabled);
+
+const featureData = {
+    enabled: data.enabled,
+    payload: data.payload,
+};
+```
 
 
+In the DemoApplication directory, you can find detailed examples of integration for both the backend and the frontend.
 
 
 
