@@ -89,14 +89,25 @@ services:
     environment:
       MINIO_ACCESS_KEY: admin
       MINIO_SECRET_KEY: admin123
-    command: >
-      mc alias set myminio http://minio:9000 admin admin123 && \
-      mc mb myminio/public-bucket && \
-      mc policy set public myminio/public-bucket
     depends_on:
-      - minio
+      minio:
+        condition: service_healthy
     networks:
       - app_network
+    entrypoint: ["/bin/sh", "-c"]
+    command:
+      - |
+        until (/usr/bin/mc alias set myminio http://minio:9000 admin admin123 --insecure); do
+          echo "Aștept MinIO...";
+          sleep 2;
+        done;
+        if ! (/usr/bin/mc ls myminio/public-bucket --insecure); then
+          /usr/bin/mc mb myminio/public-bucket --insecure;
+          /usr/bin/mc anonymous set public myminio/public-bucket --insecure;
+        else
+          echo "Bucketul public-bucket deja există.";
+        fi
+
 
 
 volumes:
