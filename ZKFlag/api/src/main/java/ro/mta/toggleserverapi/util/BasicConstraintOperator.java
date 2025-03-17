@@ -15,14 +15,16 @@ public class BasicConstraintOperator implements ConstraintOperator{
                 .map(ConstraintValue::getValue)
                 .toList();
 
-
         Optional<String> contextValue = ClientToggleEvaluationRequestDTO.getValueByName(contextFields ,constraint.getContextField().getName());
         return switch (constraint.getOperator()) {
             case IN -> isIn(values, contextValue);
             case NOT_IN -> !isIn(values, contextValue);
+            case GREATER_THAN -> isGreaterThan(values, contextValue);
+            case LESS_THAN -> isLessThan(values, contextValue);
             default -> false;
         };
     }
+
     private boolean isIn(List<String> values, Optional<String> value) {
         return value.map(v ->
                         values.stream()
@@ -30,5 +32,24 @@ public class BasicConstraintOperator implements ConstraintOperator{
                 .orElse(false);
     }
 
+    private boolean isGreaterThan(List<String> values, Optional<String> value) {
+        return value.map(v -> values.stream()
+                        .anyMatch(v2 -> tryParseDouble(v2) > tryParseDouble(v)))
+                .orElse(false);
+    }
+
+    private boolean isLessThan(List<String> values, Optional<String> value) {
+        return value.map(v -> values.stream()
+                        .anyMatch(v2 -> tryParseDouble(v2) < tryParseDouble(v)))
+                .orElse(false);
+    }
+
+    private double tryParseDouble(String value) {
+        try {
+            return Double.parseDouble(value);
+        } catch (NumberFormatException e) {
+            return Double.NaN;
+        }
+    }
 
 }

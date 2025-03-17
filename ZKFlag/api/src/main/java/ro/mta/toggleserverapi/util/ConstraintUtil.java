@@ -14,6 +14,8 @@ public class ConstraintUtil {
     static {
         operators.put(OperatorType.IN, new BasicConstraintOperator());
         operators.put(OperatorType.NOT_IN, new BasicConstraintOperator());
+        operators.put(OperatorType.GREATER_THAN, new BasicConstraintOperator());
+        operators.put(OperatorType.LESS_THAN, new BasicConstraintOperator());
     }
     public static boolean validate(@Nullable List<Constraint> constraints,
                                    List<ClientToggleEvaluationRequestDTO.ContextFromClientDTO> contextFields) {
