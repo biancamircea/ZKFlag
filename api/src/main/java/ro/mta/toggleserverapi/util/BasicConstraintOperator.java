@@ -33,25 +33,30 @@ public class BasicConstraintOperator implements ConstraintOperator{
     }
 
     private boolean isGreaterThan(List<String> values, Optional<String> value) {
-        System.out.println("value string "+values.stream());
-        return value.map(v -> values.stream()
-                        .anyMatch(v2 -> tryParseDouble(v2) > tryParseDouble(v)))
+        return value.filter(v -> !Double.isNaN(tryParseDouble(v)))
+                .map(v -> values.stream()
+                        .map(this::tryParseDouble)
+                        .filter(d -> !Double.isNaN(d))
+                        .anyMatch(d -> d < tryParseDouble(v)))
                 .orElse(false);
     }
 
     private boolean isLessThan(List<String> values, Optional<String> value) {
-        return value.map(v -> values.stream()
-                        .anyMatch(v2 -> tryParseDouble(v2) < tryParseDouble(v)))
+        return value.filter(v -> !Double.isNaN(tryParseDouble(v)))
+                .map(v -> values.stream()
+                        .map(this::tryParseDouble)
+                        .filter(d -> !Double.isNaN(d))
+                        .anyMatch(d -> d > tryParseDouble(v)))
                 .orElse(false);
     }
 
     private double tryParseDouble(String value) {
-        System.out.println("value string="+value+" value double="+ Double.parseDouble(value));
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
             return Double.NaN;
         }
     }
+
 
 }
