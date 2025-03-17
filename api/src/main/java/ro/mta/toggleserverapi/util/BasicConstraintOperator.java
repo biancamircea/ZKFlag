@@ -33,6 +33,7 @@ public class BasicConstraintOperator implements ConstraintOperator{
     }
 
     private boolean isGreaterThan(List<String> values, Optional<String> value) {
+        System.out.println("value string "+values.stream());
         return value.map(v -> values.stream()
                         .anyMatch(v2 -> tryParseDouble(v2) > tryParseDouble(v)))
                 .orElse(false);
@@ -45,6 +46,7 @@ public class BasicConstraintOperator implements ConstraintOperator{
     }
 
     private double tryParseDouble(String value) {
+        System.out.println("value string="+value+" value double="+ Double.parseDouble(value));
         try {
             return Double.parseDouble(value);
         } catch (NumberFormatException e) {
