@@ -28,6 +28,7 @@ public class ConstraintUtil {
 
     private static boolean validateConstraint(Constraint constraint,  List<ClientToggleEvaluationRequestDTO.ContextFromClientDTO> contextFields) {
         ConstraintOperator operator = operators.get(constraint.getOperator());
+        System.out.println("Operator ="+constraint.getOperator());
         if (operator == null) {
             return false;
         }
