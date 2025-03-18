@@ -54,9 +54,9 @@ public class ClientController {
         return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
     }
 
-    @GetMapping(path = "/constraints")
-    public ResponseEntity<?> getConstraints(@RequestHeader("Authorization") String apiTokenStr, @RequestParam("toggleName") String toggleName) {
-        LOG.info("Get constraints request.");
+    @PostMapping(path = "/constraints")
+    public ResponseEntity<?> getConstraints(@RequestHeader("Authorization") String apiTokenStr, @RequestBody @Valid String toggleName) {
+        System.out.println("Get constraints request.");
         ApiToken apiToken = apiTokenService.checkApiToken(apiTokenStr);
 
         if(apiTokenStr.contains("Bearer")){
@@ -71,6 +71,8 @@ public class ClientController {
         Long projectIdLong = projectRepository.findByHashId(projectId).orElseThrow().getId();
         Long environmentIdLong = environmentRepository.findByHashId(environmentId).orElseThrow().getId();
         Long instanceIdLong = instanceRepository.findByHashId(instanceId).orElseThrow().getId();
+
+        System.out.println("ProjectId in constraint client: "+projectIdLong);
 
         List<Toggle> toggles=toggleService.fetchAllTogglesByProjectId(projectIdLong);
         Toggle targetToggle = toggles.stream()
