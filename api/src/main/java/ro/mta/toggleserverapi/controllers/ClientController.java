@@ -96,6 +96,10 @@ public class ClientController {
             return constraint;
         }).toList();
 
+        System.out.println("Constraints: "+filteredConstraints);
+        Long threshold = Long.parseLong(filteredConstraints.get(0).getValues().get(0).getValue());
+        System.out.println("Threshold: "+threshold);
+
         return ResponseEntity.ok(filteredConstraints);
     }
 }
