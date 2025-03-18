@@ -31,7 +31,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        if (request.getRequestURI().startsWith("/auth/login") || request.getRequestURI().startsWith("/auth/logout") || request.getRequestURI().startsWith("/client/evaluate")) {
+        if (request.getRequestURI().startsWith("/auth/login") || request.getRequestURI().startsWith("/auth/logout") || request.getRequestURI().startsWith("/client/evaluate")|| request.getRequestURI().startsWith("/client/constraints")) {
             filterChain.doFilter(request, response);
             return;
         }
