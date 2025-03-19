@@ -9,10 +9,18 @@ RUN mvn clean package -DskipTests
 
 FROM openjdk:17-jdk-slim
 
+RUN apt-get update && apt-get install -y curl && \
+    curl -fsSL https://deb.nodesource.com/setup_16.x | bash - && \
+    apt-get install -y nodejs
+
 WORKDIR /app
 
 COPY --from=build /app/target/*.jar app.jar
 
-EXPOSE 8080
+COPY zkp-verifier/ /app/zkp-verifier/
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+RUN cd /app/zkp-verifier && npm install
+
+EXPOSE 8080 4000
+
+CMD ["sh", "-c", "(cd /app/zkp-verifier && node server.js &) && java -jar app.jar"]

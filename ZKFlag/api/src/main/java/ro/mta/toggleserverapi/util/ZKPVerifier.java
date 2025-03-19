@@ -9,7 +9,7 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 public class ZKPVerifier {
-    private static final String SERVER_URL = "http://192.168.0.86:4000/verifyProof";
+    private static final String SERVER_URL = "http://localhost:4000/verifyProof";
     private static final String PROOF_FILE_PATH = "src/main/resources/zkp/proof.json";
     private static final String PUBLIC_SIGNALS_FILE_PATH = "src/main/resources/zkp/publicSignals.json";
 
