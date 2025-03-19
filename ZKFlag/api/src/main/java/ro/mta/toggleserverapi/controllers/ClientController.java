@@ -7,7 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ro.mta.toggleserverapi.DTOs.ClientToggleEvaluationRequestDTO;
+import ro.mta.toggleserverapi.DTOs.ClientToggleEvaluationRequestZKPDTO;
 import ro.mta.toggleserverapi.DTOs.ClientToggleEvaluationResponseDTO;
+import ro.mta.toggleserverapi.DTOs.ConstraintDTO;
 import ro.mta.toggleserverapi.entities.*;
 import ro.mta.toggleserverapi.repositories.EnvironmentRepository;
 import ro.mta.toggleserverapi.repositories.InstanceRepository;
@@ -59,49 +61,29 @@ public class ClientController {
         System.out.println("Get constraints request.");
         ApiToken apiToken = apiTokenService.checkApiToken(apiTokenStr);
 
-        if(apiTokenStr.contains("Bearer")){
-            apiTokenStr = apiTokenStr.replace("Bearer ", "");
-        }
-        String[] parts =apiTokenStr.split(":");
-
-        String projectId = parts[0];
-        String instanceId =parts[1];
-        String environmentId = parts[2];
-
-        Long projectIdLong = projectRepository.findByHashId(projectId).orElseThrow().getId();
-        Long environmentIdLong = environmentRepository.findByHashId(environmentId).orElseThrow().getId();
-        Long instanceIdLong = instanceRepository.findByHashId(instanceId).orElseThrow().getId();
-
-        System.out.println("ProjectId in constraint client: "+projectIdLong);
-
-        List<Toggle> toggles=toggleService.fetchAllTogglesByProjectId(projectIdLong);
-        Toggle targetToggle = toggles.stream()
-                .filter(toggle -> toggle.getName().equals(toggleName))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Toggle not found with name: " + toggleName));
-
-        ToggleEnvironment toggleEnvironment= toggleEnvironmentService.fetchByToggleIdAndEnvIdAndInstanceId(targetToggle.getId(),environmentIdLong, instanceIdLong);
-
-
-        List<Constraint> filteredConstraints = targetToggle.getConstraints().stream().map(constraint -> {
-            List<ConstraintValue> specificValues = constraint.getValues().stream()
-                    .filter(cv -> cv.getToggleEnvironment() != null && toggleEnvironment.getId().equals(cv.getToggleEnvironment().getId()))
-                    .toList();
-
-            List<ConstraintValue> defaultValues = constraint.getValues().stream()
-                    .filter(cv -> cv.getToggleEnvironment() == null)
-                    .toList();
-
-            List<ConstraintValue> selectedValues = !specificValues.isEmpty() ? specificValues : defaultValues;
-
-            constraint.setValues(selectedValues);
-            return constraint;
-        }).toList();
+        List<ConstraintDTO> filteredConstraints = toggleService.getConstraints(apiTokenStr, toggleName);
 
         System.out.println("Constraints: "+filteredConstraints);
-        Long threshold = Long.parseLong(filteredConstraints.get(0).getValues().get(0).getValue());
+        Long threshold = Long.parseLong(filteredConstraints.get(0).getValues().get(0));
         System.out.println("Threshold: "+threshold);
 
         return ResponseEntity.ok(filteredConstraints);
     }
+
+    @PostMapping(path="/evaluateZKP")
+    public ResponseEntity<?> evaluateAgeZKP(@RequestHeader("Authorization") String apiTokenStr,
+                                            @RequestBody @Valid ClientToggleEvaluationRequestZKPDTO clientToggleEvaluationRequestZKPDTO) {
+
+        LOG.info("Client Evaluation request.");
+        ApiToken apiToken = apiTokenService.checkApiToken(apiTokenStr);
+
+        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = toggleService.evaluateToggleInContextZKP(
+                clientToggleEvaluationRequestZKPDTO.getToggleName(),
+                apiTokenStr,
+                clientToggleEvaluationRequestZKPDTO.getProof());
+
+
+        return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
+    }
+
 }
