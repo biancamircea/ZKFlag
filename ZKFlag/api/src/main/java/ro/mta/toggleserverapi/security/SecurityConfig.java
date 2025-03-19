@@ -49,6 +49,7 @@ public class SecurityConfig  {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST,"/client/evaluate").permitAll()
                         .requestMatchers(HttpMethod.POST,"/client/constraints").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/client/evaluateZKP").permitAll()
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/logout").permitAll()
                         .requestMatchers("/auth/me").authenticated()

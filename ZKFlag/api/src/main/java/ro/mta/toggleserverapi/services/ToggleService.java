@@ -1,5 +1,6 @@
 package ro.mta.toggleserverapi.services;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.AllArgsConstructor;
 import org.hashids.Hashids;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -14,6 +15,9 @@ import ro.mta.toggleserverapi.repositories.*;
 import ro.mta.toggleserverapi.util.ZKPVerifier;
 
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -530,54 +534,61 @@ public class ToggleService {
         return filteredConstraints;
     }
 
-    public ClientToggleEvaluationResponseDTO evaluateToggleInContextZKP( String toggleName, String apiTokenStr, String proof) {
+    public ClientToggleEvaluationResponseDTO evaluateToggleInContextZKP( String toggleName, String apiTokenStr, JsonNode proof) {
+        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = new ClientToggleEvaluationResponseDTO();
+
+        if(apiTokenStr.contains("Bearer")){
+            apiTokenStr = apiTokenStr.replace("Bearer ", "");
+        }
+        String[] parts =apiTokenStr.split(":");
+
+        String projectId = parts[0];
+        String instanceId =parts[1];
+        String environmentId = parts[2];
+
+        Long projectIdLong = projectRepository.findByHashId(projectId).orElseThrow().getId();
+        Long environmentIdLong = environmentRepository.findByHashId(environmentId).orElseThrow().getId();
+        Long instanceIdLong = instanceRepository.findByHashId(instanceId).orElseThrow().getId();
+        Environment environment = environmentRepository.findByHashId(environmentId).orElseThrow();
+
+        List<Toggle> toggles=fetchAllTogglesByProjectId(projectIdLong);
+        Toggle targetToggle = toggles.stream()
+                .filter(toggle -> toggle.getName().equals(toggleName))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Toggle not found with name: " + toggleName));
+
+        ToggleEnvironment toggleEnvironment= toggleEnvironmentService.fetchByToggleIdAndEnvIdAndInstanceId(targetToggle.getId(),environmentIdLong, instanceIdLong);
+
+        if(!toggleEnvironment.getEnabled()){
+            clientToggleEvaluationResponseDTO.setEnabled(false);
+            String payload = toggleEnvironmentService.getPayloadInToggleEnv(targetToggle, environment, instanceIdLong, false);
+            clientToggleEvaluationResponseDTO.setPayload(payload);
+            return clientToggleEvaluationResponseDTO;
+        }
+
+
         ZKPVerifier zkpVerifier = new ZKPVerifier();
         boolean isValid = false;
         String publicValue = "0";
 
         try {
             isValid = zkpVerifier.verifyProof(proof);
-            System.out.println("Rezultat verificare: " + (isValid ? "Valid" : "Invalid"));
 
             if (isValid) {
-                Path publicJsonPath = zkpVerifier.getLastPublicJsonPath();
-                if (publicJsonPath != null) {
-                    String publicJsonContent = Files.readString(publicJsonPath);
-                    publicValue = publicJsonContent.replaceAll("[^0-9]", "");
-                }
+                JsonNode publicSignalsNode = proof.get("publicSignals");
+                String publicSignalsValue = publicSignalsNode.get(0).asText();
+                publicValue = publicSignalsValue;
+
             }
         } catch (Exception e) {
             System.err.println("Eroare la verificare: " + e.getMessage());
             e.printStackTrace();
         }
 
-        System.out.println("Valoare extrasă din public.json: " + publicValue);
-
-
-        if (apiTokenStr.contains("Bearer")) {
-            apiTokenStr = apiTokenStr.replace("Bearer ", "");
-        }
-        String[] parts = apiTokenStr.split(":");
-
-        String projectId = parts[0];
-        String instanceId = parts[1];
-        String environmentId = parts[2];
-
-        Long projectIdLong = projectRepository.findByHashId(projectId).orElseThrow().getId();
-        Long instanceIdLong = instanceRepository.findByHashId(instanceId).orElseThrow().getId();
-        Environment environment = environmentRepository.findByHashId(environmentId).orElseThrow();
-
-        List<Toggle> toggles = fetchAllTogglesByProjectId(projectIdLong);
-        Toggle targetToggle = toggles.stream()
-                .filter(toggle -> toggle.getName().equals(toggleName))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Toggle not found with name: " + toggleName));
-
         String payload = toggleEnvironmentService.getPayloadInToggleEnv(targetToggle, environment, instanceIdLong, publicValue.equals("1"));
 
-        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = new ClientToggleEvaluationResponseDTO();
-        clientToggleEvaluationResponseDTO.setEnabled(publicValue.equals("1"));
         clientToggleEvaluationResponseDTO.setPayload(payload);
+        clientToggleEvaluationResponseDTO.setEnabled(publicValue.equals("1"));
 
         return clientToggleEvaluationResponseDTO;
     }

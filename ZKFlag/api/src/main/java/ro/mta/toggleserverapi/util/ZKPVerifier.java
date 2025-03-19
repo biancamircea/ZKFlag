@@ -1,74 +1,58 @@
 package ro.mta.toggleserverapi.util;
 
 import java.io.*;
-import java.nio.file.*;
-import java.util.Map;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.springframework.http.*;
+import org.springframework.web.client.RestTemplate;
 
 public class ZKPVerifier {
-    private static final String VERIFY_SCRIPT = "zkp/verify_proof.js";
-    private static final String NODE_MODULES_PATH = "src/main/resources/zkp/node_modules";
-    private static final String VERIFICATION_KEY_PATH = "zkp/verification_key.json";
+    private static final String SERVER_URL = "http://192.168.0.86:4000/verifyProof";
+    private static final String PROOF_FILE_PATH = "src/main/resources/zkp/proof.json";
+    private static final String PUBLIC_SIGNALS_FILE_PATH = "src/main/resources/zkp/publicSignals.json";
 
-    private Path lastPublicJsonPath;
+    public boolean verifyProof(JsonNode combinedJson) throws Exception {
+        System.out.println("Verifying proof...");
 
-    public boolean verifyProof(String proofJson) throws Exception {
-        Path tempDir = Files.createTempDirectory("zkp_verify");
+        JsonNode proofNode = combinedJson.get("proof");
+        JsonNode publicSignalsNode = combinedJson.get("publicSignals");
 
-        String proof = extractJsonField(proofJson, "proof");
-        String publicSignals = extractJsonField(proofJson, "publicSignals");
-
-        Path proofFile = tempDir.resolve("proof.json");
-        lastPublicJsonPath = tempDir.resolve("public.json"); 
-
-        Files.write(proofFile, proof.getBytes());
-        Files.write(lastPublicJsonPath, publicSignals.getBytes());
-
-        ProcessBuilder pb = new ProcessBuilder(
-                "node",
-                getResourcePath(VERIFY_SCRIPT),
-                getResourcePath(VERIFICATION_KEY_PATH),
-                proofFile.toString(),
-                lastPublicJsonPath.toString()
-        );
-
-        return executeProcess(pb);
-    }
-
-    public Path getLastPublicJsonPath() {
-        return lastPublicJsonPath;
-    }
-
-    private String extractJsonField(String json, String field) {
-        int startIndex = json.indexOf("\"" + field + "\":") + field.length() + 3;
-        int endIndex = json.indexOf("}", startIndex) + 1;
-        return json.substring(startIndex, endIndex);
-    }
-
-    private String getResourcePath(String resource) throws IOException {
-        InputStream in = getClass().getClassLoader().getResourceAsStream(resource);
-        Path tempFile = Files.createTempFile("zkp_", "_temp");
-        Files.copy(in, tempFile, StandardCopyOption.REPLACE_EXISTING);
-        return tempFile.toAbsolutePath().toString();
-    }
-
-    private boolean executeProcess(ProcessBuilder pb) throws IOException, InterruptedException {
-        Map<String, String> env = pb.environment();
-        env.put("NODE_PATH", NODE_MODULES_PATH);
-        pb.redirectErrorStream(true);
-        Process process = pb.start();
-
-        try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                System.out.println("[ZKP] " + line);
-                if (line.equals("valid")) {
-                    return true;
-                }
-            }
+        if (proofNode == null || publicSignalsNode == null) {
+            throw new IllegalArgumentException("Invalid JSON: Missing 'proof' or 'publicSignals' fields");
         }
 
-        int exitCode = process.waitFor();
-        return exitCode == 0;
+        ObjectMapper objectMapper = new ObjectMapper();
+        String proofJson = objectMapper.writeValueAsString(proofNode);
+        String publicSignalsJson = objectMapper.writeValueAsString(publicSignalsNode);
+
+        writeToFile(proofJson, PROOF_FILE_PATH);
+        writeToFile(publicSignalsJson, PUBLIC_SIGNALS_FILE_PATH);
+
+        ObjectNode requestPayload = objectMapper.createObjectNode();
+        requestPayload.set("proof", proofNode);
+        requestPayload.set("publicSignals", publicSignalsNode);
+
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(requestPayload), headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(SERVER_URL, HttpMethod.POST, entity, String.class);
+
+        JsonNode jsonResponse = objectMapper.readTree(response.getBody());
+        System.out.println("Proof verification result: " + jsonResponse.get("isValid").asBoolean());
+        return jsonResponse.get("isValid").asBoolean();
+    }
+
+    private void writeToFile(String jsonContent, String filePath) throws IOException {
+        File file = new File(filePath);
+        file.getParentFile().mkdirs();
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(file))) {
+            writer.write(jsonContent);
+        }
     }
 }
-

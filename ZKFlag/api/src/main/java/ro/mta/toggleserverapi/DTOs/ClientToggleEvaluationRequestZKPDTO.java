@@ -1,9 +1,10 @@
 package ro.mta.toggleserverapi.DTOs;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import lombok.Data;
 
 @Data
 public class ClientToggleEvaluationRequestZKPDTO {
     String toggleName;
-    String proof;
+    private JsonNode proof;
 }

@@ -75,7 +75,9 @@ public class ClientController {
                                             @RequestBody @Valid ClientToggleEvaluationRequestZKPDTO clientToggleEvaluationRequestZKPDTO) {
 
         LOG.info("Client Evaluation request.");
+        System.out.println("Client Evaluation request: evaluate age ZKP.");
         ApiToken apiToken = apiTokenService.checkApiToken(apiTokenStr);
+        System.out.println("Client Evaluation request: apiToken checked.");
 
         ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = toggleService.evaluateToggleInContextZKP(
                 clientToggleEvaluationRequestZKPDTO.getToggleName(),
