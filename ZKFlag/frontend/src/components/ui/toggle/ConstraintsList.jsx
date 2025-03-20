@@ -25,6 +25,11 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId }) {
             return;
         }
 
+        if((data.operator==="GREATER_THAN" || data.operator==="LESS_THAN") && data.values.length>1){
+            toast.error("Only one value is allowed for this operator.");
+            return;
+        }
+
         const resData = await addConstraintInToggleEnv(projectId, toggleId, data);
         if (resData) {
             toast.success("Constraint added.");
@@ -36,6 +41,11 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId }) {
     async function modifyConstraint(constraintId, data) {
         if (constraints.some(el => el.contextName === data.contextName && el.id!==constraintId)) {
             toast.error("Constraint with same context name already exists.");
+            return;
+        }
+
+        if((data.operator==="GREATER_THAN" || data.operator==="LESS_THAN") && data.values.length>1){
+            toast.error("Only one value is allowed for this operator.");
             return;
         }
 
