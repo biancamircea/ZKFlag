@@ -3,15 +3,17 @@ import Tooltip from "@mui/material/Tooltip";
 import FeatureToggleAddConstraintDialog from "../toggle/FeatureToggleAddConstraintDialog.jsx";
 import { useOutletContext } from "react-router-dom";
 import {getConstraintFromToggleEnvironment, getConstraintValues} from "../../../api/featureToggleApi.js";
-import LoadingBanner from "../common/LoadingBanner.jsx"; // Adaugă un loading banner (componentă de încărcare)
+import LoadingBanner from "../common/LoadingBanner.jsx";
 import {getToggleEnvironment} from "../../../api/featureToggleApi.js";
 
-function EditConstraintDialog({context, operator, values, submitHandler, instanceId, constraintId,environmentId,toggleId}) {
+function EditConstraintDialog({context, operator, values, submitHandler, instanceId, constraintId,environmentId,toggleId,pIsConfidential}) {
     const { contextFields } = useOutletContext()
     const [open, setOpen] = useState(false);
     const [pvalues, setPValues] = useState(values);
     const [isLoading, setIsLoading] = useState(true);
     const [elementWithName, setElementWithName] = useState(null);
+
+    console.log("edit constraint dialog pIsConfidential",pIsConfidential)
 
     useEffect(() => {
         if(instanceId) {
@@ -88,6 +90,7 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
                         submitHandler={submitHandler}
                         edit
                         instanceId={instanceId}
+                        pIsConfidential={pIsConfidential}
                     />
                 )}
             </Suspense>

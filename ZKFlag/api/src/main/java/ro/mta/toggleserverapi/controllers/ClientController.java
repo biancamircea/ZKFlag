@@ -30,11 +30,6 @@ public class ClientController {
     private final ToggleService toggleService;
     private final ApiTokenService apiTokenService;
     private static final Logger LOG = LoggerFactory.getLogger(ClientController.class);
-    private final ToggleEnvironmentService toggleEnvironmentService;
-    private final ProjectService projectService;
-    private final ProjectRepository projectRepository;
-    private final EnvironmentRepository environmentRepository;
-    private final InstanceRepository instanceRepository;
 
     @PostMapping(path = "/evaluate")
     public ResponseEntity<?> evaluateClient(@RequestHeader("Authorization") String apiTokenStr,
@@ -44,15 +39,28 @@ public class ClientController {
             System.out.println("Name context field: " + context.getName() + ", Value context field: " + context.getValue());
         }
 
-
         LOG.info("Client Evaluation request.");
         ApiToken apiToken = apiTokenService.checkApiToken(apiTokenStr);
 
-        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = toggleService.evaluateToggleInContext(
+        Boolean check = toggleService.evaluateToggleInContext(
                 clientToggleEvaluationRequestDTO.getToggleName(),
                 apiTokenStr,
                 clientToggleEvaluationRequestDTO.getContextFields());
+
+        Boolean checkZKP= toggleService.evaluateProofs(clientToggleEvaluationRequestDTO.getToggleName(),
+                    apiTokenStr,clientToggleEvaluationRequestDTO.getProofs());
+
+
+        Boolean enable = check && checkZKP;
+        System.out.println("CHECK: "+check);
+        System.out.println("CHECK ZKP: "+checkZKP);
+        String payload = toggleService.getPayload(clientToggleEvaluationRequestDTO.getToggleName(), apiTokenStr, enable);
+
         LOG.info("Client Evaluation processed.");
+        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = new ClientToggleEvaluationResponseDTO();
+        clientToggleEvaluationResponseDTO.setEnabled(enable);
+        clientToggleEvaluationResponseDTO.setPayload(payload);
+
         return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
     }
 

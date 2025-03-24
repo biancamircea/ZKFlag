@@ -32,6 +32,7 @@ public class ConstraintService {
 
         constraint.setContextField(contextFieldService.fetchByProjectIdAndName(constraintDTO.getContextName(), projectId));
         constraint.setOperator(constraintDTO.getOperator());
+        constraint.setIsConfidential(constraintDTO.getIsConfidential());
         List<ConstraintValue> values = constraintDTO.getValues()
                 .stream()
                 .map(s -> {
@@ -43,12 +44,14 @@ public class ConstraintService {
                 .toList();
 
         constraint.setValues(values);
+        constraint.setIsConfidential(constraintDTO.getIsConfidential());
         return constraint;
     }
     public Constraint fromDTO(ConstraintDTO constraintDTO, Long projectId, Long toggleId,Long instanceId, Long environmentId) {
         Constraint constraint = new Constraint();
         constraint.setContextField(contextFieldService.fetchByProjectIdAndName(constraintDTO.getContextName(), projectId));
         constraint.setOperator(constraintDTO.getOperator());
+        constraint.setIsConfidential(constraintDTO.getIsConfidential());
 
         ToggleEnvironment toggleEnvironment = toggleEnvironmentService.fetchByToggleIdAndEnvIdAndInstanceId(toggleId, environmentId,instanceId);
 
@@ -64,6 +67,7 @@ public class ConstraintService {
                 .toList();
 
         constraint.setValues(values);
+        constraint.setIsConfidential(constraintDTO.getIsConfidential());
         return constraint;
     }
 
@@ -124,6 +128,7 @@ public class ConstraintService {
                 .map(foundConstraint -> {
                     foundConstraint.setOperator(constraint.getOperator());
                     foundConstraint.setContextField(constraint.getContextField());
+                    foundConstraint.setIsConfidential(constraint.getIsConfidential());
 
                     valueRepository.deleteAllByConstraintAndToggleEnvironmentIsNull(foundConstraint);
 

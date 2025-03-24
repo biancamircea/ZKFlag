@@ -21,6 +21,8 @@ public class ConstraintDTO {
 
     private List<String> values;
 
+    private Long isConfidential;
+
     public static ConstraintDTO toDTO(Constraint constraint) {
         ConstraintDTO constraintDTO = new ConstraintDTO();
         constraintDTO.setId(constraint.getId());
@@ -33,6 +35,7 @@ public class ConstraintDTO {
                         ? constraint.getValues().stream().map(value -> value.getValue()).toList()
                         : null
         );
+        constraintDTO.setIsConfidential(constraint.getIsConfidential());
         return constraintDTO;
     }
 }

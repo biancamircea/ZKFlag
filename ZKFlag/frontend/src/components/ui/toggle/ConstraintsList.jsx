@@ -13,6 +13,7 @@ import {
 import {  useParams } from "react-router-dom";
 
 function ConstraintsList({ toggleId, constraints,instanceId,environmentId }) {
+    console.log("constraint list constraints: ",constraints)
     const { projectId } = useParams();
 
     const disabledStyle = {
@@ -94,6 +95,7 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId }) {
             instanceId={instanceId}
             environmentId={environmentId}
             toggleId={toggleId}
+            pIsConfidential={el.isConfidential}
         />
     ));
 

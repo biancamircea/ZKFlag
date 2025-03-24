@@ -1,5 +1,6 @@
 package ro.mta.toggleserverapi.DTOs;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 
@@ -11,13 +12,12 @@ public class ClientToggleEvaluationRequestDTO {
     @NotNull
     private String toggleName;
     private List<ContextFromClientDTO> contextFields;
+    private List<JsonNode> proofs;
 
     @Data
     public static class ContextFromClientDTO {
         private String name;
         private String value;
-
-
     }
 
     public static Optional<String> getValueByName(List<ContextFromClientDTO> contextFields, String name){

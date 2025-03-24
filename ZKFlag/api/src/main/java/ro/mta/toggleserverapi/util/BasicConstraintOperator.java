@@ -26,6 +26,7 @@ public class BasicConstraintOperator implements ConstraintOperator{
     }
 
     private boolean isIn(List<String> values, Optional<String> value) {
+        System.out.println("values: " + values+ " value: " + value);
         return value.map(v ->
                         values.stream()
                                 .anyMatch(v2 -> v2.equals(v)))

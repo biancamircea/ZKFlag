@@ -41,4 +41,6 @@ public class Constraint {
 
     @OneToMany(mappedBy = "constraint", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     List<ConstraintValue> values;
+
+    private Long isConfidential;
 }

@@ -22,10 +22,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @AllArgsConstructor
@@ -437,7 +434,7 @@ public class ToggleService {
     }
 
 
-    public ClientToggleEvaluationResponseDTO evaluateToggleInContext(
+    public Boolean evaluateToggleInContext(
             String toggleName,
             String apiTokenStr,
             List<ClientToggleEvaluationRequestDTO.ContextFromClientDTO> contextFields) {
@@ -467,17 +464,9 @@ public class ToggleService {
         Toggle toggle = toggleRepository.findByNameAndProjectAndToggleType(toggleName, project, toggleType)
                 .orElseThrow(() -> new ToggleNotFoundException(toggleName, project.getId()));
 
-
-
         Boolean enabled = toggleEnvironmentService.evaluateToggleInContext(toggle, environment, instance.getId(), contextFields);
-        String payload = toggleEnvironmentService.getPayloadInToggleEnv(toggle, environment, instance.getId(), enabled);
-
-        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = new ClientToggleEvaluationResponseDTO();
-        clientToggleEvaluationResponseDTO.setEnabled(enabled);
-        clientToggleEvaluationResponseDTO.setPayload(payload);
-
-        System.out.println("Client Evaluation processed. "+"payload "+clientToggleEvaluationResponseDTO.getPayload()+ " enabled "+clientToggleEvaluationResponseDTO.getEnabled());
-        return clientToggleEvaluationResponseDTO;
+        System.out.println("enabled "+toggleName+" "+enabled);
+       return enabled;
     }
 
     public List<ConstraintValueDTO> getConstraintValues(Long constraintId) {
@@ -591,5 +580,126 @@ public class ToggleService {
         clientToggleEvaluationResponseDTO.setEnabled(publicValue.equals("1"));
 
         return clientToggleEvaluationResponseDTO;
+    }
+
+
+    public Boolean evaluateProofs(
+            String toggleName,
+            String apiTokenStr,
+            List<JsonNode> proofs) {
+
+        if (apiTokenStr.contains("Bearer")) {
+            apiTokenStr = apiTokenStr.replace("Bearer ", "");
+        }
+        String[] parts = apiTokenStr.split(":");
+        String projectId = parts[0];
+        String instanceId = parts[1];
+        String environmentId = parts[2];
+
+        Long projectIdLong = projectRepository.findByHashId(projectId).orElseThrow().getId();
+        Long environmentIdLong = environmentRepository.findByHashId(environmentId).orElseThrow().getId();
+        Long instanceIdLong = instanceRepository.findByHashId(instanceId).orElseThrow().getId();
+        Environment environment = environmentRepository.findByHashId(environmentId).orElseThrow();
+
+        List<Toggle> toggles = fetchAllTogglesByProjectId(projectIdLong);
+        Toggle targetToggle = toggles.stream()
+                .filter(toggle -> toggle.getName().equals(toggleName))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Toggle not found: " + toggleName));
+
+        List<Constraint> confidentialConstraints = targetToggle.getConstraints().stream()
+                .filter(c -> c.getIsConfidential() != null && c.getIsConfidential() == 1)
+                .collect(Collectors.toList());
+
+        if ( proofs.size() != confidentialConstraints.size()) {
+            System.out.println("Proofs count mismatch. Expected: " + confidentialConstraints.size() +
+                    ", Received: " + (proofs != null ? proofs.size() : 0));
+            return false;
+        }
+
+        Set<String> proofHashes = new HashSet<>();
+
+        for (JsonNode proof : proofs) {
+            try {
+                String proofHash = proof.hashCode() + proof.toString();
+                if (proofHashes.contains(proofHash)) {
+                    System.out.println("Duplicate proof detected for context" );
+                    return false;
+                }
+                proofHashes.add(proofHash);
+
+            } catch (Exception e) {
+                System.out.println("Invalid proof format: " + e.getMessage());
+                return false;
+            }
+        }
+
+        ToggleEnvironment toggleEnvironment = toggleEnvironmentService.fetchByToggleIdAndEnvIdAndInstanceId(
+                targetToggle.getId(), environmentIdLong, instanceIdLong);
+
+        if (!toggleEnvironment.getEnabled()) {
+            return false;
+        }
+
+        ZKPVerifier zkpVerifier = new ZKPVerifier();
+        List<Boolean> proofResults = new ArrayList<>();
+        List<String> publicValues = new ArrayList<>();
+
+        for (JsonNode proof : proofs) {
+            try {
+                boolean isValid = zkpVerifier.verifyProof(proof);
+                proofResults.add(isValid);
+
+                if (isValid) {
+                    JsonNode publicSignalsNode = proof.get("publicSignals");
+                    publicValues.add(publicSignalsNode.get(0).asText());
+                    System.out.println("valoare public signals: " + publicSignalsNode.get(0).asText());
+                } else {
+                    publicValues.add("0");
+                }
+            } catch (Exception e) {
+                System.err.println("Error verifying proof: " + e.getMessage());
+                proofResults.add(false);
+                publicValues.add("0");
+            }
+        }
+
+        boolean allProofsValid = proofResults.stream().allMatch(Boolean::booleanValue);
+        boolean finalEnabled;
+        if (allProofsValid) {
+            finalEnabled = publicValues.stream().allMatch("1"::equals);
+        } else {
+            finalEnabled = false;
+        }
+
+        return finalEnabled;
+    }
+
+
+    public String getPayload(String toggleName,String apiTokenStr, Boolean enable) {
+        if (apiTokenStr.contains("Bearer")) {
+            apiTokenStr = apiTokenStr.replace("Bearer ", "");
+        }
+        String[] parts = apiTokenStr.split(":");
+        String projectId = parts[0];
+        String instanceId = parts[1];
+        String environmentId = parts[2];
+
+        Long projectIdLong = projectRepository.findByHashId(projectId).orElseThrow().getId();
+        Long environmentIdLong = environmentRepository.findByHashId(environmentId).orElseThrow().getId();
+        Long instanceIdLong = instanceRepository.findByHashId(instanceId).orElseThrow().getId();
+        Environment environment = environmentRepository.findByHashId(environmentId).orElseThrow();
+
+
+        List<Toggle> toggles = fetchAllTogglesByProjectId(projectIdLong);
+        Toggle targetToggle = toggles.stream()
+                .filter(toggle -> toggle.getName().equals(toggleName))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Toggle not found with name: " + toggleName));
+
+
+
+        String payload = toggleEnvironmentService.getPayloadInToggleEnv(targetToggle, environment, instanceIdLong, enable);
+        return payload;
     }
 }

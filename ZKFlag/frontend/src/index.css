@@ -1453,9 +1453,10 @@ textarea {
   display: flex;
   flex-direction: column;
   padding: 0.2em 0.5em;
-  width: 17%;
+  width: 19%;
   border-radius: 4px;
   background: #e5e5e5;
+  text-align: center;
 
   /*border:1px solid red;*/
 

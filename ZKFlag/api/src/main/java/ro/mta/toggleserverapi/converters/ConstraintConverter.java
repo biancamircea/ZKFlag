@@ -20,6 +20,7 @@ public class ConstraintConverter {
         constraintDTO.setId(constraint.getId());
         constraintDTO.setContextName(constraint.getContextField().getName());
         constraintDTO.setOperator(constraint.getOperator());
+        constraintDTO.setIsConfidential(constraint.getIsConfidential());
         constraintDTO.setValues(
                 constraint.getValues()
                         .stream()

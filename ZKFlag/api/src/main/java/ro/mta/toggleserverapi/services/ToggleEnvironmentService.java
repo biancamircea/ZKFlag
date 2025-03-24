@@ -107,21 +107,28 @@ public class ToggleEnvironmentService {
         ToggleEnvironment toggleEnvironment = fetchByToggleIdAndEnvIdAndInstanceId(toggle.getId(), environment.getId(), instanceId);
 
         if (toggleEnvironment != null && toggleEnvironment.getEnabled()) {
-            List<Constraint> filteredConstraints = toggle.getConstraints().stream().map(constraint -> {
-                List<ConstraintValue> specificValues = constraint.getValues().stream()
-                        .filter(cv -> cv.getToggleEnvironment() != null && toggleEnvironment.getId().equals(cv.getToggleEnvironment().getId()))
-                        .toList();
+            List<Constraint> filteredConstraints = toggle.getConstraints().stream()
+                    .filter(constraint -> constraint.getIsConfidential() != null && constraint.getIsConfidential() == 0)
+                    .map(constraint -> {
+                        List<ConstraintValue> specificValues = constraint.getValues().stream()
+                                .filter(cv -> cv.getToggleEnvironment() != null &&
+                                        toggleEnvironment.getId().equals(cv.getToggleEnvironment().getId()))
+                                .toList();
 
-                List<ConstraintValue> defaultValues = constraint.getValues().stream()
-                        .filter(cv -> cv.getToggleEnvironment() == null)
-                        .toList();
+                        List<ConstraintValue> defaultValues = constraint.getValues().stream()
+                                .filter(cv -> cv.getToggleEnvironment() == null)
+                                .toList();
 
-                List<ConstraintValue> selectedValues = !specificValues.isEmpty() ? specificValues : defaultValues;
+                        List<ConstraintValue> selectedValues = !specificValues.isEmpty() ? specificValues : defaultValues;
 
-                constraint.setValues(selectedValues);
-                return constraint;
-            }).toList();
+                        constraint.setValues(selectedValues);
+                        return constraint;
+                    })
+                    .toList();
 
+            System.out.println("Evaluating toggle: " + toggle.getName() +
+                    "\nNon-confidential constraints: " + filteredConstraints +
+                    "\nContext fields: " + contextFields);
             return ConstraintUtil.validate(filteredConstraints, contextFields);
         } else {
             return Boolean.FALSE;

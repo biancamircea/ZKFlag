@@ -2,7 +2,8 @@ import React from 'react';
 import DeleteIconNoDialog from "../common/DeleteIconNoDialog.jsx";
 import EditConstraintDialog from "../common/EditConstraintDialog.jsx";
 
-function ConstraintListItem({contextName, operator, values, remove, update,instanceId,constraintId, toggleId, environmentId}) {
+function ConstraintListItem({contextName, operator, values, remove, update,instanceId,constraintId, toggleId, environmentId,pIsConfidential}) {
+    console.log("constraintListItem pIsConfidential",pIsConfidential)
     let valuesString = ""
     if(values){
         valuesString = values.join(', ')
@@ -34,6 +35,7 @@ function ConstraintListItem({contextName, operator, values, remove, update,insta
                     constraintId={constraintId}
                     toggleId={toggleId}
                     environmentId={environmentId}
+                    pIsConfidential={pIsConfidential}
                 />
                 {instanceId == null &&  <DeleteIconNoDialog
                     deleteHandler={remove}

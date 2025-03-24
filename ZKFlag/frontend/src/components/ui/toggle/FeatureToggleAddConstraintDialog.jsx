@@ -15,9 +15,13 @@ import ConstraintValuesList from "./ConstraintValuesList.jsx";
 import { Form } from "react-router-dom";
 import { toast } from "react-toastify";
 
-function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submitHandler, pContext, pOperator, pValues, edit, instanceId }) {
+function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submitHandler, pContext, pOperator, pValues, edit, instanceId, pIsConfidential }) {
     const [context, setContext] = useState(pContext || '');
-    const [values, setValues] = useState( []);
+    const [values, setValues] = useState([]);
+    const [isConfidential, setIsConfidential] = useState(pIsConfidential !== undefined ? pIsConfidential : 0);
+
+    console.log("pIsConfidential",pIsConfidential)
+    console.log("isConfidential",isConfidential)
 
     if(instanceId) {
         useEffect(() => {
@@ -25,28 +29,29 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
                 setValues(pValues.map((value) => value.name));
             }
         }, [pValues]);
-    }else{
+    } else {
         useEffect(() => {
             if (pValues) {
                 setValues(pValues);
             }
         }, [pValues]);
-
     }
 
     useEffect(() => {
         if (pContext) {
             setContext(pContext.id);
         }
-    }, [pContext]);
-
-
+        if (pIsConfidential !== undefined) {
+            setIsConfidential(pIsConfidential);
+        }
+    }, [pContext, pIsConfidential]);
 
     const handleClose = () => {
         onClose();
         if (!edit) {
             setContext('');
             setValues([]);
+            setIsConfidential(0);
         }
     };
 
@@ -54,8 +59,11 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
         setContext(event.target.value || '');
     };
 
-    const handleSubmit = (event) => {
+    const handleConfidentialChange = (event) => {
+        setIsConfidential(Number(event.target.value));
+    };
 
+    const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
         const contextValue = formData.get("context");
@@ -66,10 +74,20 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
                 toast.error("Please fill empty fields!");
             } else {
                 const elementWithId = contextFields.find((obj) => obj.id === contextValue);
-                submitHandler({ contextName: elementWithId?.name, operator, values });
+                submitHandler({
+                    contextName: elementWithId?.name,
+                    operator,
+                    values,
+                    isConfidential
+                });
             }
         } else {
-            submitHandler({ contextName: pContext.name, operator: pOperator, values });
+            submitHandler({
+                contextName: pContext.name,
+                operator: pOperator,
+                values,
+                isConfidential
+            });
         }
 
         handleClose();
@@ -86,10 +104,10 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
                 <DialogContent>
                     {instanceId == null &&
                         <FormControl sx={{ m: 1, minWidth: 250 }}>
-                            <InputLabel id="demo-dialog-select-label">Context</InputLabel>
+                            <InputLabel id="context-select-label">Context</InputLabel>
                             <Select
-                                labelId="demo-dialog-select-label"
-                                id="demo-dialog-select"
+                                labelId="context-select-label"
+                                id="context-select"
                                 name="context"
                                 value={context}
                                 onChange={handleChange}
@@ -104,6 +122,23 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
                     }
 
                     {instanceId == null && <OperatorField defaultOperator={pOperator} />}
+
+                    {instanceId == null &&
+                    <FormControl sx={{ m: 1, minWidth: 250 ,marginTop:"20px"}}>
+                        <InputLabel id="confidential-select-label">Confidential</InputLabel>
+                        <Select
+                            labelId="confidential-select-label"
+                            id="confidential-select"
+                            name="isConfidential"
+                            value={isConfidential}
+                            onChange={handleConfidentialChange}
+                            input={<OutlinedInput label="Confidential" />}
+                        >
+                            <MenuItem value={1}>Yes</MenuItem>
+                            <MenuItem value={0}>No</MenuItem>
+                        </Select>
+                    </FormControl>
+                    }
 
                     <ConstraintValuesList
                         values={values}
