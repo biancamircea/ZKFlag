@@ -48,23 +48,11 @@ To integrate the server with Java applications, use the following steps:
 <dependency>
   <groupId>ro.mta.sdk</groupId>
   <artifactId>toggle-system</artifactId>
-  <version>1.0.3</version>
+  <version>1.0.10</version>
 </dependency>
 ```
 
-2. Add the repository to your pom.xml file:
-
-```bash
-maven {
-    url = uri("https://maven.pkg.github.com/biancamircea/Licenta-Java-Client")
-    credentials {
-        username = project.findProperty("mavenUsername") ?: System.getenv("MAVEN_USERNAME")
-        password = project.findProperty("mavenPassword") ?: System.getenv("MAVEN_PASSWORD")
-    }
-}
-```
-
-3. To create a client instance, use the following code:
+2. To create a client instance, use the following code:
 
 ```bash
 ToggleSystemConfig toggleSystemConfig = ToggleSystemConfig.builder()
@@ -76,7 +64,7 @@ ToggleSystemClient toggleSystem = new ToggleSystemClient(toggleSystemConfig);
 
 The API key is created by the Instance Admin and represents a specific project, instance, and environment.
 
-4. To evaluate a flag, you have two options:
+3. To evaluate a flag, you have two options:
 
 With constraints:
 
@@ -93,7 +81,7 @@ Without constraints:
 boolean isEnabled = toggleSystemClient.isEnabled("toggle_name");
 ```
 
-5. To retrieve the associated payload:
+4. To retrieve the associated payload:
 
 ```bash
 toggleSystem.getPayload("toggle_name");  // Without context
