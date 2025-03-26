@@ -1,14 +1,14 @@
 import React from 'react';
 import {Form} from "react-router-dom";
-import WarningField from "../ui/common/WarningField.jsx";
-import Dropdown from "react-dropdown";
+import Select from 'react-select';
 import CancelButton from "../ui/common/CancelButton.jsx";
 
-function UpdateFeatureProjectForm({handleSubmit, name, description}) {
+function UpdateFeatureProjectForm({handleSubmit, name, description, handleTypeInput, selectedType, type}) {
     const types = [
-        { value: 'standard', label: 'Standard' },
-        { value: 'experimental', label: 'Experimental' }
-    ]
+        { value: 0, label: 'Frontend' },
+        { value: 1, label: 'Backend' },
+        {value: 2, label:'Both'}
+    ];
 
     return (
         <Form
@@ -30,12 +30,13 @@ function UpdateFeatureProjectForm({handleSubmit, name, description}) {
                         disabled
                     />
                 </div>
-                <div className={"create-form-field-item"}>
+                <div className={"create-form-field-item"} style={{width: "500px"}}>
                     <label htmlFor={"type"}>What type is your toggle?</label>
-                    <Dropdown
-                        options={types }
-                        controlClassName={"form-dropdown"}
+                    <Select
+                        options={types}
                         menuClassName={"menu-dropdown"}
+                        onChange={handleTypeInput}
+                        defaultValue={types.find(type2 => type2.value === type)}
                         placeholder={"Select an option"}
                     />
                 </div>

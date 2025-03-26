@@ -53,6 +53,7 @@ public class SecurityConfig  {
                         .requestMatchers("/auth/login").permitAll()
                         .requestMatchers("/auth/logout").permitAll()
                         .requestMatchers("/auth/me").authenticated()
+                        .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()
 
                         .requestMatchers("/events/**").authenticated()
 
@@ -98,7 +99,7 @@ public class SecurityConfig  {
                         .requestMatchers("/projects/{projectId}/toggles/{toggleId}/instances/{instanceId}/environment/{environmentId}/constraints/**").hasAnyAuthority("InstanceAdmin","ProjectAdmin")
                         .requestMatchers("/toggles/{toggleId}/instances/{instanceId}/environment/{environmentId}/constraints/**").hasAnyAuthority("InstanceAdmin")
                         .requestMatchers("/constraints/{constraintId}/values").hasAuthority("InstanceAdmin")
-                        .requestMatchers("/minio/**").hasAnyAuthority("InstanceAdmin","ProjectAdmin")
+                        .requestMatchers("/minio/**").hasAnyAuthority("InstanceAdmin","ProjectAdmin","SystemAdmin")
 
                         .requestMatchers(HttpMethod.GET,"/instances/{instanceId}/toggles/{toggleId}/environments").hasAnyAuthority("InstanceAdmin","ProjectAdmin")
 
@@ -113,10 +114,6 @@ public class SecurityConfig  {
 
         return http.build();
     }
-
-
-
-
 
     @Bean
     public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {

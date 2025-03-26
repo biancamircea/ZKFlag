@@ -2,7 +2,11 @@ import React, {Suspense, useState} from 'react';
 import ListPageHeader from "../common/ListPageHeader.jsx";
 import {Await, defer, useLoaderData, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
-import {toggleEnvironmentInInstance} from "../../../api/instanceApi.js";
+import {
+    getAllInstancesFromProject,
+    getToggleEnvironments,
+    toggleEnvironmentInInstance
+} from "../../../api/instanceApi.js";
 import ProjectEnvironmentSwitch from "../project/ProjectEnvironmentSwitch.jsx";
 import EmptyList from "../common/EmptyList.jsx";
 import EmptySearchResult from "../common/EmptySearchResult.jsx";
@@ -43,6 +47,23 @@ function InstanceEnvironments(props) {
         }
     }
     async function disableEnvironmentInInstance(envId) {
+
+        let imageUrls = [];
+
+            const environments = await getToggleEnvironments(instanceId, id);
+            for (const env of environments) {
+                if (env.enabledValue && isImageUrl(env.enabledValue)) {
+                    imageUrls.push(env.enabledValue);
+                }
+                if (env.disabledValue && isImageUrl(env.disabledValue)) {
+                    imageUrls.push(env.disabledValue);
+                }
+            }
+
+        for (const imageUrl of imageUrls) {
+            await deleteFile(imageUrl);
+        }
+
         const res = await toggleEnvironmentInInstance(instanceId, envId, false);
         if (res) {
             toast.success("Environment disabled in instance.");
@@ -50,6 +71,26 @@ function InstanceEnvironments(props) {
             toast.error("Operation failed.");
         }
     }
+
+    const isImageUrl = (value) => {
+        return value && (value.endsWith('.jpg') || value.endsWith('.jpeg') || value.endsWith('.png') || value.endsWith('.gif'));
+    };
+
+    const deleteFile = async (fileUrl) => {
+        try {
+            const response = await fetch(`/api/minio/delete?fileUrl=${encodeURIComponent(fileUrl)}`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                throw new Error("File deletion failed");
+            }
+
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
 
     function render(response){
 

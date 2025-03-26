@@ -4,6 +4,11 @@ networks:
   app_network:
     driver: bridge
 
+volumes:
+  postgres_data:
+  minio_data:
+  certs:
+
 services:
   postgresql:
     image: postgres:13
@@ -26,27 +31,26 @@ services:
     networks:
       - app_network
 
-
   backend:
     build:
       context: ./api
-    container_name: feature-flag-system-backend
-    image: feature-flag-system-backend
+    container_name: backend
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/toggle_system
       SPRING_DATASOURCE_USERNAME: bianca
       SPRING_DATASOURCE_PASSWORD: 1234
+      SERVER_SSL_ENABLED: "true"
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: admin
       MINIO_SECRET_KEY: admin123
       MINIO_BUCKET_NAME: my-bucket
+
     ports:
-      - "8080:8080"
-      - "4000:4000"
+      - "8443:8443"
+    volumes:
+      - ./certs:/app/certs
     depends_on:
       postgresql:
-        condition: service_healthy
-      minio:
         condition: service_healthy
     networks:
       - app_network
@@ -54,10 +58,11 @@ services:
   frontend:
     build:
       context: ./frontend
-    image: feature-flag-system-frontend
-    container_name: feature-flag-system-frontend
+    container_name: frontend
     ports:
-      - "5173:80"
+      - "443:443"
+    volumes:
+      - ./certs:/etc/nginx/certs
     depends_on:
       - backend
     networks:
@@ -108,9 +113,3 @@ services:
         else
           echo "Bucketul public-bucket deja există.";
         fi
-
-
-
-volumes:
-  postgres_data:
-  minio_data:

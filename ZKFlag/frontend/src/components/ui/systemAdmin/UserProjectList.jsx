@@ -6,8 +6,8 @@ import EmptyList from "../../../components/ui/common/EmptyList.jsx";
 import { getUserProjectsByUserId } from "../../../api/userApi.js";
 import { removeAccessToProject } from "../../../api/projectApi.js";
 import DeleteIcon from "../../../components/ui/common/DeleteIcon.jsx";
-import EmptySearchResult from "../../../components/ui/common/EmptySearchResult.jsx";
 import { toast } from "react-toastify";
+import { useRevalidator } from 'react-router-dom';
 
 export async function loader({ params }) {
     return defer({ userProjects: getUserProjectsByUserId(params.userId) });
@@ -18,6 +18,11 @@ function UserProjectList() {
     const [searchQuery, setSearchQuery] = useState('');
     const [userProjects, setUserProjects] = useState([]);
     const { userId } = useParams();
+    const revalidator = useRevalidator();
+
+    const refreshProjects = () => {
+        revalidator.revalidate();
+    }
 
     useEffect(() => {
         loaderDataPromise.userProjects.then(setUserProjects);
@@ -28,9 +33,12 @@ function UserProjectList() {
     }
 
     async function handleRemove(projectId) {
+        console.log("projectId", projectId)
+        console.log("userId", userId)
         try {
             await removeAccessToProject(projectId, userId);
             toast.success("User removed from project!");
+            refreshProjects()
             setUserProjects(prevProjects => prevProjects.filter(p => p.id !== projectId));
         } catch (error) {
             toast.error("Failed to remove user from project.");
@@ -52,12 +60,12 @@ function UserProjectList() {
         }
 
         return filteredProjects.map(project => (
-            <div className="context-fields list-item item-body" key={project.id}>
+            <div className="context-fields list-item item-body" key={project.projectId}>
                 <div className="tags-list-item">
                     <p>{project.projectName}</p>
                 </div>
                 <div className="list-item-actions">
-                    <DeleteIcon deleteHandler={() => handleRemove(project.id)} />
+                    <DeleteIcon deleteHandler={() => handleRemove(project.projectId)} />
                 </div>
             </div>
         ));

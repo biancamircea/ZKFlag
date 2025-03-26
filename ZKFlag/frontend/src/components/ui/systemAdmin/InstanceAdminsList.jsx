@@ -8,6 +8,7 @@ import { getAllUsersWithInstanceAdminRole } from "../../../api/userApi.js";
 import DeleteIcon from "../../../components/ui/common/DeleteIcon.jsx";
 import { toast } from "react-toastify";
 import { getProjectById } from "../../../api/projectApi.js";
+import { useRevalidator } from 'react-router-dom';
 
 export async function loader({ params }) {
     return defer({
@@ -27,6 +28,11 @@ function InstanceAdminsList() {
     const { instanceId } = useParams();
     const [projectName, setProjectName] = useState("");
     const [searchQuery, setSearchQuery] = useState('');
+    const revalidator = useRevalidator();
+
+    const refreshInstanceAdmins = () => {
+        revalidator.revalidate();
+    }
 
     useEffect(() => {
         Promise.all([
@@ -48,8 +54,10 @@ function InstanceAdminsList() {
 
     async function handleRemoveAdmin(userId) {
         try {
+            console.log("userid", userId);
             await removeAccessToInstance(instanceId, userId);
             toast.success("Admin removed from instance.");
+            refreshInstanceAdmins();
             setInstanceAdmins(prevAdmins => prevAdmins.filter(admin => admin.id !== userId));
         } catch (error) {
             toast.error("Failed to remove admin from instance.");
@@ -69,6 +77,7 @@ function InstanceAdminsList() {
 
             await addAccessToInstance(instanceId, requestData);
             toast.success("Admin added successfully!");
+            refreshInstanceAdmins();
             setInstanceAdmins(prevAdmins => [...prevAdmins, availableAdmins.find(admin => admin.id === parseInt(selectedAdmin))]);
             setAvailableAdmins(prevAdmins => prevAdmins.filter(admin => admin.id !== parseInt(selectedAdmin)));
             setSelectedAdmin("");

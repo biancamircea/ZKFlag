@@ -1,12 +1,12 @@
-import React, {Suspense, useEffect, useState} from 'react';
-import {Await, defer, useLoaderData, useOutletContext, useParams} from "react-router-dom";
-import {getToggleFromProject, removeTagFromToggle} from "../../api/featureToggleApi.js";
-import LoadingBanner from "../../components/ui/common/LoadingBanner.jsx";
+import React from 'react';
+import { defer, useLoaderData, useOutletContext, useParams} from "react-router-dom";
+import { removeTagFromToggle} from "../../api/featureToggleApi.js";
 import FeatureToggleMetadataCard from "../../components/ui/toggle/FeatureToggleMetadataCard.jsx";
 import FeatureToggleDetailsCard from "../../components/ui/toggle/FeatureToggleDetailsCard.jsx";
 import {toast} from "react-toastify";
 import FeatureToggleSectionRight from "../../components/ui/toggle/FeatureToggleSectionRight.jsx";
 import { getAllConstraintsInToggle } from "../../api/projectApi";
+import { useRevalidator } from 'react-router-dom';
 
 export async function loader({ params }) {
     const { projectId, featureId } = params;
@@ -25,6 +25,11 @@ function FeatureToggleOverview(props) {
     const {projectId, featureId} = useParams()
     const {toggle, removeFeatureTag, contextFields} = useOutletContext()
     const { constraints } = useLoaderData();
+    const revalidator = useRevalidator();
+
+    const refreshConstraints = () => {
+        revalidator.revalidate();
+    };
 
     async function removeTag(id) {
         const response = await removeTagFromToggle(projectId, featureId, id)
@@ -54,6 +59,7 @@ function FeatureToggleOverview(props) {
                     <FeatureToggleSectionRight
                         featureId={featureId}
                         constraints={constraints}
+                        refreshConstraints={refreshConstraints}
                     />
                 </div>
             </div>

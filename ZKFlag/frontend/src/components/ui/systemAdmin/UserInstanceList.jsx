@@ -7,6 +7,7 @@ import { getUserInstancesByUserId } from "../../../api/userApi.js";
 import { removeAccessToInstance } from "../../../api/instanceApi.js";
 import DeleteIcon from "../../../components/ui/common/DeleteIcon.jsx";
 import { toast } from "react-toastify";
+import { useRevalidator } from 'react-router-dom';
 
 export async function loader({ params }) {
     return defer({ userInstances: getUserInstancesByUserId(params.userId) });
@@ -17,6 +18,11 @@ function UserInstanceList() {
     const [searchQuery, setSearchQuery] = useState('');
     const [userInstances, setUserInstances] = useState([]);
     const { userId } = useParams();
+    const revalidator = useRevalidator();
+
+    const refreshProjects = () => {
+        revalidator.revalidate();
+    }
 
     useEffect(() => {
         loaderDataPromise.userInstances.then(setUserInstances);
@@ -31,6 +37,7 @@ function UserInstanceList() {
         try {
             await removeAccessToInstance(instanceId, userId);
             toast.success("User removed from instance!");
+            refreshProjects()
             setUserInstances(prevInstances => prevInstances.filter(i => i.id !== instanceId));
         } catch (error) {
             toast.error("Failed to remove user from instance.");

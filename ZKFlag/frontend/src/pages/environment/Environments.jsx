@@ -2,13 +2,19 @@ import ListPageHeader from "../../components/ui/common/ListPageHeader.jsx";
 import CustomSwitch from "../../components/ui/common/CustomSwitch.jsx";
 import {Await, defer, useLoaderData, useNavigate} from "react-router-dom";
 import React, {Suspense, useState, useEffect} from "react";
-import {deleteEnvironment, getEnvironments, toggleEnvironment} from "../../api/environmentApi.js";
+import {
+    deleteEnvironment,
+    getAllToggleEnvironmentsForEnvironment,
+    getEnvironments,
+    toggleEnvironment
+} from "../../api/environmentApi.js";
 import {toast} from "react-toastify";
 import DeleteIcon from "../../components/ui/common/DeleteIcon.jsx";
 import EditIcon from "../../components/ui/common/EditIcon.jsx";
 import EmptySearchResult from "../../components/ui/common/EmptySearchResult.jsx";
 import LoadingBanner from "../../components/ui/common/LoadingBanner.jsx";
 import EmptyList from "../../components/ui/common/EmptyList.jsx";
+import {getAllInstancesFromProject, getToggleEnvironments} from "../../api/instanceApi.js";
 
 export function loader(){
     return defer({ env: getEnvironments() })
@@ -35,8 +41,27 @@ function Environments() {
     }, [envDataPromise.env]);
 
     async function deleteEnv(id){
+        const toggleEnv = await getAllToggleEnvironmentsForEnvironment(id);
+        console.log("toggleEnv", toggleEnv)
+        let imageUrls = [];
+
+        for (const env of toggleEnv) {
+            if (env.enabledValue && isImageUrl(env.enabledValue)) {
+                imageUrls.push(env.enabledValue);
+            }
+            if (env.disabledValue && isImageUrl(env.disabledValue)) {
+                imageUrls.push(env.disabledValue);
+            }
+        }
+
+        console.log("imageUrls", imageUrls)
+
+        for (const imageUrl of imageUrls) {
+            await deleteFile(imageUrl);
+        }
+
         const res = await deleteEnvironment(id);
-        if (res.status === 204) {
+        if (res.status === 200) {
             setAllEnvironments(prevEnvironments => prevEnvironments.filter(el => el.id !== id))
             toast.success("Environment deleted.");
         } else {
@@ -66,6 +91,23 @@ function Environments() {
     }
 
     async function disableEnvironment(id) {
+        const toggleEnv = await getAllToggleEnvironmentsForEnvironment(id);
+        let imageUrls = [];
+
+            for (const env of toggleEnv) {
+                if (env.enabledValue && isImageUrl(env.enabledValue)) {
+                    imageUrls.push(env.enabledValue);
+                }
+                if (env.disabledValue && isImageUrl(env.disabledValue)) {
+                    imageUrls.push(env.disabledValue);
+                }
+            }
+
+
+        for (const imageUrl of imageUrls) {
+            await deleteFile(imageUrl);
+        }
+
         const res = await toggleEnvironment(id, false);
         if (res) {
             const updatedEnvironments = clearProjectCount(id)
@@ -75,6 +117,26 @@ function Environments() {
             toast.error("Operation failed.");
         }
     }
+
+    const isImageUrl = (value) => {
+        return value && (value.endsWith('.jpg') || value.endsWith('.jpeg') || value.endsWith('.png') || value.endsWith('.gif'));
+    };
+
+    const deleteFile = async (fileUrl) => {
+        try {
+            const response = await fetch(`/api/minio/delete?fileUrl=${encodeURIComponent(fileUrl)}`, {
+                method: "DELETE",
+                credentials: "include",
+            });
+
+            if (!response.ok) {
+                throw new Error("File deletion failed");
+            }
+
+        } catch (error) {
+            toast.error(error.message);
+        }
+    };
 
     function handleItemClick(id){
         navigate(`edit/${id}`)

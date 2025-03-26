@@ -8,6 +8,7 @@ import { getAllUsersWithInstanceAdminRole, getAllUsersWithProjectAdminRole, getU
 import DeleteIcon from "../../../components/ui/common/DeleteIcon.jsx";
 import { toast } from "react-toastify";
 import { useAuth } from "../../../AuthContext.jsx"
+import { useRevalidator } from 'react-router-dom';
 
 export async function loader() {
     return defer({
@@ -23,6 +24,11 @@ function AllAdminsList() {
     const [instanceAdmins, setInstanceAdmins] = useState([]);
     const [projectAdmins, setProjectAdmins] = useState([]);
     const [systemAdmins, setSystemAdmins] = useState([]);
+    const revalidator = useRevalidator(); // Hook pentru revalidare
+
+    const refreshAdmins = () => {
+        revalidator.revalidate();
+    };
 
     const { user, logout } = useAuth();
     const navigate = useNavigate();
@@ -41,6 +47,7 @@ function AllAdminsList() {
         try {
             await deleteUser(userId);
             toast.success("User deleted successfully!");
+            refreshAdmins();
             setAdmins(prevAdmins => prevAdmins.filter(admin => admin.id !== userId));
 
             if (user && user.id === userId) {

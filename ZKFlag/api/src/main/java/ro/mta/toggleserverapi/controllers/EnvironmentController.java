@@ -4,10 +4,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ro.mta.toggleserverapi.DTOs.EnvironmentDTO;
-import ro.mta.toggleserverapi.DTOs.InstanceEnvironmentDTO;
-import ro.mta.toggleserverapi.DTOs.ProjectEnvironmentDTO;
-import ro.mta.toggleserverapi.DTOs.ProjectEnvironmentsResponseDTO;
+import ro.mta.toggleserverapi.DTOs.*;
 import ro.mta.toggleserverapi.assemblers.EnvironmentsModelAssembler;
 import ro.mta.toggleserverapi.assemblers.InstanceEnvironmentModelAssembler;
 import ro.mta.toggleserverapi.assemblers.ProjectEnvironmentModelAssembler;
@@ -84,7 +81,7 @@ public class EnvironmentController {
     public ResponseEntity<?> disableEnvironment(@PathVariable String id){
         Environment env=environmentRepository.findByHashId(id).orElseThrow();
         environmentService.toggleEnvironmentOff(env.getId());
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok().build();
     }
     @PutMapping(path = "/{id}")
     public ResponseEntity<?> updateEnvironment(@RequestBody @Valid EnvironmentDTO environmentDTO, @PathVariable String id){
@@ -99,9 +96,7 @@ public class EnvironmentController {
     public ResponseEntity<?> deleteEnvironment(@PathVariable String id){
         Environment env=environmentRepository.findByHashId(id).orElseThrow();
         environmentService.deleteEnvironment(env.getId());
-        return ResponseEntity
-                .noContent()
-                .build();
+        return ResponseEntity.ok().build();
     }
 
     @GetMapping("/active/{instanceId}")
@@ -109,6 +104,13 @@ public class EnvironmentController {
         Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
         List<InstanceEnvironmentDTO> environments = environmentService.getActiveEnvironmentsForInstance(instance.getId());
         return ResponseEntity.ok(environments);
+    }
+
+    @GetMapping("/{environmentId}/toggle-environments")
+    public ResponseEntity<List<ToggleEnvironmentDTO>> getAllToggleEnvForEnvironment(@PathVariable String environmentId) {
+        Environment env=environmentRepository.findByHashId(environmentId).orElseThrow();
+        List<ToggleEnvironmentDTO> toggleEnvironments = environmentService.getAllToggleEnvironmentsForEnvironment(env.getId());
+        return ResponseEntity.ok(toggleEnvironments);
     }
 
 }

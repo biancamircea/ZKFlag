@@ -1,82 +1,88 @@
-import React from 'react';
-import {useEffect, useState} from 'react';
-import {useOutletContext, useParams} from "react-router-dom";
+import React, { useEffect, useState } from 'react';
+import { useOutletContext, useParams } from "react-router-dom";
 import FeatureTogglePayloadItem from "../../components/ui/toggle/FeatureTogglePayloadItem.jsx";
 import {
     addPayloadInToggleEnv,
     deletePayloadFromToggleEnv,
     updatePayloadInToggleEnv
 } from "../../api/featureToggleApi.js";
-import {toast} from "react-toastify";
-import {getAllEnvironmentsFromInstance, getToggleEnvironments} from "../../api/instanceApi";
+import { toast } from "react-toastify";
+import { getToggleEnvironments } from "../../api/instanceApi";
+import EmptyList from "../../components/ui/common/EmptyList.jsx";
 
 function FeatureTogglePayload(props) {
-    const {toggle, addPayload, removePayload} = useOutletContext()
-    const {projectId, featureId,instanceId} = useParams()
+    const { toggle } = useOutletContext();
+    const { projectId, featureId, instanceId } = useParams();
     const [environments, setEnvironments] = useState([]);
 
+
+    const refreshEnvironments = async () => {
+        try {
+            const data = await getToggleEnvironments(instanceId, featureId);
+            setEnvironments(data);
+        } catch (error) {
+            console.error("Error fetching environments:", error);
+            toast.error("Failed to refresh data");
+        }
+    };
+
+
     useEffect(() => {
-        async function fetchEnvironments() {
-            try {
-                const data = await getToggleEnvironments(instanceId, featureId);
-                setEnvironments(data);
-            } catch (error) {
-                console.error("Error fetching environments:", error);
-            }
+        refreshEnvironments();
+    }, [instanceId, featureId]);
+
+    const addPayloadHandler = async (envId, data) => {
+        try {
+            await addPayloadInToggleEnv(projectId, featureId, instanceId, envId, data);
+            await refreshEnvironments();
+            toast.success("Payload created successfully");
+        } catch (error) {
+            toast.error("Failed to create payload");
         }
+    };
 
-        fetchEnvironments();
-    }, [instanceId]);
 
-    async function addPayloadHandler(envId, data) {
-        const response = await addPayloadInToggleEnv(projectId, featureId,instanceId, envId, data)
-        if (response) {
-            addPayload(response)
-            toast.success("Payload created.")
-        } else {
-            toast.error("Operation failed.")
+    const updatePayloadHandler = async (envId, data) => {
+        try {
+            await updatePayloadInToggleEnv(projectId, featureId, instanceId, envId, data);
+            await refreshEnvironments();
+            toast.success("Payload updated successfully");
+        } catch (error) {
+            toast.error("Failed to update payload");
         }
-    }
+    };
 
-    async function updatePayloadHandler(envId, data) {
-        const response = await updatePayloadInToggleEnv(projectId, featureId,instanceId, envId, data)
-        if (response) {
-            addPayload(response)
-            toast.success("Payload updated.")
-        } else {
-            toast.error("Operation failed.")
+
+    const deletePayloadHandler = async (envId) => {
+        try {
+            await deletePayloadFromToggleEnv(projectId, featureId, envId, instanceId);
+            await refreshEnvironments();
+            toast.success("Payload deleted successfully");
+        } catch (error) {
+            toast.error("Failed to delete payload");
         }
-    }
-
-    async function deletePayloadHandler(envId) {
-        const response = await deletePayloadFromToggleEnv(projectId, featureId, envId,instanceId)
-        if (response) {
-            removePayload(envId)
-            toast.success("Payload deleted.")
-        } else {
-            toast.error("Operation failed.")
-        }
-    }
-
-
-    const payloadItems = environments.map(el => {
-        return (
-            <FeatureTogglePayloadItem
-                key={el.id}
-                environmentName={el.name}
-                enabledValue={el.enabledValue}
-                disabledValue={el.disabledValue}
-                updateHandler={(data) => updatePayloadHandler(el.environmentId, data)}
-                addHandler={(data) => addPayloadHandler(el.environmentId, data)}
-                deleteHandler={() => deletePayloadHandler(el.environmentId)}
-            />
-
-        )
-    })
+    };
 
     return (
         <div className={"feature-toggle-overview-section-right payload"}>
-            {payloadItems}
+            {environments.length === 0 ? (
+            <EmptyList
+                resource={"environment"}
+                recommend={"Activate environments from settings to manage feature toggles effectively."}
+            />
+            ):
+            environments.map(env => (
+                <FeatureTogglePayloadItem
+                    key={env.id}
+                    environmentName={env.name}
+                    enabledValue={env.enabledValue}
+                    disabledValue={env.disabledValue}
+                    updateHandler={(data) => updatePayloadHandler(env.environmentId, data)}
+                    addHandler={(data) => addPayloadHandler(env.environmentId, data)}
+                    deleteHandler={() => deletePayloadHandler(env.environmentId)}
+                />
+            ))
+            }
         </div>
     );
 }

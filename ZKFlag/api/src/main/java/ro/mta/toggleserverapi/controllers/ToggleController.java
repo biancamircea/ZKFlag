@@ -145,9 +145,12 @@ public class ToggleController {
     @PutMapping(path = "/projects/{projectId}/toggles/{toggleId}")
     public ResponseEntity<?> updateToggle(@RequestBody @Valid ToggleDTO toggleDTO, @PathVariable String projectId, @PathVariable String toggleId){
         Toggle toggle2=toggleRepository.findByHashId(toggleId).orElseThrow();
+        System.out.println("updatetoggle: name: "+toggleDTO.getName()+" type: "+toggleDTO.getToggle_type());
 
         Project project=projectRepository.findByHashId(projectId).orElseThrow();
         Toggle toggle = ToggleDTO.fromDTO(toggleDTO);
+        System.out.println("toggle type dupa from dto: "+toggle.getToggleType());
+
         Toggle updatedToggle = toggleService.updateToggle(toggle, toggle2.getId() , project.getId());
         eventService.submitAction(ActionType.UPDATE, updatedToggle.getProject(), updatedToggle);
         return ResponseEntity

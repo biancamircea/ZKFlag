@@ -6,12 +6,14 @@ import org.hashids.Hashids;
 import org.springframework.stereotype.Service;
 import ro.mta.toggleserverapi.DTOs.InstanceEnvironmentDTO;
 import ro.mta.toggleserverapi.DTOs.ProjectEnvironmentDTO;
+import ro.mta.toggleserverapi.DTOs.ToggleEnvironmentDTO;
 import ro.mta.toggleserverapi.entities.*;
 import ro.mta.toggleserverapi.enums.ActionType;
 import ro.mta.toggleserverapi.exceptions.EnvironmentNotFoundException;
 import ro.mta.toggleserverapi.repositories.EnvironmentRepository;
 import ro.mta.toggleserverapi.repositories.InstanceEnvironmentRepository;
 import ro.mta.toggleserverapi.repositories.ProjectRepository;
+import ro.mta.toggleserverapi.repositories.ToggleEnvironmentRepository;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,6 +29,7 @@ public class EnvironmentService {
     private final ToggleEnvironmentService toggleEnvironmentService;
     private final EventService eventService;
     private final InstanceEnvironmentRepository instanceEnvironmentRepository;
+    private final ToggleEnvironmentRepository toggleEnvironmentRepository;
 
     public List<Environment> fetchAllEnvironments() {
         return environmentRepository.findAll();
@@ -155,5 +158,17 @@ public class EnvironmentService {
 
     public Environment fetchEnvironmentByName(String name) {
         return environmentRepository.findByName(name);
+    }
+
+    public List<ToggleEnvironmentDTO> getAllToggleEnvironmentsForEnvironment(Long envId){
+        List<ToggleEnvironment> toggleEnvironments=toggleEnvironmentRepository.findAllByEnvironmentId(envId);
+       System.out.println("toggleEnvironments rezultate: "+toggleEnvironments);
+        List<ToggleEnvironmentDTO> toggleEnvironmentDTOList = new ArrayList<>();
+        for (ToggleEnvironment toggleEnvironment : toggleEnvironments) {
+            ToggleEnvironmentDTO toggleEnvironmentDTO = ToggleEnvironmentDTO.toDTO(toggleEnvironment);
+            toggleEnvironmentDTOList.add(toggleEnvironmentDTO);
+        }
+
+        return toggleEnvironmentDTOList;
     }
 }

@@ -7,6 +7,7 @@ import { getProjects } from "../../../api/projectApi.js";
 import { getAllInstancesFromProject, deleteInstance } from "../../../api/instanceApi.js";
 import DeleteIcon from "../../../components/ui/common/DeleteIcon.jsx";
 import { toast } from "react-toastify";
+import { useRevalidator } from 'react-router-dom';
 
 export async function loader() {
     const projects = await getProjects();
@@ -23,11 +24,17 @@ function AllInstancesList() {
     const { projects, instancesByProject } = useLoaderData();
     const [searchQuery, setSearchQuery] = useState('');
     const navigate = useNavigate();
+    const revalidator = useRevalidator();
+
+    const refreshInstances = () => {
+        revalidator.revalidate();
+    }
 
     function handleDeleteInstance(instanceId, projectId) {
         try {
            const res= deleteInstance(projectId, instanceId);
             toast.success("Instance deleted successfully!");
+            refreshInstances();
             const updatedInstances = instancesByProject.map(project => {
                 if (project.projectId === projectId) {
                     return {

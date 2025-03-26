@@ -1,10 +1,9 @@
-import React, {Suspense, useEffect, useState} from 'react';
-import { Await, defer, useLoaderData, useParams } from 'react-router-dom';
+import React, { useEffect, useState} from 'react';
+import { defer, useLoaderData, useParams } from 'react-router-dom';
 import FeatureToggleScheduleItem from '../../components/ui/toggle/FeatureToggleScheduleItem';
-import LoadingBanner from '../../components/ui/common/LoadingBanner';
 import { getEnabledEnvFromInstance } from '../../api/environmentApi';
-import {toast} from "react-toastify";
 import {getToggleEnvironments} from "../../api/instanceApi.js";
+import EmptyList from "../../components/ui/common/EmptyList.jsx";
 
 export async function loader({ params }) {
     return defer({ environments: getEnabledEnvFromInstance(params.instanceId) });
@@ -30,8 +29,12 @@ function FeatureToggleSchedule() {
 
     return (
         <div>
-            {environments.length > 0 ? (
-                environments.map((env) => (
+            {environments.length === 0 ? (
+            <EmptyList
+                resource={"environment"}
+                recommend={"Activate environments from settings to manage feature toggles effectively."}
+            />
+            ) :( environments.map((env) => (
                     <FeatureToggleScheduleItem
                         key={env.id}
                         environmentName={env.name}
@@ -40,9 +43,8 @@ function FeatureToggleSchedule() {
                         instanceId={instanceId}
                     />
                 ))
-            ) : (
-                <p>No environments available.</p>
-            )}
+            )
+            }
         </div>
     );
 }

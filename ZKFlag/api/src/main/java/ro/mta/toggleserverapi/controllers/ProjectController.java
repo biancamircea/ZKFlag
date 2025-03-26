@@ -12,6 +12,7 @@ import ro.mta.toggleserverapi.entities.Project;
 import ro.mta.toggleserverapi.entities.User;
 import ro.mta.toggleserverapi.enums.ActionType;
 import ro.mta.toggleserverapi.repositories.ProjectRepository;
+import ro.mta.toggleserverapi.repositories.UserRepository;
 import ro.mta.toggleserverapi.services.*;
 
 
@@ -29,6 +30,7 @@ public class ProjectController {
     private final EventService eventService;
     private final UserProjectService userProjectService;
     private final ProjectRepository projectRepository;
+    private final UserRepository userRepository;
 
     @GetMapping
     public ResponseEntity<?> getAllProjects(){
@@ -77,10 +79,12 @@ public class ProjectController {
     }
 
     @PostMapping(path = "/{projectId}/access/remove")
-    public ResponseEntity<?> removeAccessToProject(@RequestBody @Valid Long userId,
+    public ResponseEntity<?> removeAccessToProject(@RequestParam String userId,
                                                    @PathVariable String projectId){
         Project project=projectRepository.findByHashId(projectId).orElseThrow();
-        userProjectService.removeAccessFromProject(project, userId);
+
+        User user=userRepository.findByHashId(userId).orElseThrow();
+        userProjectService.removeAccessFromProject(project, user.getId());
         return ResponseEntity.noContent().build();
     }
 

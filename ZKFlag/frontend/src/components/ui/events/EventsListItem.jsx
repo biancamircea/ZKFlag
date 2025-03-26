@@ -122,7 +122,7 @@ function EventsListItem({event, search}) {
                 return (
                     <div className={"list-item item-body events"}>
                         <p className={"underlined-on-parent-hover"}>
-                            {`#${id} `}
+                            {/*{`#${id} `}*/}
                             {
                                 result
                             }
@@ -141,7 +141,7 @@ function EventsListItem({event, search}) {
             return (
                 <div className={"list-item item-body events"}>
                     <p className={"underlined-on-parent-hover"}>
-                        {`#${id} `}
+                        {/*{`#${id} `}*/}
                         {
                             renderText()
                         }

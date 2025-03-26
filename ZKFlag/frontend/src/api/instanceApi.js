@@ -204,17 +204,18 @@ export async function addAccessToInstance(instanceId, instanceUsersAddAccessDTO)
 }
 
 export async function removeAccessToInstance(instanceId, userId) {
-    const url = `/api/instances/${instanceId}/access/remove`;
+    console.log("userId",userId)
+    const url = `/api/instances/${instanceId}/access/remove?userId=${userId}`;
     const response = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
         credentials: "include",
-        body: JSON.stringify(userId),
     });
+
     if (!response.ok) {
         throw new Error("Failed to remove access to instance");
     }
 }
+
 
 export async function getUsersWithInstanceAdminRole(instanceId) {
     const url = `/api/instances/${instanceId}/instance-admins`;

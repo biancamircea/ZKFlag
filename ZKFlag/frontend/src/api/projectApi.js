@@ -129,12 +129,10 @@ export async function deleteProject(id) {
 }
 
 export async function removeAccessToProject(projectId, userId) {
-    const url = `${baseUrl}/${projectId}/access/remove`;
+    const url = `${baseUrl}/${projectId}/access/remove?userId=${userId}`;
     const response = await fetch(url, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(userId),
+        credentials: "include"
     });
     if (!response.ok) {
         throw new Error("Failed to remove access to project");

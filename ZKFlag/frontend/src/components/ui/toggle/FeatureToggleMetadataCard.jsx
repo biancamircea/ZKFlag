@@ -30,6 +30,13 @@ function FeatureToggleMetadataCard({ description, projectName, instanceName }) {
             />
             <h4>Project: {projectName}</h4>
             {instanceName && <h4>Instance: {instanceName}</h4>}
+
+            {instanceName == null &&
+                <div className={"metadata-edit-icon"}>
+                    <EditIcon directLink={`/projects/${projectId}/features/edit/${featureId}`} className={"metadata-edit-icon"} />
+                </div>
+            }
+
             <div className={"feature-toggle-overview-meta-card-description"}>
                 <p>
                     {"Description: "}
@@ -37,11 +44,7 @@ function FeatureToggleMetadataCard({ description, projectName, instanceName }) {
                         {description === "" ? "No description." : description}
                     </span>
                 </p>
-                {instanceName == null &&
-                    <div className={"metadata-edit-icon"}>
-                        <EditIcon directLink={`/projects/${projectId}/features/edit/${featureId}`} />
-                    </div>
-                }
+
 
                 {toggle && (
                     <p>

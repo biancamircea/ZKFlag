@@ -15,16 +15,15 @@ function ContextFieldEdit(props) {
     const navigate = useNavigate();
     let receivedDescription = ""
     let receivedName = ""
+
     async function handleSubmit(event){
         event.preventDefault();
         const formData = new FormData(event.target);
         const description = formData.get("description");
         if(receivedDescription === description){
-            // nothing changed
             toast.success("Context field updated.")
             navigate(-1)
         } else {
-            // PUT request
             const requestSuccessful = await updateContextField(projectId, contextFieldId , {name: receivedName, description})
             toast.success("Context field updated.")
             navigate(-1)

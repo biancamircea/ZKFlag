@@ -11,10 +11,7 @@ import ro.mta.toggleserverapi.converters.InstanceConverter;
 import ro.mta.toggleserverapi.converters.InstanceUsersAddAccessConverter;
 import ro.mta.toggleserverapi.entities.*;
 import ro.mta.toggleserverapi.enums.ActionType;
-import ro.mta.toggleserverapi.repositories.EnvironmentRepository;
-import ro.mta.toggleserverapi.repositories.InstanceRepository;
-import ro.mta.toggleserverapi.repositories.ProjectRepository;
-import ro.mta.toggleserverapi.repositories.ToggleRepository;
+import ro.mta.toggleserverapi.repositories.*;
 import ro.mta.toggleserverapi.services.*;
 
 import java.net.URI;
@@ -40,6 +37,8 @@ public class InstanceController {
     private final InstanceRepository instanceRepository;
     private final ToggleRepository toggleRepository;
     private final EnvironmentRepository environmentRepository;
+    private final UserService userService;
+    private final UserRepository userRepository;
 
     @PostMapping("/projects/{projectId}/instances")
     public ResponseEntity<InstanceDTO> createInstance(
@@ -166,11 +165,13 @@ public class InstanceController {
     }
 
     @PostMapping(path = "/instances/{instanceId}/access/remove")
-    public ResponseEntity<?> removeAccessToInstance(@RequestBody @Valid Long userId,
+    public ResponseEntity<?> removeAccessToInstance(@RequestParam String userId,
                                                    @PathVariable String instanceId){
+        System.out.println("Removing access for user: " + userId);
+        User user=userRepository.findByHashId(userId).orElseThrow();
         Instance instance2=instanceRepository.findByHashId(instanceId).orElseThrow();
         Instance instance = instanceService.fetchInstance(instance2.getId());
-        userInstanceService.removeAccessFromInstance(instance, userId);
+        userInstanceService.removeAccessFromInstance(instance, user.getId());
         return ResponseEntity.noContent().build();
     }
 

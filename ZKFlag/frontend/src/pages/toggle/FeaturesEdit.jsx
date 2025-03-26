@@ -1,4 +1,4 @@
-import React, {Suspense} from 'react';
+import React, {Suspense, useState,useEffect} from 'react';
 import UpdateFeatureProjectForm from "../../components/forms/UpdateFeatureProjectForm.jsx";
 import {Await, defer, useLoaderData, useNavigate, useParams} from "react-router-dom";
 import {getToggleFromProject, updateToggleFromProject} from "../../api/featureToggleApi.js";
@@ -15,17 +15,23 @@ function FeaturesEdit(props) {
     const { projectId, featureId} = useParams();
     let receivedName = null
     let receivedDescription = null
+    let type=null
+    const [selectedType, setSelectedType] = useState(0);
+
+
+    function handleTypeInput(selectedOption) {
+        setSelectedType(selectedOption.value);
+    }
+
     async function handleSubmit(event){
         event.preventDefault();
         const formData = new FormData(event.target);
         const description = formData.get("description");
-        if(receivedDescription === description){
-            // nothing changed
+        if(receivedDescription === description && type===selectedType){
             toast.success("Feature toggle updated.")
             navigate(-1)
         } else {
-            // PUT request
-            const requestSuccessful = await updateToggleFromProject(projectId, featureId, {name: receivedName, description})
+            const requestSuccessful = await updateToggleFromProject(projectId, featureId, {name: receivedName, description, toggle_type: selectedType})
             toast.success("Feature toggle updated.")
             navigate(-1)
         }
@@ -35,11 +41,21 @@ function FeaturesEdit(props) {
     function render(response){
         receivedName=response.name
         receivedDescription=response.description
+        type=response.toggle_type
+
+        useEffect(() => {
+            setSelectedType(response.toggle_type);
+        }, [type]);
+
+
         return (
             <UpdateFeatureProjectForm
                 handleSubmit={handleSubmit}
                 name={response.name}
                 description={response.description}
+                handleTypeInput={handleTypeInput}
+                selectedType={selectedType}
+                type={type}
             />
         );
     }

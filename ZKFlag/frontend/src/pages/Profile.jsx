@@ -28,7 +28,7 @@ function Profile() {
 
         const fetchEmails = async () => {
             try {
-                const emailsData = await getAllUserEmails(); // Așteaptă răspunsul corect
+                const emailsData = await getAllUserEmails();
                 setEmails(emailsData);
             } catch (error) {
                 console.error('Failed to fetch emails:', error);
@@ -73,6 +73,7 @@ function Profile() {
             await updateUser(user.id, updatedFields);
             toast.success('Profile updated successfully!');
             setPassword('');
+            window.location.reload()
         } catch (error) {
             console.error('Failed to update profile:', error);
             setError('Update failed. Please try again.');

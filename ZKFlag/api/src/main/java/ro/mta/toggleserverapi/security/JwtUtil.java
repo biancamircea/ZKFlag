@@ -2,27 +2,26 @@ package ro.mta.toggleserverapi.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
-import jakarta.annotation.PostConstruct;
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletResponse;
-import lombok.Getter;
-import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
-import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
-import ro.mta.toggleserverapi.enums.UserRoleType;
+import org.springframework.stereotype.Component;
+import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletResponse;
+import java.security.Key;
+import java.util.*;
 
-@Getter
-@Setter
 @Component
 public class JwtUtil {
 
     @Value("${jwt.secret}")
     private String secretKey;
+
+    @Value("${jwt.access-token.expiration}")
+    private long accessTokenExpirationMs;
+
+    @Value("${jwt.refresh-token.expiration}")
+    private long refreshTokenExpirationMs;
 
     private Key key;
 
@@ -34,19 +33,9 @@ public class JwtUtil {
         this.key = Keys.hmacShaKeyFor(secretKey.getBytes());
     }
 
-    public String generateToken(Long id, String email, String role) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("id", id);
-        claims.put("username", email);
-        claims.put("role", role);
 
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(email)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 3))
-                .signWith(key, SignatureAlgorithm.HS512)
-                .compact();
+    public String generateToken(Long id, String email, String role) {
+        return generateAccessToken(id, email, role);
     }
 
     public Claims extractClaims(String token) {
@@ -65,50 +54,85 @@ public class JwtUtil {
         return extractClaims(token).getSubject();
     }
 
-    public String extractId(String token) {
-        return extractClaims(token).get("id", String.class);
-    }
-
     public boolean validateToken(String token) {
         try {
-
             Claims claims = extractClaims(token);
-            Date expiration = claims.getExpiration();
-
-            if (expiration.before(new Date())) {
-                System.err.println("JWT is expired: " + token);
-                throw new AuthenticationCredentialsNotFoundException("JWT is expired");
-            }
-
-            return true;
-
+            return !claims.getExpiration().before(new Date());
         } catch (ExpiredJwtException e) {
-            System.err.println("JWT is expired: " + token);
-            throw new AuthenticationCredentialsNotFoundException("JWT is expired", e);
+            System.err.println("JWT expired: " + token);
+            throw new AuthenticationCredentialsNotFoundException("JWT expired", e);
         } catch (JwtException e) {
-            System.err.println("JWT is incorrect or malformed: " + token);
-            throw new AuthenticationCredentialsNotFoundException("JWT is incorrect or malformed", e);
-        } catch (Exception e) {
-            System.err.println("JWT is invalid: " + token);
-            throw new AuthenticationCredentialsNotFoundException("JWT is invalid", e);
+            System.err.println("Invalid JWT: " + token);
+            throw new AuthenticationCredentialsNotFoundException("Invalid JWT", e);
         }
     }
 
-    public String getSecretKey() {
-        return secretKey;
+    public String generateAccessToken(Long id, String email, String role) {
+        return buildToken(id, email, role, accessTokenExpirationMs);
     }
 
-    public Key getKey() {
-        return key;
+    public String generateRefreshToken(Long id, String email, String role) {
+        return buildToken(id, email, role, refreshTokenExpirationMs);
     }
 
-    public void addTokenToResponse(HttpServletResponse response, String token) {
-        Cookie cookie = new Cookie("jwt", token);
-        cookie.setHttpOnly(true);
-        cookie.setSecure(false);
-        cookie.setPath("/");
-        cookie.setMaxAge(60 * 60 * 3); // 3 ore
+    private String buildToken(Long id, String email, String role, long expirationMs) {
+        Map<String, Object> claims = new HashMap<>();
+        claims.put("id", id);
+        claims.put("role", role);
 
-        response.addCookie(cookie);
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(email)
+                .setIssuedAt(new Date())
+                .setExpiration(new Date(System.currentTimeMillis() + expirationMs))
+                .signWith(key, SignatureAlgorithm.HS512)
+                .compact();
+    }
+
+    public void addAccessTokenToResponse(HttpServletResponse response, String token) {
+        ResponseCookie cookie = ResponseCookie.from("accessToken", token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(accessTokenExpirationMs / 1000)
+                .sameSite("Strict")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    public void addRefreshTokenToResponse(HttpServletResponse response, String token) {
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/auth/refresh")
+                .maxAge(refreshTokenExpirationMs / 1000)
+                .sameSite("Strict")
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    public void clearTokens(HttpServletResponse response) {
+        ResponseCookie accessCookie = ResponseCookie.from("accessToken", "")
+                .maxAge(0)
+                .path("/")
+                .build();
+
+        ResponseCookie refreshCookie = ResponseCookie.from("refreshToken", "")
+                .maxAge(0)
+                .path("/auth/refresh")
+                .build();
+
+        response.addHeader("Set-Cookie", accessCookie.toString());
+        response.addHeader("Set-Cookie", refreshCookie.toString());
+    }
+
+    public ResponseCookie createAccessTokenCookie(String token) {
+        return ResponseCookie.from("accessToken", token)
+                .httpOnly(true)
+                .secure(true)
+                .path("/")
+                .maxAge(accessTokenExpirationMs / 1000)
+                .sameSite("Strict")
+                .build();
     }
 }

@@ -6,6 +6,7 @@ import EmptyList from "../../../components/ui/common/EmptyList.jsx";
 import { getUsersWithProjectAdminRole, getProjectById, removeAccessToProject, addAccessToProject } from "../../../api/projectApi.js";
 import DeleteIcon from "../../../components/ui/common/DeleteIcon.jsx";
 import { toast } from "react-toastify";
+import { useRevalidator } from 'react-router-dom';
 
 export async function loader({ params }) {
     return defer({
@@ -20,6 +21,11 @@ function ProjectAdminsList() {
     const [projectName, setProjectName] = useState("");
     const { projectId } = useParams();
     const [searchQuery, setSearchQuery] = useState('');
+    const revalidator = useRevalidator();
+
+    const refreshProjects = () => {
+        revalidator.revalidate();
+    }
 
     useEffect(() => {
         loaderDataPromise.projectAdmins.then(setProjectAdmins);
@@ -36,6 +42,7 @@ function ProjectAdminsList() {
         try {
             await removeAccessToProject(projectId, userId);
             toast.success("Admin removed from project.");
+            refreshProjects();
             setProjectAdmins(prevAdmins => prevAdmins.filter(admin => admin.id !== userId));
         } catch (error) {
             toast.error("Failed to remove admin from project.");
@@ -49,6 +56,7 @@ function ProjectAdminsList() {
         try {
             await addAccessToProject(projectId, { email });
             toast.success("Admin added successfully.");
+            refreshProjects();
             loaderDataPromise.projectAdmins.then(setProjectAdmins);
         } catch (error) {
             toast.error("Failed to add admin to project.");

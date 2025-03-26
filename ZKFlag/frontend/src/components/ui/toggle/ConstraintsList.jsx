@@ -12,8 +12,7 @@ import {
 } from "../../../api/featureToggleApi.js";
 import {  useParams } from "react-router-dom";
 
-function ConstraintsList({ toggleId, constraints,instanceId,environmentId }) {
-    console.log("constraint list constraints: ",constraints)
+function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refreshConstraints }) {
     const { projectId } = useParams();
 
     const disabledStyle = {
@@ -34,6 +33,7 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId }) {
         const resData = await addConstraintInToggleEnv(projectId, toggleId, data);
         if (resData) {
             toast.success("Constraint added.");
+            refreshConstraints();
         } else {
             toast.error("Operation failed.");
         }
@@ -59,6 +59,7 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId }) {
         }
         if (resData) {
             toast.success("Constraint updated.");
+            refreshConstraints();
         } else {
             toast.error("Operation failed.");
         }
@@ -68,6 +69,7 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId }) {
            const res = await deleteConstraintFromToggleEnv(projectId, toggleId, id);
         if (res) {
             toast.success("Constraint deleted.");
+            refreshConstraints();
         } else {
             toast.error("Operation failed.");
         }
@@ -76,8 +78,8 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId }) {
     async function deleteAllConstraints() {
         const res = await deleteAllConstraintsFromToggleEnv(projectId, toggleId);
         if (res) {
-            //deleteAllConstraintsHandler(toggleId);
             toast.success("Entire list of constraints deleted.");
+            refreshConstraints();
         } else {
             toast.error("Operation failed.");
         }

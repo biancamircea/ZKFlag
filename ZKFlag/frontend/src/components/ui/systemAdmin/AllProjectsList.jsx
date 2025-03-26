@@ -6,6 +6,8 @@ import EmptyList from "../../../components/ui/common/EmptyList.jsx";
 import { getProjects, deleteProject } from "../../../api/projectApi.js";
 import DeleteIcon from "../../../components/ui/common/DeleteIcon.jsx";
 import { toast } from "react-toastify";
+import { useRevalidator } from 'react-router-dom';
+
 
 export async function loader() {
     return defer({ projects: getProjects() });
@@ -16,6 +18,11 @@ function AllProjectsList() {
     const [searchQuery, setSearchQuery] = useState('');
     const [projects, setProjects] = useState([]);
     const navigate = useNavigate();
+    const revalidator = useRevalidator();
+
+    const refreshProjects = () => {
+        revalidator.revalidate();
+    };
 
     useEffect(() => {
         loaderDataPromise.projects.then(data => {
@@ -38,6 +45,7 @@ function AllProjectsList() {
             if (success) {
                 toast.success("Project deleted successfully!");
                 setProjects(prevProjects => prevProjects.filter(p => p.id !== projectId));
+                refreshProjects()
             } else {
                 toast.error("Failed to delete project.");
             }
@@ -87,7 +95,7 @@ function AllProjectsList() {
                 buttonText={"New project"}
                 hasButton={true}
                 searchQuery={searchQuery}
-                handleSearch={handleSearch} // Trimiterea funcției de căutare
+                handleSearch={handleSearch}
                 auxiliaryPath="/system-admin/projects"
             />
             <div className="list-container">

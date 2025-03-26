@@ -43,19 +43,6 @@ function FeatureToggleInstanceOverview(props) {
         getInstanceName();
     }, [instanceId]);
 
-    function renderInstances(constraints) {
-        if (!constraints || constraints.length === 0) {
-            return <EmptyList resource="constraints" />;
-        }
-
-        return (
-            <FeatureToggleSectionRight
-                featureId={featureId}
-                constraints={constraints}
-                instanceId={instanceId}
-            />
-        );
-    }
 
     return (
         <div className="project-overview-wrapper" key={toggle.id}>
@@ -78,12 +65,6 @@ function FeatureToggleInstanceOverview(props) {
                     instanceId={instanceId}
                     environments={environments}
                 />
-
-                {/*<Suspense fallback={<LoadingBanner />}>*/}
-                {/*    <Await resolve={loaderDataPromise.constraints}>*/}
-                {/*        {(constraints) => renderInstances(constraints)}*/}
-                {/*    </Await>*/}
-                {/*</Suspense>*/}
             </div>
         </div>
     );

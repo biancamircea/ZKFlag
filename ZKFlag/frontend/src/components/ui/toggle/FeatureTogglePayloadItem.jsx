@@ -3,7 +3,7 @@ import FeatureTogglePayloadContainer from "./FeatureTogglePayloadContainer.jsx";
 import DeleteBtnDialog from "../common/DeleteBtnDialog.jsx";
 import FeatureTogglePayloadBtn from "./FeatureTogglePayloadBtn.jsx";
 import {toast} from "react-toastify";
-import CONFIG from "../../../Config.jsx";
+
 
 function FeatureTogglePayloadItem({environmentName, enabledValue, disabledValue, addHandler, updateHandler, deleteHandler}) {
     const hasPayload = (enabledValue != null || disabledValue != null)

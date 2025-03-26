@@ -230,18 +230,10 @@ public class ToggleService {
                 .map(foundToggle -> {
                     foundToggle.setName(toggle.getName());
                     foundToggle.setDescription(toggle.getDescription());
+                    foundToggle.setToggleType(toggle.getToggleType());
                     return toggleRepository.save(foundToggle);
                 })
                 .orElseGet(() -> saveToggle(toggle, projectId));
-    }
-    public Toggle updateToggleProject(Project project, Long id) {
-        return toggleRepository
-                .findById(id).map(toggle -> {
-                    toggle.setProject(project);
-                    return toggleRepository.save(toggle);
-                })
-                .orElseThrow(() -> new ToggleNotFoundException(id));
-
     }
 
     public ToggleEnvironmentDTO updatePayloadInToggleEnvironment(Long projectId, Long toggleId, Long environmentId, Long instanceId, String enabledValue, String disabledValue) {

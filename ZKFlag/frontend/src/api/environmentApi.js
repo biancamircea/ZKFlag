@@ -143,3 +143,22 @@ export async function deleteEnvironment(id) {
     }
     return res
 }
+
+
+export async function getAllToggleEnvironmentsForEnvironment(environmentId) {
+    const url = `${baseUrl}/${environmentId}/toggle-environments`;
+    try {
+        const response = await fetch(url, { credentials: "include" });
+        if (!response.ok) {
+            throw new Error("Could not fetch toggle environments for the environment!");
+        }
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('Network error occurred. Please check your internet connection.');
+        } else {
+            throw error;
+        }
+    }
+}

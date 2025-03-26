@@ -39,9 +39,9 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
         String token = getTokenFromCookie(request);
 
         if (token == null || token.isEmpty() || !jwtUtil.validateToken(token)) {
-            Cookie cookie = new Cookie("jwt", null);
+            Cookie cookie = new Cookie("accessToken", null);
             cookie.setHttpOnly(true);
-            cookie.setSecure(false);
+            cookie.setSecure(true);
             cookie.setPath("/");
             cookie.setMaxAge(0);
             response.addCookie(cookie);
@@ -69,7 +69,7 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
     private String getTokenFromCookie(HttpServletRequest request) {
         if (request.getCookies() != null) {
             return Arrays.stream(request.getCookies())
-                    .filter(cookie -> "jwt".equals(cookie.getName()))
+                    .filter(cookie -> "accessToken".equals(cookie.getName()))
                     .map(Cookie::getValue)
                     .findFirst()
                     .orElse(null);
