@@ -97,7 +97,7 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
             instanceId={instanceId}
             environmentId={environmentId}
             toggleId={toggleId}
-            pIsConfidential={el.isConfidential}
+            //pIsConfidential={el.isConfidential}
         />
     ));
 

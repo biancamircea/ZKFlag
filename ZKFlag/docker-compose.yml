@@ -44,11 +44,8 @@ services:
       MINIO_ACCESS_KEY: admin
       MINIO_SECRET_KEY: admin123
       MINIO_BUCKET_NAME: my-bucket
-
     ports:
       - "8443:8443"
-    volumes:
-      - ./certs:/app/certs
     depends_on:
       postgresql:
         condition: service_healthy
@@ -61,8 +58,6 @@ services:
     container_name: frontend
     ports:
       - "443:443"
-    volumes:
-      - ./certs:/etc/nginx/certs
     depends_on:
       - backend
     networks:

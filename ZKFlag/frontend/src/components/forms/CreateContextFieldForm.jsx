@@ -2,8 +2,15 @@ import React from 'react';
 import CancelButton from "../ui/common/CancelButton.jsx";
 import {Form} from "react-router-dom";
 import WarningField from "../ui/common/WarningField.jsx";
+import {
+    FormControl,
+    InputLabel,
+    MenuItem,
+    OutlinedInput,
+    Select
+} from "@mui/material";
 
-function CreateContextFieldForm({handleSubmit, handleNameInput, disableSubmit}) {
+function CreateContextFieldForm({handleSubmit, handleNameInput, disableSubmit,isConfidential, handleConfidentialChange}) {
     return (
         <Form
             className={"create-form-container"}
@@ -29,6 +36,24 @@ function CreateContextFieldForm({handleSubmit, handleNameInput, disableSubmit}) 
                         onInput={handleNameInput}
                     />
                 </div>
+
+
+                <FormControl sx={{ m: 1, width:"30em"}}>
+                    {/*<InputLabel id="confidential-select-label">Confidential</InputLabel>*/}
+                    <label htmlFor="confidential-select-label">Does this context field need ZKP verification?</label>
+                    <Select
+                        labelId="confidential-select-label"
+                        id="confidential-select"
+                        name="isConfidential"
+                        value={isConfidential}
+                        onChange={handleConfidentialChange}
+                        input={<OutlinedInput label="Confidential" />}
+                    >
+                        <MenuItem value={1}>Yes</MenuItem>
+                        <MenuItem value={0}>No</MenuItem>
+                    </Select>
+                </FormControl>
+
                 <div className={"create-form-field-item"}>
                     <label htmlFor={"description"}>What is this context used for?</label>
                     <textarea

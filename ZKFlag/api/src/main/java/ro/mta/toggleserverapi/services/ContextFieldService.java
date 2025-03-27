@@ -6,9 +6,11 @@ import org.hashids.Hashids;
 import org.springframework.stereotype.Service;
 import ro.mta.toggleserverapi.DTOs.ContextFieldDTO;
 import ro.mta.toggleserverapi.DTOs.ContextFieldsResponseDTO;
+import ro.mta.toggleserverapi.entities.Constraint;
 import ro.mta.toggleserverapi.entities.ContextField;
 import ro.mta.toggleserverapi.entities.Project;
 import ro.mta.toggleserverapi.exceptions.ContextFieldNotFoundException;
+import ro.mta.toggleserverapi.repositories.ConstraintRepository;
 import ro.mta.toggleserverapi.repositories.ContextFieldRepository;
 
 import java.util.List;
@@ -19,6 +21,7 @@ import java.util.stream.Collectors;
 public class ContextFieldService {
     private final ContextFieldRepository contextFieldRepository;
     private final ProjectService projectService;
+    private final ConstraintRepository constraintRepository;
 
     public List<ContextField> fetchAllByProjectId(Long projectId){
         return contextFieldRepository.findAllByProjectId(projectId);
@@ -72,6 +75,15 @@ public class ContextFieldService {
                 .map(foundContextField -> {
                     foundContextField.setName(contextField.getName());
                     foundContextField.setDescription(contextField.getDescription());
+                    foundContextField.setIsConfidential(contextField.getIsConfidential());
+
+                    // Fetch and update all constraints with this context field
+                    List<Constraint> constraints = constraintRepository.findByContextFieldId(foundContextField.getId());
+                    for (Constraint constraint : constraints) {
+                        constraint.setIsConfidential(contextField.getIsConfidential());
+                        constraintRepository.save(constraint);
+                    }
+
                     return contextFieldRepository.save(foundContextField);
                 })
                 .map(ContextFieldDTO::toDTO)

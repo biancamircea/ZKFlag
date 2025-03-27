@@ -3,6 +3,7 @@ package ro.mta.toggleserverapi.DTOs;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import ro.mta.toggleserverapi.entities.ContextField;
 import ro.mta.toggleserverapi.enums.OperatorType;
 import ro.mta.toggleserverapi.entities.Constraint;
 
@@ -35,6 +36,7 @@ public class ConstraintDTO {
                         ? constraint.getValues().stream().map(value -> value.getValue()).toList()
                         : null
         );
+
         constraintDTO.setIsConfidential(constraint.getIsConfidential());
         return constraintDTO;
     }

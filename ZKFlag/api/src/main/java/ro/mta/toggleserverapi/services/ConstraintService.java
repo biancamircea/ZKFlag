@@ -6,10 +6,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ro.mta.toggleserverapi.DTOs.ConstraintDTO;
 import ro.mta.toggleserverapi.DTOs.ConstraintValueUpdateDTO;
-import ro.mta.toggleserverapi.entities.Constraint;
-import ro.mta.toggleserverapi.entities.ConstraintValue;
-import ro.mta.toggleserverapi.entities.Toggle;
-import ro.mta.toggleserverapi.entities.ToggleEnvironment;
+import ro.mta.toggleserverapi.entities.*;
 import ro.mta.toggleserverapi.exceptions.ConstraintNotFoundException;
 import ro.mta.toggleserverapi.repositories.ConstraintRepository;
 import ro.mta.toggleserverapi.repositories.ConstraintValueRepository;
@@ -44,7 +41,8 @@ public class ConstraintService {
                 .toList();
 
         constraint.setValues(values);
-        constraint.setIsConfidential(constraintDTO.getIsConfidential());
+        ContextField contextField = contextFieldService.fetchByProjectIdAndName(constraintDTO.getContextName(),projectId);
+        constraint.setIsConfidential(contextField.getIsConfidential());
         return constraint;
     }
     public Constraint fromDTO(ConstraintDTO constraintDTO, Long projectId, Long toggleId,Long instanceId, Long environmentId) {
@@ -67,7 +65,8 @@ public class ConstraintService {
                 .toList();
 
         constraint.setValues(values);
-        constraint.setIsConfidential(constraintDTO.getIsConfidential());
+        ContextField contextField = contextFieldService.fetchByProjectIdAndName(constraintDTO.getContextName(),projectId);
+        constraint.setIsConfidential(contextField.getIsConfidential());
         return constraint;
     }
 
@@ -104,20 +103,17 @@ public class ConstraintService {
 
 
     public Constraint createConstraintInToggle(Constraint constraint, Toggle toggle){
-        //Toggle toggle = toggleService.fetchToggleById(toggleId);
         constraint.setToggle(toggle);
         return constraintRepository.save(constraint);
     }
 
     @Transactional
     public void deleteConstraintFromToggle(Long constraintId, Long toggleId) {
-        //Toggle toggle = toggleService.fetchToggleById(toggleId);
         constraintRepository.deleteByIdAndToggleId(constraintId, toggleId);
     }
 
     @Transactional
     public void deleteAllConstraintsFromToggle(Toggle toggle) {
-        //Toggle toggle = toggleService.fetchToggleById(toggleId);
         constraintRepository.deleteAllByToggle(toggle);
     }
 

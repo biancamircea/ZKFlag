@@ -12,7 +12,7 @@ function Login() {
     const handleLogin = async (e) => {
         e.preventDefault();
         if (!email || !password) {
-            setError("Email și parola sunt necesare!");
+            setError("Both email and password are required");
             return;
         }
         setError("");
@@ -21,7 +21,7 @@ function Login() {
             const userData = await login(email, password);
 
             if (!userData || !userData.role) {
-                throw new Error("Rolul utilizatorului nu este disponibil.");
+                throw new Error("This role is not available");
             }
 
             switch (userData.role) {
@@ -38,7 +38,7 @@ function Login() {
                     navigate("/");
             }
         } catch (error) {
-            setError("Autentificare eșuată. Verifică datele introduse.");
+            setError("Authentication failed. Check your credentials.");
         }
     };
 

@@ -1,54 +1,70 @@
-import React, {Suspense} from 'react';
+import React, {Suspense, useState} from 'react';
 import {Await, defer, useLoaderData, useNavigate, useParams} from "react-router-dom";
 import {getContextField, updateContextField} from "../api/contextFieldApi.js";
 import LoadingBanner from "../components/ui/common/LoadingBanner.jsx";
 import UpdateContextFieldForm from "../components/forms/UpdateContextFieldForm.jsx";
 import {toast} from "react-toastify";
 
-export function loader({ params }){
+export function loader({ params }) {
     return defer({ contextField: getContextField(params.projectId, params.contextFieldId) })
 }
 
-function ContextFieldEdit(props) {
-    const loaderDataPromise = useLoaderData()
+function ContextFieldEdit() {
+    const loaderDataPromise = useLoaderData();
     const { projectId, contextFieldId } = useParams();
     const navigate = useNavigate();
-    let receivedDescription = ""
-    let receivedName = ""
+    const [formData, setFormData] = useState({
+        name: '',
+        description: '',
+        isConfidential: 0
+    });
 
-    async function handleSubmit(event){
+    async function handleSubmit(event) {
         event.preventDefault();
-        const formData = new FormData(event.target);
-        const description = formData.get("description");
-        if(receivedDescription === description){
-            toast.success("Context field updated.")
-            navigate(-1)
-        } else {
-            const requestSuccessful = await updateContextField(projectId, contextFieldId , {name: receivedName, description})
-            toast.success("Context field updated.")
-            navigate(-1)
+        try {
+            await updateContextField(projectId, contextFieldId, {
+                name: formData.name,
+                description: formData.description,
+                isConfidential: Number(formData.isConfidential)
+            });
+            toast.success("Context field updated.");
+            navigate(-1);
+        } catch (error) {
+            toast.error("Failed to update context field");
         }
-
     }
 
-    function render(response){
-        receivedDescription=response.description
-        receivedName=response.name
+    function handleChange(event) {
+        const { name, value } = event.target;
+        setFormData(prev => ({
+            ...prev,
+            [name]: value
+        }));
+    }
+
+    function render(response) {
+        // Initialize form data only once
+        if (formData.name === '') {
+            setFormData({
+                name: response.name,
+                description: response.description,
+                isConfidential: response.isConfidential || 0
+            });
+        }
+
         return (
             <UpdateContextFieldForm
                 handleSubmit={handleSubmit}
-                name={response.name}
-                description={response.description}
+                formData={formData}
+                handleChange={handleChange}
             />
-        )
+        );
     }
 
     return (
         <Suspense fallback={<LoadingBanner/>}>
             <Await resolve={loaderDataPromise.contextField}>
-                {
-                    render
-                }
+                {render}
             </Await>
         </Suspense>
     );

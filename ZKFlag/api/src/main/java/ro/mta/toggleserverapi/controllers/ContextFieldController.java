@@ -53,6 +53,7 @@ public class ContextFieldController {
                                                 @PathVariable String contextFieldId){
         ContextField contextField2=contextFieldRepository.findByHashId(contextFieldId).orElseThrow();
         Project project=projectRepository.findByHashId(projectId).orElseThrow();
+
         ContextField contextField = ContextFieldDTO.fromDTO(contextFieldDTO);
         ContextFieldDTO updatedContextField = contextFieldService.updateFromProject(contextField, project.getId(), contextField2.getId());
         return ResponseEntity

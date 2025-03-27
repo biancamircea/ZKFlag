@@ -6,14 +6,13 @@ import {getConstraintFromToggleEnvironment, getConstraintValues} from "../../../
 import LoadingBanner from "../common/LoadingBanner.jsx";
 import {getToggleEnvironment} from "../../../api/featureToggleApi.js";
 
-function EditConstraintDialog({context, operator, values, submitHandler, instanceId, constraintId,environmentId,toggleId,pIsConfidential}) {
+function EditConstraintDialog({context, operator, values, submitHandler, instanceId, constraintId,environmentId,toggleId}) {
     const { contextFields } = useOutletContext()
     const [open, setOpen] = useState(false);
     const [pvalues, setPValues] = useState(values);
     const [isLoading, setIsLoading] = useState(true);
     const [elementWithName, setElementWithName] = useState(null);
 
-    console.log("edit constraint dialog pIsConfidential",pIsConfidential)
 
     useEffect(() => {
         if(instanceId) {
@@ -90,7 +89,7 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
                         submitHandler={submitHandler}
                         edit
                         instanceId={instanceId}
-                        pIsConfidential={pIsConfidential}
+                        //pIsConfidential={pIsConfidential}
                     />
                 )}
             </Suspense>

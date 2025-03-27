@@ -43,6 +43,8 @@ public class ContextField {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    private Long isConfidential;
+
     @OneToMany(mappedBy = "contextField", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Constraint> constraints;
 }

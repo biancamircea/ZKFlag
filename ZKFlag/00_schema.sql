@@ -162,7 +162,8 @@ CREATE TABLE public.context_fields (
     description character varying(255),
     name character varying(255) NOT NULL,
     project_id bigint,
-    hash_id character varying(255)
+    hash_id character varying(255),
+    isConfidential bigint
 );
 
 

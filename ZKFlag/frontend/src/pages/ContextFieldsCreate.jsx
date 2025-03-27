@@ -15,12 +15,22 @@ function ContextFieldsCreate() {
     const { projectId } = useParams();
     const navigate = useNavigate();
     const [disableSubmit, setDisableSubmit] = useState(false)
+    const [isConfidential, setIsConfidential] = useState(0); // Schimbă din false în 0
 
     async function handleSubmit(event){
         event.preventDefault();
         const formData = new FormData(event.target);
+        console.log("Form data:", {
+            name: formData.get("name"),
+            description: formData.get("description"),
+            isConfidential: formData.get("isConfidential") // Verifică ce valoare primești
+        })
+
         const name = formData.get("name");
         const description = formData.get("description");
+        const isConfidential = Number(formData.get("isConfidential"));
+
+        console.log("is conf in create", isConfidential)
 
         let sanitizedName = null;
         if(name){
@@ -28,14 +38,17 @@ function ContextFieldsCreate() {
         }
 
         if (!sanitizedName) {
-            // One or both fields are empty
             toast.error("Please check empty fields!");
         } else {
             if(disableSubmit){
                 toast.error("Please check invalid fields.");
             } else {
                 try {
-                    const requestSuccessful = await createContextField(projectId,{name, description})
+                    const requestSuccessful = await createContextField(projectId, {
+                        name,
+                        description,
+                        isConfidential
+                    })
                     toast.success("Context field created.");
                     navigate(-1)
                 } catch(err) {
@@ -54,6 +67,10 @@ function ContextFieldsCreate() {
         }
     }
 
+    function handleConfidentialChange(event) {
+        setIsConfidential(Number(event.target.value));
+    }
+
     function render(response){
         existingNames = response['context-fields'].map(el => el.name)
         return (
@@ -61,6 +78,8 @@ function ContextFieldsCreate() {
                 handleSubmit={handleSubmit}
                 handleNameInput={handleNameInput}
                 disableSubmit={disableSubmit}
+                isConfidential={isConfidential}
+                handleConfidentialChange={handleConfidentialChange}
             />
         )
     }

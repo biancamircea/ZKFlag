@@ -15,13 +15,9 @@ import ConstraintValuesList from "./ConstraintValuesList.jsx";
 import { Form } from "react-router-dom";
 import { toast } from "react-toastify";
 
-function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submitHandler, pContext, pOperator, pValues, edit, instanceId, pIsConfidential }) {
+function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submitHandler, pContext, pOperator, pValues, edit, instanceId }) {
     const [context, setContext] = useState(pContext || '');
     const [values, setValues] = useState([]);
-    const [isConfidential, setIsConfidential] = useState(pIsConfidential !== undefined ? pIsConfidential : 0);
-
-    console.log("pIsConfidential",pIsConfidential)
-    console.log("isConfidential",isConfidential)
 
     if(instanceId) {
         useEffect(() => {
@@ -41,17 +37,13 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
         if (pContext) {
             setContext(pContext.id);
         }
-        if (pIsConfidential !== undefined) {
-            setIsConfidential(pIsConfidential);
-        }
-    }, [pContext, pIsConfidential]);
+    }, [pContext]);
 
     const handleClose = () => {
         onClose();
         if (!edit) {
             setContext('');
             setValues([]);
-            setIsConfidential(0);
         }
     };
 
@@ -59,9 +51,9 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
         setContext(event.target.value || '');
     };
 
-    const handleConfidentialChange = (event) => {
-        setIsConfidential(Number(event.target.value));
-    };
+    // const handleConfidentialChange = (event) => {
+    //     setIsConfidential(Number(event.target.value));
+    // };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -78,7 +70,7 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
                     contextName: elementWithId?.name,
                     operator,
                     values,
-                    isConfidential
+                    //isConfidential
                 });
             }
         } else {
@@ -86,7 +78,7 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
                 contextName: pContext.name,
                 operator: pOperator,
                 values,
-                isConfidential
+                //isConfidential
             });
         }
 
@@ -123,22 +115,22 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
 
                     {instanceId == null && <OperatorField defaultOperator={pOperator} />}
 
-                    {instanceId == null &&
-                    <FormControl sx={{ m: 1, minWidth: 250 ,marginTop:"20px"}}>
-                        <InputLabel id="confidential-select-label">Confidential</InputLabel>
-                        <Select
-                            labelId="confidential-select-label"
-                            id="confidential-select"
-                            name="isConfidential"
-                            value={isConfidential}
-                            onChange={handleConfidentialChange}
-                            input={<OutlinedInput label="Confidential" />}
-                        >
-                            <MenuItem value={1}>Yes</MenuItem>
-                            <MenuItem value={0}>No</MenuItem>
-                        </Select>
-                    </FormControl>
-                    }
+                    {/*{instanceId == null &&*/}
+                    {/*<FormControl sx={{ m: 1, minWidth: 250 ,marginTop:"20px"}}>*/}
+                    {/*    <InputLabel id="confidential-select-label">Confidential</InputLabel>*/}
+                    {/*    <Select*/}
+                    {/*        labelId="confidential-select-label"*/}
+                    {/*        id="confidential-select"*/}
+                    {/*        name="isConfidential"*/}
+                    {/*        value={isConfidential}*/}
+                    {/*        onChange={handleConfidentialChange}*/}
+                    {/*        input={<OutlinedInput label="Confidential" />}*/}
+                    {/*    >*/}
+                    {/*        <MenuItem value={1}>Yes</MenuItem>*/}
+                    {/*        <MenuItem value={0}>No</MenuItem>*/}
+                    {/*    </Select>*/}
+                    {/*</FormControl>*/}
+                    {/*}*/}
 
                     <ConstraintValuesList
                         values={values}

@@ -16,11 +16,14 @@ public class ContextFieldDTO {
 
     private String description;
 
+    private Long isConfidential;
+
     public static ContextFieldDTO toDTO(ContextField contextField){
         ContextFieldDTO contextFieldDTO = new ContextFieldDTO();
         contextFieldDTO.setId(contextField.getHashId());
         contextFieldDTO.setName(contextField.getName());
         contextFieldDTO.setDescription(contextField.getDescription());
+        contextFieldDTO.setIsConfidential(contextField.getIsConfidential());
         return contextFieldDTO;
     }
     public static ContextField fromDTO(ContextFieldDTO contextFieldDTO){
@@ -28,6 +31,7 @@ public class ContextFieldDTO {
         contextField.setHashId(contextFieldDTO.getId());
         contextField.setName(contextFieldDTO.getName());
         contextField.setDescription(contextFieldDTO.getDescription());
+        contextField.setIsConfidential(contextFieldDTO.getIsConfidential());
         return contextField;
     }
 

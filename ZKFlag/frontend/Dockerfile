@@ -20,6 +20,10 @@ RUN mkdir -p /etc/nginx/certs
 COPY server.crt /etc/nginx/certs/
 COPY server.key /etc/nginx/certs/
 
+RUN ls -la /etc/nginx/certs/ && \
+    [ -f /etc/nginx/certs/server.crt ] && \
+    [ -f /etc/nginx/certs/server.key ]
+
 EXPOSE 443
 
 CMD ["nginx", "-g", "daemon off;"]

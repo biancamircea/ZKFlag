@@ -1,8 +1,14 @@
 import React from 'react';
 import {Form} from "react-router-dom";
 import CancelButton from "../ui/common/CancelButton.jsx";
+import {
+    FormControl,
+    MenuItem,
+    OutlinedInput,
+    Select
+} from "@mui/material";
 
-function UpdateContextFieldForm({handleSubmit, name, description}) {
+function UpdateContextFieldForm({handleSubmit, formData, handleChange}) {
     return (
         <Form
             className={"create-form-container"}
@@ -10,28 +16,47 @@ function UpdateContextFieldForm({handleSubmit, name, description}) {
             onSubmit={handleSubmit}>
             <div className={"create-form-fields"}>
                 <span className={"title"}>Edit context field</span>
+
                 <div className={"create-form-field-item"}>
-                    <label htmlFor={"name"}>What is your context name?</label>
+                    <label htmlFor={"name"}>Context name</label>
                     <input
                         id={"name"}
                         name={"name"}
                         type={"text"}
-                        placeholder={"Context name"}
-                        value={name}
+                        value={formData.name}
                         readOnly
                         disabled
                     />
                 </div>
+
                 <div className={"create-form-field-item"}>
-                    <label htmlFor={"description"}>What is this context used for?</label>
+                    <label htmlFor="isConfidential">ZKP verification needed?</label>
+                    <FormControl sx={{ m: 1, width: "30em" }}>
+                        <Select
+                            id="isConfidential"
+                            name="isConfidential"
+                            value={formData.isConfidential}
+                            onChange={handleChange}
+                            input={<OutlinedInput />}
+                        >
+                            <MenuItem value={1}>Yes</MenuItem>
+                            <MenuItem value={0}>No</MenuItem>
+                        </Select>
+                    </FormControl>
+                </div>
+
+                <div className={"create-form-field-item"}>
+                    <label htmlFor={"description"}>Description</label>
                     <textarea
                         id={"description"}
                         name={"description"}
-                        placeholder={"Context description"}
-                        defaultValue={description}
+                        placeholder={"Enter description"}
+                        value={formData.description}
+                        onChange={handleChange}
                     />
                 </div>
             </div>
+
             <div className={"create-form-buttons"}>
                 <CancelButton/>
                 <button type={"submit"}>

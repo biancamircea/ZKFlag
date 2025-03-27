@@ -14,4 +14,5 @@ public interface ConstraintRepository extends JpaRepository<Constraint, Long> {
     Optional<Constraint> findById(Long id);
 
     List<Constraint>  findAllByToggleId(Long toggleId);
+    List<Constraint> findByContextFieldId(Long contextFieldId);
 }

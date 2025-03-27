@@ -10,13 +10,12 @@ function ConstraintValuesList({ values, setValues, instanceId }) {
         if (inputValue === '') {
             toast.error('Value cannot be empty!');
         } else {
-            // Dacă values este o listă de obiecte, verificăm dacă deja există un obiect cu același name
             const valueExists = values.some((val) => val === inputValue);
 
             if (valueExists) {
                 toast.error('Value already exists in the list!');
             } else {
-                const newValue =  inputValue; // Adaugă un obiect doar dacă există instanceId
+                const newValue =  inputValue;
                 setValues([...values, newValue]);
                 setInputValue('');
             }
@@ -26,14 +25,14 @@ function ConstraintValuesList({ values, setValues, instanceId }) {
     const handleDelete = (index) => {
         setValues((prevValues) => {
             const newValues = [...prevValues];
-            newValues.splice(index, 1); // Șterge obiectul pe index
+            newValues.splice(index, 1);
             return newValues;
         });
     };
 
     const handleKeyDown = (event) => {
         if (event.key === 'Enter') {
-            handleAdd(event);  // Trebuie să transmitem event-ul
+            handleAdd(event);
         }
     };
 
