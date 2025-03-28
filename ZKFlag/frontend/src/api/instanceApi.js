@@ -40,6 +40,24 @@ export async function getToggleEnvironments(instanceId, toggleId) {
     }
 }
 
+export async function getToggleEnvironments2(instanceId, envId) {
+    const url = `/api/instances/${instanceId}/environments/${envId}/toggles`;
+    try {
+        const response = await fetch(url, {
+            method: 'GET',
+            credentials: "include"
+        });
+
+        if (!response.ok) {
+            throw new Error(`Failed to fetch toggle environments: ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        console.error(error.message);
+        throw error;
+    }
+}
 
 export async function createInstance(projectId, instanceData) {
     const url = `/api/projects/${projectId}/instances`;

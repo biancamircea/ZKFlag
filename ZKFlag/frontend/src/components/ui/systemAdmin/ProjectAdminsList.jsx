@@ -83,7 +83,7 @@ function ProjectAdminsList() {
                     <p>{admin.name}</p>
                     <p>{admin.email}</p>
                 </div>
-                <div className="list-item-actions">
+                <div className="list-item-actions" style={{marginLeft:"20px"}}>
                     <DeleteIcon deleteHandler={() => handleRemoveAdmin(admin.id)} />
                 </div>
             </div>

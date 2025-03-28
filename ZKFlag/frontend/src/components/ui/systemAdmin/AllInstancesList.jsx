@@ -68,7 +68,7 @@ function AllInstancesList() {
                     <p>{instance.name}</p>
                     <p>{instance.type}</p>
                 </div>
-                <div className="list-item-actions">
+                <div className="list-item-actions" style={{marginLeft:"20px"}}>
                     <DeleteIcon deleteHandler={() => handleDeleteInstance(instance.id, projectId)} />
                 </div>
             </div>

@@ -62,7 +62,7 @@ function UserInstanceList() {
                 <div className="tags-list-item">
                     <p>{instance.instanceName}</p>
                 </div>
-                <div className="list-item-actions">
+                <div className="list-item-actions" style={{marginLeft:"20px"}}>
                     <DeleteIcon deleteHandler={() => handleRemove(instance.id)} />
                 </div>
             </div>

@@ -24,7 +24,7 @@ function AllAdminsList() {
     const [instanceAdmins, setInstanceAdmins] = useState([]);
     const [projectAdmins, setProjectAdmins] = useState([]);
     const [systemAdmins, setSystemAdmins] = useState([]);
-    const revalidator = useRevalidator(); // Hook pentru revalidare
+    const revalidator = useRevalidator();
 
     const refreshAdmins = () => {
         revalidator.revalidate();
@@ -90,11 +90,12 @@ function AllAdminsList() {
                             navigate(`/system-admin/${admin.id}/instances`);
                         }
                     }}
+                    style={{contentAlign:"center", textAlign:"center"}}
                 >
                     <p>{admin.name}</p>
                     <p>{admin.email}</p>
                 </div>
-                <div className="list-item-actions">
+                <div className="list-item-actions" style={{marginLeft:"20px"}}>
                     <DeleteIcon deleteHandler={() => handleDelete(admin.id, setAdmins)} />
                 </div>
             </div>

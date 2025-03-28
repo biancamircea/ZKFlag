@@ -67,10 +67,17 @@ function FeatureToggleInstanceSectionRight({ projectId, featureId, instanceId, e
     return (
         <div className="feature-toggle-instance-section-right">
             <div className="list-container">
-                <div className="project-environment list-item item-header" style={{ display: "flex" }}>
-                    <p>Name</p>
-                    <p style={{ marginLeft: "300px" }}>Active in environment</p>
+                <div className="project-environment list-item item-header">
+                    <div className={"instances-list-item-name"}>
+                        <span>Name</span>
+                    </div>
+
+                    <div className={"context-fields list-item actions"} >
+                        <span >Active in environment</span>
+                    </div>
                 </div>
+
+
                 <br/>
                 {isLoading ? (
                     <p>Loading...</p>

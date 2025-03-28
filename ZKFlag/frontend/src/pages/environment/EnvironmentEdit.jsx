@@ -68,7 +68,7 @@ function EnvironmentEdit(props) {
                                     type={"radio"}
                                     defaultChecked={response.type === "DEVELOPMENT"}
                                 />
-                                <label htmlFor={"development"}>Development</label>
+                                <label htmlFor={"development"} style={{marginLeft:"-140px"}}>Development</label>
                             </div>
                             <div className={"field-item-select"}>
                                 <input
@@ -78,7 +78,7 @@ function EnvironmentEdit(props) {
                                     type={"radio"}
                                     defaultChecked={response.type === "TEST"}
                                 />
-                                <label htmlFor={"test"}>Test</label>
+                                <label htmlFor={"test"} style={{marginLeft:"-140px"}}>Test</label>
                             </div>
                             <div className={"field-item-select"}>
                                 <input
@@ -88,7 +88,7 @@ function EnvironmentEdit(props) {
                                     type={"radio"}
                                     defaultChecked={response.type === "PRE_PRODUCTION"}
                                 />
-                                <label htmlFor={"pre-production"}>Pre-Production</label>
+                                <label htmlFor={"pre-production"} style={{marginLeft:"-140px"}}>Pre-Production</label>
                             </div>
                             <div className={"field-item-select"}>
                                 <input
@@ -98,7 +98,7 @@ function EnvironmentEdit(props) {
                                     type={"radio"}
                                     defaultChecked={response.type === "PRODUCTION"}
                                 />
-                                <label htmlFor={"production"}>Production</label>
+                                <label htmlFor={"production"} style={{marginLeft:"-140px"}}>Production</label>
                             </div>
                         </fieldset>
                     </div>

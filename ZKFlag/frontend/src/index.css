@@ -1561,10 +1561,11 @@ textarea {
 }
 
 .tags-list-item {
-  width: 35%;
+  width: 40%;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  text-align: center;
   /*border: 1px solid red;*/
 }
 
@@ -2244,7 +2245,6 @@ margin-top: 20px;
   font-weight: bold;
 }
 
-/* Stiluri pentru modal */
 .image-modal {
   position: fixed;
   top: 0;
@@ -2258,7 +2258,6 @@ margin-top: 20px;
   z-index: 1000;
 }
 
-/* Contenitorul imaginii */
 .modal-content {
   position: relative;
   max-width: 90%;
@@ -2266,14 +2265,12 @@ margin-top: 20px;
   overflow: hidden;
 }
 
-/* Stil pentru imaginea din modal */
 .modal-image {
   width: 500px;
   height: auto;
-  object-fit: contain; /* Asigură că imaginea rămâne proporționată */
+  object-fit: contain;
 }
 
-/* Stil pentru butonul de închidere */
 .close-btn {
   position: absolute;
   top: 10px;
@@ -2283,4 +2280,20 @@ margin-top: 20px;
   background-color: transparent;
   border: none;
   cursor: pointer;
+}
+
+
+/* Instance Overview */
+.feature-toggle-table {
+  display: flex;
+  gap: 1em;
+  padding: 1em;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.feature-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }

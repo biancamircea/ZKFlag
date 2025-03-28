@@ -8,32 +8,36 @@ function ApplicationNav(props) {
         fontWeight: "bold"
     }
     return (
-        <nav className={"nav-container application"}>
+        <nav className={"project-nav-container"} style={{
+            display: "flex",
+            justifyContent: "space-between",
+            width: "100%",
+        }}>
             <NavLink
                 to={"."}
                 end
-                className={"feature-toggle-nav-item"}
+                className={"project-nav-item"}
                 style={({isActive}) => isActive ? activeStyles : null}
             >
                 Overview
             </NavLink>
             <NavLink
                 to={"all-admins"}
-                className={"feature-toggle-nav-item"}
+                className={"project-nav-item"}
                 style={({isActive}) => isActive ? activeStyles : null}
             >
                 Admins
             </NavLink>
             <NavLink
                 to={"all-projects"}
-                className={"feature-toggle-nav-item"}
+                className={"project-nav-item"}
                 style={({isActive}) => isActive ? activeStyles : null}
             >
                 Projects
             </NavLink>
             <NavLink
                 to={"all-instances"}
-                className={"feature-toggle-nav-item"}
+                className={"project-nav-item"}
                 style={({isActive}) => isActive ? activeStyles : null}
             >
                 Instances

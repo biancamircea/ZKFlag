@@ -16,21 +16,21 @@ function FeatureToggleInstanceNav(props) {
             <NavLink
                 to={"."}
                 end
-                className={"feature-toggle-nav-item"}
+                className={"project-nav-item"}
                 style={({isActive}) => isActive ? activeStyles : null}
             >
                 Overview
             </NavLink>
             <NavLink
                 to={"payload"}
-                className={"feature-toggle-nav-item"}
+                className={"project-nav-item"}
                 style={({isActive}) => isActive ? activeStyles : null}
             >
                 Payload
             </NavLink>
             <NavLink
                 to={"schedule"}
-                className={"feature-toggle-nav-item"}
+                className={"project-nav-item"}
                 style={({isActive}) => isActive ? activeStyles : null}
             >
                 Schedule flag

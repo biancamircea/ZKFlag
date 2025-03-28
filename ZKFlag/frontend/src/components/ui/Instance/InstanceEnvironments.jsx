@@ -3,8 +3,7 @@ import ListPageHeader from "../common/ListPageHeader.jsx";
 import {Await, defer, useLoaderData, useParams} from "react-router-dom";
 import {toast} from "react-toastify";
 import {
-    getAllInstancesFromProject,
-    getToggleEnvironments,
+    getToggleEnvironments2,
     toggleEnvironmentInInstance
 } from "../../../api/instanceApi.js";
 import ProjectEnvironmentSwitch from "../project/ProjectEnvironmentSwitch.jsx";
@@ -50,7 +49,7 @@ function InstanceEnvironments(props) {
 
         let imageUrls = [];
 
-            const environments = await getToggleEnvironments(instanceId, id);
+            const environments = await getToggleEnvironments2(instanceId, envId);
             for (const env of environments) {
                 if (env.enabledValue && isImageUrl(env.enabledValue)) {
                     imageUrls.push(env.enabledValue);

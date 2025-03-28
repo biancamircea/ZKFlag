@@ -12,7 +12,7 @@ export function loader({ params }){
 
 function ProjectOverview(props) {
     const loaderDataPromise = useLoaderData()
-    const {projectId, featureId,instanceId} = useParams()
+    const {projectId} = useParams()
 
     function renderProjectOverview(response){
         return (

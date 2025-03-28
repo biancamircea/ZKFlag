@@ -54,7 +54,6 @@ function InstanceAdminsList() {
 
     async function handleRemoveAdmin(userId) {
         try {
-            console.log("userid", userId);
             await removeAccessToInstance(instanceId, userId);
             toast.success("Admin removed from instance.");
             refreshInstanceAdmins();
@@ -106,7 +105,7 @@ function InstanceAdminsList() {
                     <p>{admin.name}</p>
                     <p>{admin.email}</p>
                 </div>
-                <div className="list-item-actions">
+                <div className="list-item-actions" style={{marginLeft:"20px"}}>
                     <DeleteIcon deleteHandler={() => handleRemoveAdmin(admin.id)} />
                 </div>
             </div>

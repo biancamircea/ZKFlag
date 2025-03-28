@@ -72,8 +72,6 @@ public class ClientController {
         List<ConstraintDTO> filteredConstraints = toggleService.getConstraints(apiTokenStr, toggleName);
 
         System.out.println("Constraints: "+filteredConstraints);
-        Long threshold = Long.parseLong(filteredConstraints.get(0).getValues().get(0));
-        System.out.println("Threshold: "+threshold);
 
         return ResponseEntity.ok(filteredConstraints);
     }

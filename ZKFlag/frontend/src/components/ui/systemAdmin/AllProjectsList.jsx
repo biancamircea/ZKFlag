@@ -80,7 +80,7 @@ function AllProjectsList() {
                 >
                     <p>{project.name}</p>
                 </div>
-                <div className="list-item-actions">
+                <div className="list-item-actions" style={{marginLeft:"20px"}}>
                     <DeleteIcon deleteHandler={() => handleDelete(project.id)} />
                 </div>
             </div>

@@ -70,5 +70,5 @@ public interface ToggleEnvironmentRepository extends JpaRepository<ToggleEnviron
     List<ToggleEnvironment> findByInstanceIdAndToggleId(@Param("instanceId") Long instanceId, @Param("toggleId") Long toggleId);
 
     List<ToggleEnvironment> findAllByEnvironmentId(Long environmentId);
-
+    List<ToggleEnvironment> findByInstanceIdAndEnvironmentId(Long instanceId,Long environmentId);
 }

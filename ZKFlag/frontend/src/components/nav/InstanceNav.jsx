@@ -5,7 +5,6 @@ function ProjectNav() {
     const activeStyles = {
         borderBottom: "0.3em solid #203983",
         boxShadow: "2px 2px 4px 0 rgba(0, 0, 0, 0.1)",
-        // backgroundColor: "#eceaea",
         fontWeight: "bold"
     }
 
@@ -26,13 +25,6 @@ function ProjectNav() {
             >
                 Settings
             </NavLink>
-            {/*<NavLink*/}
-            {/*    to={"/events"}*/}
-            {/*    className={"project-nav-item"}*/}
-            {/*    style={({isActive}) => isActive ? activeStyles : null}*/}
-            {/*>*/}
-            {/*    Events*/}
-            {/*</NavLink>*/}
             <NavLink
                 to={"members"}
                 className={"project-nav-item"}

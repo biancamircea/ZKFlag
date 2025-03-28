@@ -64,8 +64,8 @@ function UserProjectList() {
                 <div className="tags-list-item">
                     <p>{project.projectName}</p>
                 </div>
-                <div className="list-item-actions">
-                    <DeleteIcon deleteHandler={() => handleRemove(project.projectId)} />
+                <div className="list-item-actions" style={{marginLeft:"20px"}}>
+                    <DeleteIcon deleteHandler={() => handleRemove(project.projectId) } />
                 </div>
             </div>
         ));

@@ -93,7 +93,7 @@ function EnvironmentsCreate() {
                                     value={"DEVELOPMENT"}
                                     type={"radio"}
                                 />
-                                <label htmlFor={"development"}>Development</label>
+                                <label htmlFor={"development"} style={{marginLeft:"-140px"}}>Development</label>
                             </div>
                             <div className={"field-item-select"}>
                                 <input
@@ -102,7 +102,7 @@ function EnvironmentsCreate() {
                                     value={"TEST"}
                                     type={"radio"}
                                 />
-                                <label htmlFor={"test"}>Test</label>
+                                <label htmlFor={"test"} style={{marginLeft:"-140px"}}>Test</label>
                             </div>
                             <div className={"field-item-select"}>
                                 <input
@@ -111,7 +111,7 @@ function EnvironmentsCreate() {
                                     value={"PRE_PRODUCTION"}
                                     type={"radio"}
                                 />
-                                <label htmlFor={"pre-production"}>Pre-Production</label>
+                                <label htmlFor={"pre-production"} style={{marginLeft:"-140px"}}>Pre-Production</label>
                             </div>
                             <div className={"field-item-select"}>
                                 <input
@@ -120,24 +120,16 @@ function EnvironmentsCreate() {
                                     value={"PRODUCTION"}
                                     type={"radio"}
                                 />
-                                <label htmlFor={"production"}>Production</label>
+                                <label htmlFor={"production"} style={{marginLeft:"-140px"}}>Production</label>
                             </div>
 
                         </fieldset>
-                    </div>
-                    <div className={"field-item-select"}>
-                        <input
-                            id={"apikey-checkbox"}
-                            name={"apikey-checkbox"}
-                            type={"checkbox"}/>
-                        <label htmlFor={"apikey-checkbox"}>Generate API Key for environment now?</label>
                     </div>
                 </div>
                 <div className={"create-form-buttons"}>
                     <CancelButton/>
                     <button
                         type={"submit"}
-                        // disabled={disableSubmit}
                     >
                         Create environment
                     </button>

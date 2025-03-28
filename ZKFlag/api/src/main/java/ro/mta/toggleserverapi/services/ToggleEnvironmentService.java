@@ -4,6 +4,7 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ro.mta.toggleserverapi.DTOs.ClientToggleEvaluationRequestDTO;
+import ro.mta.toggleserverapi.DTOs.ToggleEnvironmentDTO;
 import ro.mta.toggleserverapi.entities.*;
 import ro.mta.toggleserverapi.enums.ActionType;
 import ro.mta.toggleserverapi.exceptions.EnvironmentNotFoundException;
@@ -15,6 +16,7 @@ import ro.mta.toggleserverapi.repositories.ToggleRepository;
 import ro.mta.toggleserverapi.util.ConstraintUtil;
 
 import java.time.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -226,4 +228,14 @@ public class ToggleEnvironmentService {
         toggleEnvironmentRepository.deleteByEnvironmentId(environmentId);
     }
 
+    public List<ToggleEnvironmentDTO> getToggleEnvironments(Long instanceId, Long environmentId) {
+        List<ToggleEnvironment> toggleEnvironments = toggleEnvironmentRepository.findByInstanceIdAndEnvironmentId(instanceId, environmentId);
+        List<ToggleEnvironmentDTO> toggleEnvironmentDTOList = new ArrayList<>();
+        for (ToggleEnvironment toggleEnvironment : toggleEnvironments) {
+            ToggleEnvironmentDTO toggleEnvironmentDTO = ToggleEnvironmentDTO.toDTO(toggleEnvironment);
+            toggleEnvironmentDTOList.add(toggleEnvironmentDTO);
+        }
+
+        return toggleEnvironmentDTOList;
+    }
 }

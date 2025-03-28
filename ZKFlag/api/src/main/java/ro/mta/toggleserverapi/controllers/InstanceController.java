@@ -16,6 +16,7 @@ import ro.mta.toggleserverapi.services.*;
 
 import java.net.URI;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -39,6 +40,7 @@ public class InstanceController {
     private final EnvironmentRepository environmentRepository;
     private final UserService userService;
     private final UserRepository userRepository;
+    private final ToggleEnvironmentService toggleEnvironmentService;
 
     @PostMapping("/projects/{projectId}/instances")
     public ResponseEntity<InstanceDTO> createInstance(
@@ -153,6 +155,15 @@ public class InstanceController {
         Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
         List<ToggleEnvironmentDTO> toggleEnvironments = instanceService.getToggleEnvironments(instance.getId(), toggle.getId());
         return ResponseEntity.ok(toggleEnvironments);
+    }
+
+    @GetMapping(path = "/instances/{instanceId}/environments/{envId}/toggles")
+    public ResponseEntity<List<ToggleEnvironmentDTO>> getToggleEnvironments2(@PathVariable String instanceId, @PathVariable String envId) {
+        Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
+        Environment environment=environmentRepository.findByHashId(envId).orElseThrow();
+            List<ToggleEnvironmentDTO> toggleEnvironments = toggleEnvironmentService.getToggleEnvironments(instance.getId(), environment.getId());
+            return ResponseEntity.ok(toggleEnvironments);
+
     }
 
     @PostMapping(path = "/instances/{instanceId}/access")

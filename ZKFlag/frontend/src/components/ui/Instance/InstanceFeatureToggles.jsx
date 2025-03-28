@@ -56,7 +56,7 @@ function InstanceFeatureToggles({ toggles }) {
                     </div>
 
                     <div className={"context-fields list-item actions"}>
-                        <p style={{display:"flex",marginLeft:"300px"}}> {el.createdAt ? new Date(el.createdAt).toLocaleDateString("ro") : "null"}</p>
+                        <p style={{position:"fixed",float:"right", marginRight:"20px"}}> {el.createdAt ? new Date(el.createdAt).toLocaleDateString("ro") : "null"}</p>
                     </div>
             </div>
         );
