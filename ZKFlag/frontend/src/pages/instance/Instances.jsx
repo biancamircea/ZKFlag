@@ -41,7 +41,7 @@ function Instances() {
             <div className={"instances-list list-item item-body"} key={el.id} style={{display:"flex", justifyContent:"space-between"}}>
                 <div
                     className={"instances-list-item-name"}
-                    style={{height:"40px",textAlign:"center",display:"flex",alignItems:"center"}}
+                    style={{height:"60px",textAlign:"center",display:"flex",alignItems:"center"}}
                 >
                     {el.name}
                 </div>

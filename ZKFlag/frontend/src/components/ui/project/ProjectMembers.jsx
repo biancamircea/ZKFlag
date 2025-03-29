@@ -4,6 +4,7 @@ import LoadingBanner from "../../../components/ui/common/LoadingBanner.jsx";
 import EmptyList from "../../../components/ui/common/EmptyList.jsx";
 import EmptySearchResult from "../../../components/ui/common/EmptySearchResult.jsx";
 import { getUsersWithProjectAdminRole } from "../../../api/projectApi.js";
+import ListPageHeader from "../common/ListPageHeader.jsx";
 
 export async function loader({ params }) {
     return defer({
@@ -50,6 +51,14 @@ function ProjectMembers() {
     }
 
     return (
+        <>
+            <ListPageHeader
+                title={"Members"}
+                buttonText={""}
+                hasButton={false}
+                searchQuery={searchQuery}
+                handleSearch={handleSearch}
+            />
         <div className="list-container">
             <div className="context-fields list-item item-header">
                 <div className="tags-list-item">
@@ -63,6 +72,7 @@ function ProjectMembers() {
                 </Await>
             </Suspense>
         </div>
+            </>
     );
 }
 

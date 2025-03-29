@@ -46,17 +46,22 @@ function InstanceFeatureToggles({ toggles }) {
 
         return (
             <div
-                className={"instances-list list-item item-body"} key={el.id} style={{display:"flex", justifyContent:"space-between"}}
+                className={"instances-list list-item item-body"} key={el.id}
                 onClick={() => handleItemClick(el.id)}
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%"
+                }}
             >
-                    <div className={"instances-list-item-name"}>
+                    <div style={{flex: "1.5", display: "flex", justifyContent: "flex-start"}}>
                         <p id={"feature-name"}>
                             {el.name}
                         </p>
                     </div>
 
-                    <div className={"context-fields list-item actions"}>
-                        <p style={{position:"fixed",float:"right", marginRight:"20px"}}> {el.createdAt ? new Date(el.createdAt).toLocaleDateString("ro") : "null"}</p>
+                    <div  style={{flex: "1.5",display:"flex",justifyContent: "flex-end"}}>
+                        <p style={{marginRight:"20px"}}> {el.createdAt ? new Date(el.createdAt).toLocaleDateString("ro") : "null"}</p>
                     </div>
             </div>
         );

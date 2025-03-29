@@ -8,11 +8,11 @@ function FeatureToggleNav(props) {
         fontWeight: "bold"
     }
     return (
-        <nav className={"project-nav-container"}>
+        <nav className={"feature-toggle-nav-container"}>
             <NavLink
                 to={"."}
                 end
-                className={"project-nav-item"}
+                className={"feature-toggle-nav-item"}
                 style={({isActive}) => isActive ? activeStyles : null}
             >
                 Overview

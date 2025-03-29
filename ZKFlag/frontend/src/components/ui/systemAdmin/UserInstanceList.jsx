@@ -58,11 +58,13 @@ function UserInstanceList() {
         }
 
         return filteredInstances.map(instance => (
-            <div className="context-fields list-item item-body" key={instance.id}>
-                <div className="tags-list-item">
+            <div className="context-fields list-item item-body" key={instance.id}  style={{ display: "flex",
+                justifyContent: "space-between",
+                width: "100%"}}>
+                <div className="tags-list-item"  style={{flex: "1", display: "flex", justifyContent: "flex-start"}}>
                     <p>{instance.instanceName}</p>
                 </div>
-                <div className="list-item-actions" style={{marginLeft:"20px"}}>
+                <div className="list-item-actions" style={{flex: "1", display: "flex", justifyContent: "center"}}>
                     <DeleteIcon deleteHandler={() => handleRemove(instance.id)} />
                 </div>
             </div>
@@ -80,11 +82,13 @@ function UserInstanceList() {
             />
             <div className="list-container">
                 <h2 className="admin-section-title">Instances</h2>
-                <div className="context-fields list-item item-header">
-                    <div className="tags-list-item">
+                <div className="context-fields list-item item-header" style={{ display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%"}}>
+                    <div className="tags-list-item" style={{flex: "1", display: "flex", justifyContent: "flex-start"}}>
                         <p>Name</p>
                     </div>
-                    <div className="list-item-actions">
+                    <div className="list-item-actions" style={{flex: "1", display: "flex", justifyContent: "center"}}>
                         <p>Remove User from Instance</p>
                     </div>
                 </div>

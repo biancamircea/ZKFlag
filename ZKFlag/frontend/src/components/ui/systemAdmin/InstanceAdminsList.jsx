@@ -100,12 +100,18 @@ function InstanceAdminsList() {
         }
 
         return filteredAdmins.map(admin => (
-            <div className="context-fields list-item item-body" key={admin.id}>
-                <div className="tags-list-item">
-                    <p>{admin.name}</p>
-                    <p>{admin.email}</p>
+            <div className="context-fields list-item item-body" key={admin.id}  style={{ display: "flex",
+                justifyContent: "space-between",
+                width: "100%"}}>
+                <div className="tags-list-item"   style={{flex: "2", display: "flex"}}>
+                    <div  style={{flex: "1", display: "flex", justifyContent: "flex-start"}}>
+                        <p>{admin.name}</p>
+                    </div>
+                    <div style={{flex: "1", display: "flex", justifyContent: "center"}}>
+                        <p>{admin.email}</p>
+                    </div>
                 </div>
-                <div className="list-item-actions" style={{marginLeft:"20px"}}>
+                <div className="list-item-actions" style={{flex: "1", display: "flex", justifyContent: "center"}}>
                     <DeleteIcon deleteHandler={() => handleRemoveAdmin(admin.id)} />
                 </div>
             </div>
@@ -124,12 +130,18 @@ function InstanceAdminsList() {
             />
             <div className="list-container">
                 <h2 className="admin-section-title">Admins</h2>
-                <div className="context-fields list-item item-header">
-                    <div className="tags-list-item">
-                        <p>Name</p>
-                        <p>Email</p>
+                <div className="context-fields list-item item-header"  style={{display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%"}}>
+                    <div className="tags-list-item"  style={{flex: "2", display: "flex"}}>
+                        <div style={{flex: "1", display: "flex", justifyContent: "flex-start"}}>
+                            <p>Name</p>
+                        </div>
+                        <div style={{flex: "1", display: "flex", justifyContent: "center"}}>
+                            <p>Email</p>
+                        </div>
                     </div>
-                    <div className="list-item-actions">
+                    <div className="list-item-actions" style={{flex: "1", display: "flex", justifyContent: "center"}}>
                         <p>Remove Admin from Instance</p>
                     </div>
                 </div>

@@ -1102,8 +1102,8 @@ textarea {
   flex-grow: 1;
   display: flex;
   justify-content: flex-end;
-  gap: 2em;
-  padding: 0 2em;
+  gap: 1em;
+  padding: 0 1em;
   /*border: 1px solid black;*/
 }
 

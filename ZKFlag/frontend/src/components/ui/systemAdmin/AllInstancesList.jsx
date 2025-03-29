@@ -63,12 +63,14 @@ function AllInstancesList() {
                 className="context-fields list-item item-body"
                 key={instance.id}
                 onClick={() => navigate(`/system-admin/${projectId}/instances/${instance.id}/instance-admins`)}
+                style={{ display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%"}}
             >
-                <div className="tags-list-item">
+                <div className="tags-list-item"  style={{flex: "1", display: "flex", justifyContent: "flex-start"}}>
                     <p>{instance.name}</p>
-                    <p>{instance.type}</p>
                 </div>
-                <div className="list-item-actions" style={{marginLeft:"20px"}}>
+                <div className="list-item-actions"  style={{flex: "1", display: "flex", justifyContent: "center"}}>
                     <DeleteIcon deleteHandler={() => handleDeleteInstance(instance.id, projectId)} />
                 </div>
             </div>
@@ -96,11 +98,13 @@ function AllInstancesList() {
                             Add Instance
                         </button>
                     </div>
-                    <div className="context-fields list-item item-header">
-                        <div className="tags-list-item">
+                    <div className="context-fields list-item item-header" style={{ display: "flex",
+                        justifyContent: "space-between",
+                        width: "100%"}}>
+                        <div className="tags-list-item" style={{flex: "1", display: "flex", justifyContent: "flex-start"}}>
                             <p>Name</p>
                         </div>
-                        <div className="list-item-actions">
+                        <div className="list-item-actions" style={{flex: "1", display: "flex", justifyContent: "center"}}>
                             <p>Actions</p>
                         </div>
                     </div>

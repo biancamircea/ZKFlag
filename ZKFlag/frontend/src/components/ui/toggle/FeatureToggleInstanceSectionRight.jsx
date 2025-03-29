@@ -67,12 +67,17 @@ function FeatureToggleInstanceSectionRight({ projectId, featureId, instanceId, e
     return (
         <div className="feature-toggle-instance-section-right">
             <div className="list-container">
-                <div className="project-environment list-item item-header">
-                    <div className={"instances-list-item-name"}>
-                        <span>Name</span>
+                <div className="project-environment list-item item-header"  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%",
+                    height: "50px",
+                }}>
+                    <div style={{  flex: "1.5",display: "flex",justifyContent: "space-between" }}>
+                        <span style={{marginLeft:""}}>Name</span>
                     </div>
 
-                    <div className={"context-fields list-item actions"} >
+                    <div  style={{  flex: "1.5",display: "flex",justifyContent: "center" }}>
                         <span >Active in environment</span>
                     </div>
                 </div>
@@ -93,8 +98,10 @@ function FeatureToggleInstanceSectionRight({ projectId, featureId, instanceId, e
                                 className="project-environment list-item"
                                 style={{ flexGrow: 1, width: "100%", display: "flex" }}
                             >
-                                <span>{env.name}</span>
-                                <div className="list-item-actions" style={{ marginLeft: `${300 - 7.5 * env.name.length}px` }}>
+                                <div style={{flex: "1.5", display: "flex", justifyContent: "space-between"}}>
+                                    <span>{env.name}</span>
+                                </div>
+                                <div className="list-item-actions" style={{flex: "1.5",display:"flex",justifyContent: "center"}}>
                                     <ProjectEnvironmentSwitch
                                         checked={toggleStates[env.id] ?? false}
                                         handleEnable={() => handleToggle(env.id, env.name)}

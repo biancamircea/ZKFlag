@@ -71,16 +71,18 @@ function AllProjectsList() {
             <div
                 className="context-fields list-item item-body"
                 key={project.id}
-                style={{ display: "flex", justifyContent: "space-between", alignItems: "center", cursor: "pointer" }}
+                style={{ display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%"}}
             >
                 <div
                     className="tags-list-item"
                     onClick={() => navigate(`/system-admin/projects/${project.id}/project-admins`)}
-                    style={{ flexGrow: 1 }}
+                    style={{flex: "1", display: "flex", justifyContent: "flex-start"}}
                 >
                     <p>{project.name}</p>
                 </div>
-                <div className="list-item-actions" style={{marginLeft:"20px"}}>
+                <div className="list-item-actions" style={{flex: "1", display: "flex", justifyContent: "center"}}>
                     <DeleteIcon deleteHandler={() => handleDelete(project.id)} />
                 </div>
             </div>
@@ -100,11 +102,13 @@ function AllProjectsList() {
             />
             <div className="list-container">
                 <h2 className="admin-section-title">Projects</h2>
-                <div className="context-fields list-item item-header">
-                    <div className="tags-list-item">
+                <div className="context-fields list-item item-header" style={{ display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%"}}>
+                    <div className="tags-list-item" style={{flex: "1", display: "flex", justifyContent: "flex-start"}}>
                         <p>Name</p>
                     </div>
-                    <div className="list-item-actions">
+                    <div className="list-item-actions" style={{flex: "1", display: "flex", justifyContent: "center"}}>
                         <p>Actions</p>
                     </div>
                 </div>

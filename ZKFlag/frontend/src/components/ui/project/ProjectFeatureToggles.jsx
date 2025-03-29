@@ -120,33 +120,36 @@ function ProjectFeatureToggles({ toggles }) {
 
         return (
             <div
-                className={"feature-list-item item-body"}
                 key={el.id}
                 onClick={() => handleItemClick(el.id)}
+                style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    width: "100%"
+                }}
+                className={"list-item item-body"}
             >
-                <div className={"feature-list-item-wrapper"}>
-                    <div className={"feature-list-item-left item-body"}>
+                <div style={{ flex: "1.5" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
                         <p id={"feature-name"}>
                             {el.name}
                         </p>
-                        <p style={{ marginLeft: `${500 - el.name.length*7.8}px` }}>{el.createdAt ? new Date(el.createdAt).toLocaleDateString("ro") : "null"}</p>
+                        <p>{el.createdAt ? new Date(el.createdAt).toLocaleDateString("ro") : "null"}</p>
                     </div>
                     <div className={"feature-list-item-left tags"}>
                         {tagsEl}
                     </div>
                 </div>
-                <div className={"feature-list-item-right"} style={{marginLeft: "750px"}}>
-                    <div className={"feature-list-item-right-actions"}>
-                        <EditIcon
-                            id={el.id}
-                            directLink={`/projects/${projectId}/features/edit/${el.id}`}
-                        />
-                        <DeleteIcon
-                            resource={"Toggle"}
-                            resourceName={el.name}
-                            deleteHandler={() => deleteToggle(el.id)}
-                        />
-                    </div>
+                <div className={"feature-list-item-right-dynamic"} style={{ flex: "1", display: "flex", gap: "10px", justifyContent: "flex-end" }}>
+                    <EditIcon
+                        id={el.id}
+                        directLink={`/projects/${projectId}/features/edit/${el.id}`}
+                    />
+                    <DeleteIcon
+                        resource={"Toggle"}
+                        resourceName={el.name}
+                        deleteHandler={() => deleteToggle(el.id)}
+                    />
                 </div>
             </div>
         );
