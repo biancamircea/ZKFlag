@@ -23,6 +23,7 @@ public class ConstraintDTO {
     private List<String> values;
 
     private Long isConfidential;
+    private Long constrGroupId;
 
     public static ConstraintDTO toDTO(Constraint constraint) {
         ConstraintDTO constraintDTO = new ConstraintDTO();
@@ -38,6 +39,7 @@ public class ConstraintDTO {
         );
 
         constraintDTO.setIsConfidential(constraint.getIsConfidential());
+        constraintDTO.setConstrGroupId(constraint.getConstrGroupId());
         return constraintDTO;
     }
 }

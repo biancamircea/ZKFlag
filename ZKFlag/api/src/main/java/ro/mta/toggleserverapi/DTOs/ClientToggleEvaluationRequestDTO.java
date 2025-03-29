@@ -12,12 +12,18 @@ public class ClientToggleEvaluationRequestDTO {
     @NotNull
     private String toggleName;
     private List<ContextFromClientDTO> contextFields;
-    private List<JsonNode> proofs;
+    private List<ProofFromClientDTO> proofs;
 
     @Data
     public static class ContextFromClientDTO {
         private String name;
         private String value;
+    }
+
+    @Data
+    public static class ProofFromClientDTO {
+        private String name;
+        private JsonNode proof;
     }
 
     public static Optional<String> getValueByName(List<ContextFromClientDTO> contextFields, String name){

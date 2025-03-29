@@ -43,6 +43,7 @@ public class ConstraintService {
         constraint.setValues(values);
         ContextField contextField = contextFieldService.fetchByProjectIdAndName(constraintDTO.getContextName(),projectId);
         constraint.setIsConfidential(contextField.getIsConfidential());
+        constraint.setConstrGroupId(constraintDTO.getConstrGroupId());
         return constraint;
     }
     public Constraint fromDTO(ConstraintDTO constraintDTO, Long projectId, Long toggleId,Long instanceId, Long environmentId) {
@@ -67,6 +68,7 @@ public class ConstraintService {
         constraint.setValues(values);
         ContextField contextField = contextFieldService.fetchByProjectIdAndName(constraintDTO.getContextName(),projectId);
         constraint.setIsConfidential(contextField.getIsConfidential());
+        constraint.setConstrGroupId(constraintDTO.getConstrGroupId());
         return constraint;
     }
 

@@ -47,6 +47,7 @@ function ProjectApiTokensList({apiTokens, searchQuery, environments}) {
                 remove={() => removeToken(el.id)}
                 projectId={projectId}
                 instanceId={instanceId}
+                type={el.type}
             />
         )
     })

@@ -43,4 +43,5 @@ public class Constraint {
     List<ConstraintValue> values;
 
     private Long isConfidential;
+    private Long constrGroupId;
 }

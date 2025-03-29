@@ -429,7 +429,8 @@ public class ToggleService {
     public Boolean evaluateToggleInContext(
             String toggleName,
             String apiTokenStr,
-            List<ClientToggleEvaluationRequestDTO.ContextFromClientDTO> contextFields) {
+            List<ClientToggleEvaluationRequestDTO.ContextFromClientDTO> contextFields,
+            Long constrGroupId) {
 
         if(apiTokenStr.contains("Bearer")){
             apiTokenStr = apiTokenStr.replace("Bearer ", "");
@@ -456,7 +457,7 @@ public class ToggleService {
         Toggle toggle = toggleRepository.findByNameAndProjectAndToggleType(toggleName, project, toggleType)
                 .orElseThrow(() -> new ToggleNotFoundException(toggleName, project.getId()));
 
-        Boolean enabled = toggleEnvironmentService.evaluateToggleInContext(toggle, environment, instance.getId(), contextFields);
+        Boolean enabled = toggleEnvironmentService.evaluateToggleInContext(toggle, environment, instance.getId(), contextFields,constrGroupId);
         System.out.println("enabled "+toggleName+" "+enabled);
        return enabled;
     }
@@ -578,7 +579,8 @@ public class ToggleService {
     public Boolean evaluateProofs(
             String toggleName,
             String apiTokenStr,
-            List<JsonNode> proofs) {
+            List<ClientToggleEvaluationRequestDTO.ProofFromClientDTO> proofs,
+            Long constrGroupId) {
 
         if (apiTokenStr.contains("Bearer")) {
             apiTokenStr = apiTokenStr.replace("Bearer ", "");
@@ -602,18 +604,52 @@ public class ToggleService {
         List<Constraint> confidentialConstraints = targetToggle.getConstraints().stream()
                 .filter(c -> c.getIsConfidential() != null && c.getIsConfidential() == 1)
                 .collect(Collectors.toList());
+        System.out.println("Confidential constraints size: " + confidentialConstraints.size());
 
-        if ( proofs.size() != confidentialConstraints.size()) {
-            System.out.println("Proofs count mismatch. Expected: " + confidentialConstraints.size() +
-                    ", Received: " + (proofs != null ? proofs.size() : 0));
+        List<Constraint> filteredList= new ArrayList<>();
+        for(Constraint constraint : confidentialConstraints) {
+            System.out.println("Constr group id: " + constraint.getConstrGroupId());
+            System.out.println("Constr group id from toggle: " + constrGroupId);
+            if (constraint.getConstrGroupId() != null && constraint.getConstrGroupId().equals(constrGroupId)) {
+                filteredList.add(constraint);
+            }
+        }
+        System.out.println("Filtered constraints size: " + filteredList.size());
+
+        if (!filteredList.isEmpty() && !(proofs == null) && filteredList.size() != proofs.size()) {
+            return false;
+        }else if(filteredList.isEmpty()){
+            return true;
+        }else if(proofs == null){
             return false;
         }
 
+
+        for(ClientToggleEvaluationRequestDTO.ProofFromClientDTO proof : proofs) {
+
+            boolean haveSameContextname = false;
+            for (Constraint constraint : filteredList) {
+                if (constraint.getContextField().getName().equals(proof.getName())) {
+                    haveSameContextname = true;
+                }
+            }
+
+            if(!haveSameContextname) {
+                return false;
+            }
+        }
+
+//        if ( proofs.size() != confidentialConstraints.size()) {
+//            System.out.println("Proofs count mismatch. Expected: " + confidentialConstraints.size() +
+//                    ", Received: " + (proofs != null ? proofs.size() : 0));
+//            return false;
+//        }
+//
         Set<String> proofHashes = new HashSet<>();
 
-        for (JsonNode proof : proofs) {
+        for (ClientToggleEvaluationRequestDTO.ProofFromClientDTO proof : proofs) {
             try {
-                String proofHash = proof.hashCode() + proof.toString();
+                String proofHash = proof.getProof().hashCode() + proof.getProof().toString();
                 if (proofHashes.contains(proofHash)) {
                     System.out.println("Duplicate proof detected for context" );
                     return false;
@@ -637,13 +673,13 @@ public class ToggleService {
         List<Boolean> proofResults = new ArrayList<>();
         List<String> publicValues = new ArrayList<>();
 
-        for (JsonNode proof : proofs) {
+        for (ClientToggleEvaluationRequestDTO.ProofFromClientDTO proof : proofs) {
             try {
-                boolean isValid = zkpVerifier.verifyProof(proof);
+                boolean isValid = zkpVerifier.verifyProof(proof.getProof());
                 proofResults.add(isValid);
 
                 if (isValid) {
-                    JsonNode publicSignalsNode = proof.get("publicSignals");
+                    JsonNode publicSignalsNode = proof.getProof().get("publicSignals");
                     publicValues.add(publicSignalsNode.get(0).asText());
                     System.out.println("valoare public signals: " + publicSignalsNode.get(0).asText());
                 } else {

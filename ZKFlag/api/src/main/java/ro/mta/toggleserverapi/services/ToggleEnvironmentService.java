@@ -16,10 +16,8 @@ import ro.mta.toggleserverapi.repositories.ToggleRepository;
 import ro.mta.toggleserverapi.util.ConstraintUtil;
 
 import java.time.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -105,7 +103,8 @@ public class ToggleEnvironmentService {
     public Boolean evaluateToggleInContext(Toggle toggle,
                                            Environment environment,
                                            Long instanceId,
-                                           List<ClientToggleEvaluationRequestDTO.ContextFromClientDTO> contextFields) {
+                                           List<ClientToggleEvaluationRequestDTO.ContextFromClientDTO> contextFields,
+                                           Long constrGroupId) {
         ToggleEnvironment toggleEnvironment = fetchByToggleIdAndEnvIdAndInstanceId(toggle.getId(), environment.getId(), instanceId);
 
         if (toggleEnvironment != null && toggleEnvironment.getEnabled()) {
@@ -128,10 +127,22 @@ public class ToggleEnvironmentService {
                     })
                     .toList();
 
+            System.out.println("Filtred constraints: "+ filteredConstraints);
+
+
+            List<Constraint> filteredList= new ArrayList<>();
+            for(Constraint constraint : filteredConstraints) {
+                System.out.println("Constr group id: " + constraint.getConstrGroupId());
+                System.out.println("Constr group id from toggle: " + constrGroupId);
+                if (constraint.getConstrGroupId() != null && constraint.getConstrGroupId().equals(constrGroupId)) {
+                  filteredList.add(constraint);
+                }
+            }
+
             System.out.println("Evaluating toggle: " + toggle.getName() +
-                    "\nNon-confidential constraints: " + filteredConstraints +
+                    "\nNon-confidential constraints: " + filteredList +
                     "\nContext fields: " + contextFields);
-            return ConstraintUtil.validate(filteredConstraints, contextFields);
+            return ConstraintUtil.validate(filteredList, contextFields);
         } else {
             return Boolean.FALSE;
         }

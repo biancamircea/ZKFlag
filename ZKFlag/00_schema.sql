@@ -133,7 +133,8 @@ CREATE TABLE public.constraints (
     operator character varying(255),
     context_field_id bigint,
     toggle_id bigint NOT NULL,
-    isConfidential bigint
+    isConfidential bigint,
+    constrGroupId bigint
 );
 
 

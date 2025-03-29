@@ -89,7 +89,6 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
                         submitHandler={submitHandler}
                         edit
                         instanceId={instanceId}
-                        //pIsConfidential={pIsConfidential}
                     />
                 )}
             </Suspense>

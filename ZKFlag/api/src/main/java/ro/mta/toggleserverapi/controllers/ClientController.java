@@ -14,6 +14,7 @@ import ro.mta.toggleserverapi.entities.*;
 import ro.mta.toggleserverapi.repositories.EnvironmentRepository;
 import ro.mta.toggleserverapi.repositories.InstanceRepository;
 import ro.mta.toggleserverapi.repositories.ProjectRepository;
+import ro.mta.toggleserverapi.repositories.ToggleRepository;
 import ro.mta.toggleserverapi.services.ApiTokenService;
 import ro.mta.toggleserverapi.services.ProjectService;
 import ro.mta.toggleserverapi.services.ToggleEnvironmentService;
@@ -21,6 +22,8 @@ import ro.mta.toggleserverapi.services.ToggleService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @AllArgsConstructor
@@ -30,6 +33,7 @@ public class ClientController {
     private final ToggleService toggleService;
     private final ApiTokenService apiTokenService;
     private static final Logger LOG = LoggerFactory.getLogger(ClientController.class);
+    private final ToggleRepository toggleRepository;
 
     @PostMapping(path = "/evaluate")
     public ResponseEntity<?> evaluateClient(@RequestHeader("Authorization") String apiTokenStr,
@@ -42,24 +46,43 @@ public class ClientController {
         LOG.info("Client Evaluation request.");
         ApiToken apiToken = apiTokenService.checkApiToken(apiTokenStr);
 
-        Boolean check = toggleService.evaluateToggleInContext(
-                clientToggleEvaluationRequestDTO.getToggleName(),
-                apiTokenStr,
-                clientToggleEvaluationRequestDTO.getContextFields());
+        Toggle toggle=toggleRepository.findByNameAndProject(clientToggleEvaluationRequestDTO.getToggleName(), apiToken.getProject())
+                .orElseThrow(() -> new NoSuchElementException("Toggle not found"));
+        List<Constraint> constraints=toggle.getConstraints();
 
-        Boolean checkZKP= toggleService.evaluateProofs(clientToggleEvaluationRequestDTO.getToggleName(),
-                    apiTokenStr,clientToggleEvaluationRequestDTO.getProofs());
+        List<Long> distinctConstrGroupIds = constraints.stream()
+                .map(Constraint::getConstrGroupId)
+                .filter(Objects::nonNull)
+                .distinct()
+                .collect(Collectors.toList());
 
-
-        Boolean enable = check && checkZKP;
-        System.out.println("CHECK: "+check);
-        System.out.println("CHECK ZKP: "+checkZKP);
-        String payload = toggleService.getPayload(clientToggleEvaluationRequestDTO.getToggleName(), apiTokenStr, enable);
-
-        LOG.info("Client Evaluation processed.");
+        System.out.println("Distinct constr group ids size: " + distinctConstrGroupIds.size());
         ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = new ClientToggleEvaluationResponseDTO();
-        clientToggleEvaluationResponseDTO.setEnabled(enable);
-        clientToggleEvaluationResponseDTO.setPayload(payload);
+
+        for (Long constrGroupId : distinctConstrGroupIds) {
+            Boolean check = toggleService.evaluateToggleInContext(
+                    clientToggleEvaluationRequestDTO.getToggleName(),
+                    apiTokenStr,
+                    clientToggleEvaluationRequestDTO.getContextFields(),
+                    constrGroupId);
+
+            Boolean checkZKP= toggleService.evaluateProofs(clientToggleEvaluationRequestDTO.getToggleName(),
+                    apiTokenStr,clientToggleEvaluationRequestDTO.getProofs(), constrGroupId);
+
+            Boolean enable = check && checkZKP;
+            System.out.println("constrGroupId: " + constrGroupId + ", check: " + check + ", checkZKP: " + checkZKP);
+            if(enable){
+                String payload = toggleService.getPayload(clientToggleEvaluationRequestDTO.getToggleName(), apiTokenStr, enable);
+
+                clientToggleEvaluationResponseDTO.setEnabled(enable);
+                clientToggleEvaluationResponseDTO.setPayload(payload);
+                return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
+            }
+        }
+
+        String payload2 = toggleService.getPayload(clientToggleEvaluationRequestDTO.getToggleName(), apiTokenStr, false);
+        clientToggleEvaluationResponseDTO.setEnabled(false);
+        clientToggleEvaluationResponseDTO.setPayload(payload2);
 
         return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
     }

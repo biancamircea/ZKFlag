@@ -51,10 +51,6 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
         setContext(event.target.value || '');
     };
 
-    // const handleConfidentialChange = (event) => {
-    //     setIsConfidential(Number(event.target.value));
-    // };
-
     const handleSubmit = (event) => {
         event.preventDefault();
         const formData = new FormData(event.target);
@@ -70,7 +66,6 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
                     contextName: elementWithId?.name,
                     operator,
                     values,
-                    //isConfidential
                 });
             }
         } else {
@@ -78,7 +73,6 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
                 contextName: pContext.name,
                 operator: pOperator,
                 values,
-                //isConfidential
             });
         }
 
@@ -114,23 +108,6 @@ function FeatureToggleAddConstraintDialog({ onClose, open, contextFields, submit
                     }
 
                     {instanceId == null && <OperatorField defaultOperator={pOperator} />}
-
-                    {/*{instanceId == null &&*/}
-                    {/*<FormControl sx={{ m: 1, minWidth: 250 ,marginTop:"20px"}}>*/}
-                    {/*    <InputLabel id="confidential-select-label">Confidential</InputLabel>*/}
-                    {/*    <Select*/}
-                    {/*        labelId="confidential-select-label"*/}
-                    {/*        id="confidential-select"*/}
-                    {/*        name="isConfidential"*/}
-                    {/*        value={isConfidential}*/}
-                    {/*        onChange={handleConfidentialChange}*/}
-                    {/*        input={<OutlinedInput label="Confidential" />}*/}
-                    {/*    >*/}
-                    {/*        <MenuItem value={1}>Yes</MenuItem>*/}
-                    {/*        <MenuItem value={0}>No</MenuItem>*/}
-                    {/*    </Select>*/}
-                    {/*</FormControl>*/}
-                    {/*}*/}
 
                     <ConstraintValuesList
                         values={values}

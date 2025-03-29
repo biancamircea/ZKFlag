@@ -21,6 +21,7 @@ public class ApiTokenConverter {
         apiTokenDTO.setEnvironmentId(apiToken.getEnvironment().getHashId());
         apiTokenDTO.setEnvironmentName(apiToken.getEnvironment().getName());
         apiTokenDTO.setInstanceId(apiToken.getInstance().getHashId());
+        apiTokenDTO.setType(apiToken.getType());
         return apiTokenDTO;
     }
 }

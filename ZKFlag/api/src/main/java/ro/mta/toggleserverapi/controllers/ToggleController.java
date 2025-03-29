@@ -157,7 +157,7 @@ public class ToggleController {
                 .created(linkTo(methodOn(ToggleController.class).getToggle(updatedToggle.getHashId())).toUri())
                 .body(ToggleDTO.toDTO(updatedToggle));
     }
-
+//----------------------------------------------------------------------------------------------------------------------------
         @GetMapping("/projects/{projectId}/toggles/{toggleId}/constraints")
         public ResponseEntity<List<ConstraintDTO>> getAllConstraintsForToggle(@PathVariable String projectId,
                                                                               @PathVariable String toggleId) {
@@ -291,6 +291,8 @@ public class ToggleController {
             constraintValuesResponseDTO.setConstraintValues(constraintValues);
             return ResponseEntity.ok(constraintValuesResponseDTO);
         }
+
+        //-----------------------------------------------------------------------------------------------------------------------------
 
     @PutMapping(path = "/projects/{projectId}/toggles/{toggleId}/instances/{instanceId}/environments/{environmentId}/payload")
     public ResponseEntity<?> updatePayloadInToggleEnvironment(@RequestBody @Valid PayloadDTO payloadDTO,
