@@ -12,7 +12,6 @@ import {
 } from "../../../api/featureToggleApi.js";
 import {  useParams } from "react-router-dom";
 import AddConstraintToGroupButton from "../common/AddConstraintToGroupButton.jsx";
-import Tooltip from "@mui/material/Tooltip";
 import OrButton from "../common/OrButton.jsx";
 import AndButton from "../common/AndButton.jsx";
 
@@ -65,12 +64,12 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
 
 
     async function modifyConstraint(constraintId, data) {
-        if (constraints.some(el => el.contextName === data.contextName && el.id!==constraintId)) {
+        if (constraints.some(el => el.contextName === data.contextName && el.id!==constraintId && el.isConfidential === 1)) {
             toast.error("Constraint with same context name already exists.");
             return;
         }
 
-        if((data.operator==="GREATER_THAN" || data.operator==="LESS_THAN") && data.values.length>1){
+        if( data.values.length>1){
             toast.error("Only one value is allowed for this operator.");
             return;
         }

@@ -516,66 +516,6 @@ public class ToggleService {
         return filteredConstraints;
     }
 
-    public ClientToggleEvaluationResponseDTO evaluateToggleInContextZKP( String toggleName, String apiTokenStr, JsonNode proof) {
-        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = new ClientToggleEvaluationResponseDTO();
-
-        if(apiTokenStr.contains("Bearer")){
-            apiTokenStr = apiTokenStr.replace("Bearer ", "");
-        }
-        String[] parts =apiTokenStr.split(":");
-
-        String projectId = parts[0];
-        String instanceId =parts[1];
-        String environmentId = parts[2];
-
-        Long projectIdLong = projectRepository.findByHashId(projectId).orElseThrow().getId();
-        Long environmentIdLong = environmentRepository.findByHashId(environmentId).orElseThrow().getId();
-        Long instanceIdLong = instanceRepository.findByHashId(instanceId).orElseThrow().getId();
-        Environment environment = environmentRepository.findByHashId(environmentId).orElseThrow();
-
-        List<Toggle> toggles=fetchAllTogglesByProjectId(projectIdLong);
-        Toggle targetToggle = toggles.stream()
-                .filter(toggle -> toggle.getName().equals(toggleName))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Toggle not found with name: " + toggleName));
-
-        ToggleEnvironment toggleEnvironment= toggleEnvironmentService.fetchByToggleIdAndEnvIdAndInstanceId(targetToggle.getId(),environmentIdLong, instanceIdLong);
-
-        if(!toggleEnvironment.getEnabled()){
-            clientToggleEvaluationResponseDTO.setEnabled(false);
-            String payload = toggleEnvironmentService.getPayloadInToggleEnv(targetToggle, environment, instanceIdLong, false);
-            clientToggleEvaluationResponseDTO.setPayload(payload);
-            return clientToggleEvaluationResponseDTO;
-        }
-
-
-        ZKPVerifier zkpVerifier = new ZKPVerifier();
-        boolean isValid = false;
-        String publicValue = "0";
-
-        try {
-            isValid = zkpVerifier.verifyProof(proof);
-
-            if (isValid) {
-                JsonNode publicSignalsNode = proof.get("publicSignals");
-                String publicSignalsValue = publicSignalsNode.get(0).asText();
-                publicValue = publicSignalsValue;
-
-            }
-        } catch (Exception e) {
-            System.err.println("Eroare la verificare: " + e.getMessage());
-            e.printStackTrace();
-        }
-
-        String payload = toggleEnvironmentService.getPayloadInToggleEnv(targetToggle, environment, instanceIdLong, publicValue.equals("1"));
-
-        clientToggleEvaluationResponseDTO.setPayload(payload);
-        clientToggleEvaluationResponseDTO.setEnabled(publicValue.equals("1"));
-
-        return clientToggleEvaluationResponseDTO;
-    }
-
-
     public Boolean evaluateProofs(
             String toggleName,
             String apiTokenStr,
@@ -604,17 +544,14 @@ public class ToggleService {
         List<Constraint> confidentialConstraints = targetToggle.getConstraints().stream()
                 .filter(c -> c.getIsConfidential() != null && c.getIsConfidential() == 1)
                 .collect(Collectors.toList());
-        System.out.println("Confidential constraints size: " + confidentialConstraints.size());
 
         List<Constraint> filteredList= new ArrayList<>();
         for(Constraint constraint : confidentialConstraints) {
-            System.out.println("Constr group id: " + constraint.getConstrGroupId());
-            System.out.println("Constr group id from toggle: " + constrGroupId);
             if (constraint.getConstrGroupId() != null && constraint.getConstrGroupId().equals(constrGroupId)) {
                 filteredList.add(constraint);
             }
         }
-        System.out.println("Filtered constraints size: " + filteredList.size());
+
 
         if (!filteredList.isEmpty() && !(proofs == null) && filteredList.size() != proofs.size()) {
             return false;
@@ -629,6 +566,7 @@ public class ToggleService {
 
             boolean haveSameContextname = false;
             for (Constraint constraint : filteredList) {
+
                 if (constraint.getContextField().getName().equals(proof.getName())) {
                     haveSameContextname = true;
                 }
@@ -639,12 +577,6 @@ public class ToggleService {
             }
         }
 
-//        if ( proofs.size() != confidentialConstraints.size()) {
-//            System.out.println("Proofs count mismatch. Expected: " + confidentialConstraints.size() +
-//                    ", Received: " + (proofs != null ? proofs.size() : 0));
-//            return false;
-//        }
-//
         Set<String> proofHashes = new HashSet<>();
 
         for (ClientToggleEvaluationRequestDTO.ProofFromClientDTO proof : proofs) {
@@ -681,7 +613,6 @@ public class ToggleService {
                 if (isValid) {
                     JsonNode publicSignalsNode = proof.getProof().get("publicSignals");
                     publicValues.add(publicSignalsNode.get(0).asText());
-                    System.out.println("valoare public signals: " + publicSignalsNode.get(0).asText());
                 } else {
                     publicValues.add("0");
                 }

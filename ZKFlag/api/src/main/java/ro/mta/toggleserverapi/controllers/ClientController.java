@@ -38,10 +38,6 @@ public class ClientController {
     @PostMapping(path = "/evaluate")
     public ResponseEntity<?> evaluateClient(@RequestHeader("Authorization") String apiTokenStr,
                                             @RequestBody @Valid ClientToggleEvaluationRequestDTO clientToggleEvaluationRequestDTO) {
-        System.out.println("Client Evaluation request."+clientToggleEvaluationRequestDTO.getToggleName());
-        for (ClientToggleEvaluationRequestDTO.ContextFromClientDTO context : clientToggleEvaluationRequestDTO.getContextFields()) {
-            System.out.println("Name context field: " + context.getName() + ", Value context field: " + context.getValue());
-        }
 
         LOG.info("Client Evaluation request.");
         ApiToken apiToken = apiTokenService.checkApiToken(apiTokenStr);
@@ -56,7 +52,6 @@ public class ClientController {
                 .distinct()
                 .collect(Collectors.toList());
 
-        System.out.println("Distinct constr group ids size: " + distinctConstrGroupIds.size());
         ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = new ClientToggleEvaluationResponseDTO();
 
         for (Long constrGroupId : distinctConstrGroupIds) {
@@ -70,7 +65,6 @@ public class ClientController {
                     apiTokenStr,clientToggleEvaluationRequestDTO.getProofs(), constrGroupId);
 
             Boolean enable = check && checkZKP;
-            System.out.println("constrGroupId: " + constrGroupId + ", check: " + check + ", checkZKP: " + checkZKP);
             if(enable){
                 String payload = toggleService.getPayload(clientToggleEvaluationRequestDTO.getToggleName(), apiTokenStr, enable);
 
@@ -97,24 +91,6 @@ public class ClientController {
         System.out.println("Constraints: "+filteredConstraints);
 
         return ResponseEntity.ok(filteredConstraints);
-    }
-
-    @PostMapping(path="/evaluateZKP")
-    public ResponseEntity<?> evaluateAgeZKP(@RequestHeader("Authorization") String apiTokenStr,
-                                            @RequestBody @Valid ClientToggleEvaluationRequestZKPDTO clientToggleEvaluationRequestZKPDTO) {
-
-        LOG.info("Client Evaluation request.");
-        System.out.println("Client Evaluation request: evaluate age ZKP.");
-        ApiToken apiToken = apiTokenService.checkApiToken(apiTokenStr);
-        System.out.println("Client Evaluation request: apiToken checked.");
-
-        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = toggleService.evaluateToggleInContextZKP(
-                clientToggleEvaluationRequestZKPDTO.getToggleName(),
-                apiTokenStr,
-                clientToggleEvaluationRequestZKPDTO.getProof());
-
-
-        return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
     }
 
 }
