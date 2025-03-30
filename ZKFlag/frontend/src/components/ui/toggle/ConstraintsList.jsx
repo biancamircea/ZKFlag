@@ -12,6 +12,9 @@ import {
 } from "../../../api/featureToggleApi.js";
 import {  useParams } from "react-router-dom";
 import AddConstraintToGroupButton from "../common/AddConstraintToGroupButton.jsx";
+import Tooltip from "@mui/material/Tooltip";
+import OrButton from "../common/OrButton.jsx";
+import AndButton from "../common/AndButton.jsx";
 
 function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refreshConstraints }) {
     const { projectId } = useParams();
@@ -107,70 +110,82 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
         }
     }
 
-    const constraintsItemsEl = constraints.map(el => (
-        <ConstraintListItem
-            key={el.id}
-            constraintId={el.id}
-            contextName={el}
-            operator={el.operator}
-            values={el.values}
-            remove={() => deleteConstraint(el.id)}
-            update={(data) => modifyConstraint(el.id, data)}
-            instanceId={instanceId}
-            environmentId={environmentId}
-            toggleId={toggleId}
-        />
-    ));
-
-
     return (
         <>
-        <div
-            className="toggle-environment-constraints-container"
-            style={constraints.length === 0 ? disabledStyle : null}
-        >
-            <div className="header">
-                <img
-                    src={"/images/environment.png"}
-                    alt={"Environment"}
-                    className="environment-icon"
-                />
-                {
-                    constraints.length > 0 && instanceId == null &&
-                    <DeleteAllConstraintsBtn deleteHandler={deleteAllConstraints} />
-                }
-            </div>
-            {constraints.length === 0 ? (
-                <EmptyList resource={"constraint"} recommend={"Add constraints to manage feature toggles effectively."} />
-            ) : (
-                Object.entries(groupedConstraints).map(([groupId, groupConstraints]) => (
-                    <div key={groupId} className="constraint-group group-container">
-                        <div className="constraint-group-header">
-                            <span>Group {groupId}</span>
-                            <AddConstraintToGroupButton submitHandler={addConstraint} groupId={groupId} />
+            <div
+                className="toggle-environment-constraints-container"
+                style={constraints.length === 0 ? disabledStyle : null}
+            >
+                <div className="header">
+                    <img
+                        src={"/images/environment.png"}
+                        alt={"Environment"}
+                        className="environment-icon"
+                    />
+                    {constraints.length > 0 && instanceId == null && (
+                        <DeleteAllConstraintsBtn deleteHandler={deleteAllConstraints} />
+                    )}
+                </div>
+
+                {constraints.length === 0 ? (
+                    <EmptyList resource={"constraint"} recommend={"Add constraints to manage feature toggles effectively."} />
+                ) : (
+                    Object.entries(groupedConstraints).map(([groupId, groupConstraints], index) => (
+                        <div key={groupId} className="constraint-group group-container">
+                            <br />
+                            <div className="constraint-group-header" style={{ display: "flex", justifyContent: "space-between", width: "100%" }}>
+                                <div style={{ flex: 1, display: "flex", alignItems: "flex-start" }}>
+                                    <span>{index + 1}.</span>
+                                </div>
+
+                                <div className="or-button-container"
+                                     style={{
+                                         display: "flex",
+                                         justifyContent: "center",
+                                         alignItems: "center",
+                                         flex: 1
+                                     }}
+                                >
+                                {index > 0 && (
+                                        <OrButton/>
+                                )}
+                                </div>
+
+                                <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
+                                {instanceId == null &&
+                                    <AddConstraintToGroupButton submitHandler={addConstraint} groupId={groupId} />
+                                }
+                                </div>
+                            </div>
+
+                            {groupConstraints.map((el, i) => (
+                                <React.Fragment key={el.id}>
+                                    <ConstraintListItem
+                                        constraintId={el.id}
+                                        contextName={el}
+                                        operator={el.operator}
+                                        values={el.values}
+                                        remove={() => deleteConstraint(el.id)}
+                                        update={(data) => modifyConstraint(el.id, data)}
+                                        instanceId={instanceId}
+                                        environmentId={environmentId}
+                                        toggleId={toggleId}
+                                    />
+
+                                    {i < groupConstraints.length - 1 && (
+                                        <div className={"or-button"}    style={{ display: "flex", justifyContent: "flex-start", alignItems: "center"}}>
+                                           <AndButton/>
+                                        </div>
+                                    )}
+                                </React.Fragment>
+                            ))}
 
                         </div>
-                        {groupConstraints.map(el => (
-                            <ConstraintListItem
-                                key={el.id}
-                                constraintId={el.id}
-                                contextName={el}
-                                operator={el.operator}
-                                values={el.values}
-                                remove={() => deleteConstraint(el.id)}
-                                update={(data) => modifyConstraint(el.id, data)}
-                                instanceId={instanceId}
-                                environmentId={environmentId}
-                                toggleId={toggleId}
-                            />
-                        ))}
-                    </div>
-                ))
-            )}
-        </div>
-    {instanceId == null && <AddConstraintButton submitHandler={addConstraint} />}
+                    ))
+                )}
+            </div>
+            {instanceId == null && <AddConstraintButton submitHandler={addConstraint} />}
         </>
-    );
-}
+    );}
 
-export default ConstraintsList;
+    export default ConstraintsList;

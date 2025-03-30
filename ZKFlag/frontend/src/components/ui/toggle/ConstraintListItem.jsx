@@ -19,7 +19,6 @@ function ConstraintListItem({contextName, operator, values, remove, update,insta
                 </span>
             <div className={"operator"}>
                 <span className={"title"}>{operator}</span>
-                {/*<span className={"description gray-text"}>is {operator === "IN" ? "" : "not"} one of</span>*/}
             </div>
             <div className={"values"}>
                 {valuesString}
@@ -34,7 +33,6 @@ function ConstraintListItem({contextName, operator, values, remove, update,insta
                     constraintId={constraintId}
                     toggleId={toggleId}
                     environmentId={environmentId}
-                    //pIsConfidential={pIsConfidential}
                 />
                 {instanceId == null &&  <DeleteIconNoDialog
                     deleteHandler={remove}

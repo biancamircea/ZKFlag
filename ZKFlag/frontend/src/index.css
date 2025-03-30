@@ -198,7 +198,7 @@ header {
   align-items: center;
   justify-content: center;
   padding: 8px;
-  border-radius: 50%;
+  border-radius:2px;
   transition: background-color 0.3s;
   cursor: pointer;
   /*border: 1px solid red;*/
@@ -2339,4 +2339,29 @@ margin-top: 20px;
   border-radius: 8px;
   padding: 16px;
   margin-bottom: 12px;
+}
+
+.or-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  padding: 5px 15px;
+  border-radius: 20px;
+  width: 60px;
+  text-align: center;
+}
+
+.and-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: black;
+  font-weight: bold;
+  padding: 2px 8px;
+  border-radius: 12px;
+  position: relative;
+  z-index: 2;
+  width: 50px;
+  text-align: center;
 }

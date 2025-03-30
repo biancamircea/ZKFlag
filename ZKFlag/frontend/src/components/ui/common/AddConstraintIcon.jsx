@@ -8,11 +8,11 @@ function AddConstraintIcon({ onClick }) {
                 event.stopPropagation();
                 onClick();
             }}
-            className={"action-icon-wrapper"}>
-            <Tooltip title={"Add constraint"} arrow>
-                <img src={"/images/add-constraint.webp"}
+            style={{display:"flex",justifyContent:"center"}}>
+            <Tooltip title={"Add an OR constraint"} arrow>
+                <img src={"/images/add_constraint.png"}
                      alt={"Add"}
-                     className={"action-icon"} />
+                     className={"small-icon"} />
             </Tooltip>
         </div>
     );
