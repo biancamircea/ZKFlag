@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
-import {FeatureFlagContext} from "../../Components/FeatureFlagContext";
+import {FeatureFlagContext} from "../../Components/FeatureFlags/FeatureFlagContext";
 
 const Home = () => {
     const navigate = useNavigate();
@@ -74,17 +74,17 @@ const Home = () => {
 
     }, [userId]);
 
-    useEffect(() => {
-        const fetchFeatureStatus = async () => {
-            const featureName = "feature_imagine";
-            const contextFields = [{ name: "port", value: `${process.env.REACT_APP_API_PORT}` }];
-            const featureData = await checkFeature(featureName, contextFields);
-
-            setImageURL(featureData.payload || "");
-        };
-
-        fetchFeatureStatus();
-    }, [checkFeature]);
+    // useEffect(() => {
+    //     const fetchFeatureStatus = async () => {
+    //         const featureName = "feature_imagine";
+    //         const contextFields = [{ name: "port", value: `${process.env.REACT_APP_API_PORT}` }];
+    //         const featureData = await checkFeature(featureName, contextFields);
+    //
+    //         setImageURL(featureData.payload || "");
+    //     };
+    //
+    //     fetchFeatureStatus();
+    // }, [checkFeature]);
 
 
     return (

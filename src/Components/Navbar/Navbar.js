@@ -82,10 +82,10 @@ const Navbar = () => {
         <div>
             <nav className="navbar">
                 <div className="navbar-logo" onClick={() => navigate("/home")}>
-                    <img src="../../../logo.png" alt="Logo" className="logo-image" />
+                    <img src="../../../images/logo.png" alt="Logo" className="logo-image" />
                 </div>
                 <div className="navbar-logo">
-                    <img src="../../../titlu2.png" alt="Title" className="title" />
+                    <img src="../../../images/titlu2.png" alt="Title" className="title" />
                 </div>
                 <div className="navbar-icons">
                     <div className="notification-bell" onClick={toggleNotificationList}>
