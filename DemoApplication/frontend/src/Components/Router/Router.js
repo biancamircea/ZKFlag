@@ -68,14 +68,14 @@ const AuthProvider = ({ children }) => {
     const [role, setRole] = useState(
         () => localStorage.getItem("role") || null
     );
-
-
+    const { setDepartmentName } = useDepartment();
 
     const login = (role) => {
         setIsAuthenticated(true);
         setRole(role);
         localStorage.setItem("role", role);
         localStorage.setItem("isAuthenticated", "true");
+        setDepartmentName(null);
     };
 
     const logout = () => {
@@ -85,6 +85,7 @@ const AuthProvider = ({ children }) => {
         localStorage.removeItem("role");
         localStorage.removeItem("idUser");
         localStorage.removeItem("token");
+        setDepartmentName(null);
     };
 
     return (
