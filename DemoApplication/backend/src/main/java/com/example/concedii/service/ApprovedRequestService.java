@@ -100,11 +100,11 @@ public class ApprovedRequestService {
         ApprovedRequest savedApprovedRequest = approvedRequestRepository.save(approvedRequest);
 
         ToggleSystemContext context = ToggleSystemContext.builder()
-                .addProperty("port", "3000")
+                .addContext("port", "3000")
                 .build();
 
 
-        boolean isEnabled=toggleSystemClient.isEnabled("send_email_and_notifications",context);
+        boolean isEnabled=toggleSystemClient.isEnabled("feature_test",context);
 
         System.out.println("isEnabled cu context: "+isEnabled);
 
@@ -113,7 +113,7 @@ public class ApprovedRequestService {
                     submittedRequest.getReason(), newStartDate, newEndDate);
             notificationService.createNotification(message, "requests", employee.getEmployeeId());
 
-            sendApprovalEmail(employee, submittedRequest);
+            //sendApprovalEmail(employee, submittedRequest);
         }
 
         return savedApprovedRequest;

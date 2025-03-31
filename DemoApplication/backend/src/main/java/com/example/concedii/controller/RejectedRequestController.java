@@ -68,13 +68,13 @@ public class RejectedRequestController {
         RejectedRequest createdRequest = rejectedRequestService.createRejectedRequest(rejectedRequest);
 
         ToggleSystemContext context = ToggleSystemContext.builder()
-                .addProperty("port", "3000")
+                .addContext("port", "3000")
                 .build();
-        boolean isEnabled=toggleSystemClient.isEnabled("send_email_and_notifications",context);
+        boolean isEnabled=toggleSystemClient.isEnabled("feature_test",context);
 
 
         if(isEnabled) {
-            sendRejectionEmail(submittedRequest.getEmployee(), rejectedRequest);
+            //sendRejectionEmail(submittedRequest.getEmployee(), rejectedRequest);
 
             String message = String.format("Your request for %s from %s to %s has been rejected.",
                     submittedRequest.getReason(), submittedRequest.getStartDate(), submittedRequest.getEndDate());

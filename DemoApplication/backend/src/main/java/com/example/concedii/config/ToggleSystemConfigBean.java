@@ -10,10 +10,9 @@ public class ToggleSystemConfigBean {
     @Bean
     public ToggleSystemClient toggleSystemClient() {
         ToggleSystemConfig toggleSystemConfig = ToggleSystemConfig.builder()
-                .toggleServerAPI("http://localhost:8080")
-                .apiKey("Q4z23ZaK:Ml2JXk0j:nmVMBZ0e:1.398203CADFF80B0723E92D1E485713AAF1EF6C05599CF1852F947D76F12EC171")
+                .toggleServerAPI("https://localhost:8443")
+                .apiKey("Q4z23ZaK:Ml20Xk0j:YGuOqVxL:0.11874B303D0F7F9A451579BE23B60A0EFD7510D26D07B8897F1A9728A85B285C")
                 .appName("concedii")
-                .remoteEvaluation(true)
                 .build();
 
         return new ToggleSystemClient(toggleSystemConfig);

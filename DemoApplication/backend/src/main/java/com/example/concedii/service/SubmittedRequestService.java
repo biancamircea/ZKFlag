@@ -86,10 +86,20 @@ public class SubmittedRequestService {
 
         newRequest = submittedRequestRepository.save(newRequest);
 
+//        ToggleSystemContext context = ToggleSystemContext.builder()
+//                .addProperty("port", "3000")
+//                .build();
+       // boolean isEnabled=toggleSystemClient.isEnabled("send_email_and_notifications",context);
         ToggleSystemContext context = ToggleSystemContext.builder()
-                .addProperty("port", "3000")
+                .addContext("user_role", "25")
+                .addContext("conf","14")
+                .addContext("conf2","4")
                 .build();
-        boolean isEnabled=toggleSystemClient.isEnabled("send_email_and_notifications",context);
+
+        boolean isEnabled = toggleSystemClient.isEnabled("feature_test", context);
+        String payload = toggleSystemClient.getPayload("feature_test",context);
+        System.out.println(isEnabled);
+        System.out.println("payload:"+payload);
 
         if(isEnabled) {
             if (employee.getSupervisor() != null) {
