@@ -39,8 +39,8 @@ public class ApiTokenService {
         String[] subParts = parts[3].split("\\.");
         Integer toggleType = Integer.parseInt(subParts[0]);
 
-        Instance instance = instanceRepository.findByHashId(instanceId).orElseThrow();
-        Environment environment = environmentRepository.findByHashId(environmentId).orElseThrow();
+        Instance instance = instanceRepository.findByHashId(instanceId) .orElseThrow(() -> new ApiTokenNotValidException());
+        Environment environment = environmentRepository.findByHashId(environmentId) .orElseThrow(() -> new ApiTokenNotValidException());
 
         if(!instanceEnvironmentService.isActive(instance.getId(), environment.getId())){
             throw new ApiTokenNotValidException();

@@ -430,18 +430,21 @@ public class ToggleService {
             List<ClientToggleEvaluationRequestDTO.ContextFromClientDTO> contextFields,
             Long constrGroupId) {
 
-        Project project=apiToken.getProject();
-        Instance instance=apiToken.getInstance();
-        Environment environment=apiToken.getEnvironment();
-        Integer toggleType= Math.toIntExact(apiToken.getType());
+        try {
+            Project project = apiToken.getProject();
+            Instance instance = apiToken.getInstance();
+            Environment environment = apiToken.getEnvironment();
+            Integer toggleType = Math.toIntExact(apiToken.getType());
 
+            Toggle toggle = toggleRepository.findByNameAndProjectAndToggleType(toggleName, project, toggleType)
+                    .orElseThrow(() -> new ToggleNotFoundException(toggleName, project.getId()));
 
-        Toggle toggle = toggleRepository.findByNameAndProjectAndToggleType(toggleName, project, toggleType)
-                .orElseThrow(() -> new ToggleNotFoundException(toggleName, project.getId()));
-
-        Boolean enabled = toggleEnvironmentService.evaluateToggleInContext(toggle, environment, instance.getId(), contextFields,constrGroupId);
-        System.out.println("enabled "+toggleName+" "+enabled);
-       return enabled;
+            Boolean enabled = toggleEnvironmentService.evaluateToggleInContext(toggle, environment, instance.getId(), contextFields, constrGroupId);
+            System.out.println("enabled " + toggleName + " " + enabled);
+            return enabled;
+        } catch (ToggleNotFoundException e) {
+            return false;
+        }
     }
 
     public List<ConstraintValueDTO> getConstraintValues(Long constraintId) {
@@ -452,33 +455,46 @@ public class ToggleService {
     }
 
 
-    public List<ConstraintDTO> getConstraints(ApiToken apiToken, String toggleName){
-        Project project=apiToken.getProject();
-        Instance instance=apiToken.getInstance();
-        Environment environment=apiToken.getEnvironment();
+    public List<ConstraintDTO> getConstraints(ApiToken apiToken, String toggleName) {
+        try {
+            Project project = apiToken.getProject();
+            Instance instance = apiToken.getInstance();
+            Environment environment = apiToken.getEnvironment();
 
-        List<Toggle> toggles=fetchAllTogglesByProjectId(project.getId());
-        Toggle targetToggle = toggles.stream()
-                .filter(toggle -> toggle.getName().equals(toggleName))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Toggle not found with name: " + toggleName));
+            List<Toggle> toggles = fetchAllTogglesByProjectId(project.getId());
+            Toggle targetToggle = toggles.stream()
+                    .filter(toggle -> toggle.getName().equals(toggleName))
+                    .findFirst()
+                    .orElseThrow(() -> new NoSuchElementException("Toggle not found with name: " + toggleName));
 
-        ToggleEnvironment toggleEnvironment= toggleEnvironmentService.fetchByToggleIdAndEnvIdAndInstanceId(targetToggle.getId(),environment.getId(), instance.getId());
+            ToggleEnvironment toggleEnvironment = toggleEnvironmentService.fetchByToggleIdAndEnvIdAndInstanceId(
+                    targetToggle.getId(), environment.getId(), instance.getId());
 
-        List<ConstraintDTO> filteredConstraints = targetToggle.getConstraints().stream().map(constraint -> {
-            List<ConstraintValue> specificValues = constraint.getValues().stream()
-                    .filter(cv -> cv.getToggleEnvironment() != null && toggleEnvironment.getId().equals(cv.getToggleEnvironment().getId()))
+            if (targetToggle.getConstraints() == null || targetToggle.getConstraints().isEmpty()) {
+                return Collections.emptyList();
+            }
+
+            List<ConstraintDTO> result = targetToggle.getConstraints().stream()
+                    .map(constraint -> {
+                        List<ConstraintValue> specificValues = constraint.getValues().stream()
+                                .filter(cv -> cv.getToggleEnvironment() != null
+                                        && toggleEnvironment.getId().equals(cv.getToggleEnvironment().getId()))
+                                .toList();
+                        List<ConstraintValue> defaultValues = constraint.getValues().stream()
+                                .filter(cv -> cv.getToggleEnvironment() == null)
+                                .toList();
+
+                        List<ConstraintValue> selectedValues = !specificValues.isEmpty() ? specificValues : defaultValues;
+                        constraint.setValues(selectedValues);
+                        return ConstraintDTO.toDTO(constraint);
+                    })
+                    .filter(Objects::nonNull)
                     .toList();
-            List<ConstraintValue> defaultValues = constraint.getValues().stream()
-                    .filter(cv -> cv.getToggleEnvironment() == null)
-                    .toList();
 
-            List<ConstraintValue> selectedValues = !specificValues.isEmpty() ? specificValues : defaultValues;
-            constraint.setValues(selectedValues);
-            return ConstraintDTO.toDTO(constraint);
-        }).toList();
-
-        return filteredConstraints;
+            return result.isEmpty() ? Collections.emptyList() : result;
+        } catch (NoSuchElementException e) {
+            return Collections.emptyList();
+        }
     }
 
     public Boolean verifyAllProofsZKP(List<ClientToggleEvaluationRequestDTO.ProofFromClientDTO> proofs){
@@ -524,7 +540,7 @@ public class ToggleService {
 
         List<Constraint> confidentialConstraints = toggle.getConstraints().stream()
                 .filter(c -> c.getIsConfidential() != null && c.getIsConfidential() == 1)
-                .collect(Collectors.toList());
+                .toList();
 
         List<Constraint> filteredList= new ArrayList<>();
         for(Constraint constraint : confidentialConstraints) {
@@ -578,19 +594,19 @@ public class ToggleService {
     }
 
 
-    public String getPayload(String toggleName,ApiToken apiToken, Boolean enable) {
-
-        Project project=apiToken.getProject();
-        Instance instance=apiToken.getInstance();
-        Environment environment=apiToken.getEnvironment();
+    public String getPayload(String toggleName, ApiToken apiToken, Boolean enable) {
+        Project project = apiToken.getProject();
+        Instance instance = apiToken.getInstance();
+        Environment environment = apiToken.getEnvironment();
 
         List<Toggle> toggles = fetchAllTogglesByProjectId(project.getId());
-        Toggle targetToggle = toggles.stream()
+        Optional<Toggle> targetToggle = toggles.stream()
                 .filter(toggle -> toggle.getName().equals(toggleName))
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Toggle not found with name: " + toggleName));
+                .findFirst();
 
-        return toggleEnvironmentService.getPayloadInToggleEnv(targetToggle, environment, instance.getId(), enable);
+        return targetToggle.map(toggle ->
+                        toggleEnvironmentService.getPayloadInToggleEnv(toggle, environment, instance.getId(), enable))
+                .orElse("default");
     }
 
 

@@ -43,19 +43,26 @@ public class ClientController {
         LOG.info("Client Evaluation request.");
         ApiToken apiToken = apiTokenService.checkApiToken(apiTokenStr);
 
-        Toggle toggle=toggleRepository.findByNameAndProject(clientToggleEvaluationRequestDTO.getToggleName(), apiToken.getProject())
-                .orElseThrow(() -> new NoSuchElementException("Toggle not found"));
-        List<Constraint> constraints=toggle.getConstraints();
+        try {
+            Toggle toggle =toggleRepository.findByNameAndProjectAndToggleType(clientToggleEvaluationRequestDTO.getToggleName(),apiToken.getProject(),Math.toIntExact(apiToken.getType()))
+                    .orElseThrow(() -> new NoSuchElementException("Toggle not found"));
+            List<Constraint> constraints = toggle.getConstraints();
 
-        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO=toggleService.combinedEvaluateToggle(
-                toggle,
-                apiToken,
-                clientToggleEvaluationRequestDTO.getContextFields(),
-                clientToggleEvaluationRequestDTO.getProofs(),
-                constraints
-        );
+            ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = toggleService.combinedEvaluateToggle(
+                    toggle,
+                    apiToken,
+                    clientToggleEvaluationRequestDTO.getContextFields(),
+                    clientToggleEvaluationRequestDTO.getProofs(),
+                    constraints
+            );
 
-        return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
+            return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
+        } catch (NoSuchElementException e) {
+            ClientToggleEvaluationResponseDTO defaultResponse = new ClientToggleEvaluationResponseDTO();
+            defaultResponse.setEnabled(false);
+            defaultResponse.setPayload("default");
+            return ResponseEntity.ok(defaultResponse);
+        }
     }
 
     @PostMapping(path = "/constraints")
