@@ -2,32 +2,30 @@ package ro.mta.sdk;
 
 public class Main {
     public static void main(String[] args) {
+
         ToggleSystemConfig toggleSystemConfig = ToggleSystemConfig.builder()
-                .toggleServerAPI("http://localhost:8080")
-                .instanceId("1")
-                .apiKey("1:1:1.C76EFF5D24B48E506758D87CC688E6C439467404E5F9F91593B6B3B43DD66976")
-                .remoteEvaluation(true)
-                .cacheTimeout(10)
-                .appName("demo")
-                .environment("production")
+                .toggleServerAPI("https://localhost:8443")
+                .apiKey("Q4z23ZaK:Ml2JXk0j:YG5OqVxL:0.11874B303D0F7F9A451579BE23B60A0EFD7510D26D07B8897F1A9728A85B285C")
+                .appName("concedii")
                 .build();
-
-        ToggleSystemContextProvider toggleSystemContextProvider = ToggleSystemContextProvider.getDefaultProvider();
-        ToggleSystemContext toggleSystemContext = toggleSystemConfig.getToggleSystemContextProvider().getContext();
-
-        ToggleSystemContext context = ToggleSystemContext.builder()
-                .userId("user@mail.com").build();
 
         ToggleSystemClient systemClient = new ToggleSystemClient(toggleSystemConfig);
 
-        while (true){
-            if(systemClient.isEnabled("feat1")) {
-                System.out.println("DA");
-            } else {
-                System.out.println("NU");
-            }
+        ToggleSystemContext context = ToggleSystemContext.builder()
+                .addContext("user_role", "25")
+                .addContext("conf","14")
+                .addContext("conf2","4")
+                .build();
 
-        }
-//        Long a = 3L;
+        boolean isEnabled = systemClient.isEnabled("background-color",context);
+        String payload = systemClient.getPayload("background-color",context);
+        System.out.println(isEnabled);
+        System.out.println("payload:"+payload);
+
+        boolean isEnabled2 = systemClient.isEnabled("background-color",context);
+        System.out.println("isEn2: "+isEnabled2);
+
+        boolean isEnabled4 = systemClient.isEnabled("feature_test");
+        System.out.println("isEn4: "+isEnabled4);
     }
 }
