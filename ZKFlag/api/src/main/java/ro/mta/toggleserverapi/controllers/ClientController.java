@@ -20,6 +20,7 @@ import ro.mta.toggleserverapi.services.ProjectService;
 import ro.mta.toggleserverapi.services.ToggleEnvironmentService;
 import ro.mta.toggleserverapi.services.ToggleService;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -46,37 +47,13 @@ public class ClientController {
                 .orElseThrow(() -> new NoSuchElementException("Toggle not found"));
         List<Constraint> constraints=toggle.getConstraints();
 
-        List<Long> distinctConstrGroupIds = constraints.stream()
-                .map(Constraint::getConstrGroupId)
-                .filter(Objects::nonNull)
-                .distinct()
-                .collect(Collectors.toList());
-
-        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = new ClientToggleEvaluationResponseDTO();
-
-        for (Long constrGroupId : distinctConstrGroupIds) {
-            Boolean check = toggleService.evaluateToggleInContext(
-                    clientToggleEvaluationRequestDTO.getToggleName(),
-                    apiTokenStr,
-                    clientToggleEvaluationRequestDTO.getContextFields(),
-                    constrGroupId);
-
-            Boolean checkZKP= toggleService.evaluateProofs(clientToggleEvaluationRequestDTO.getToggleName(),
-                    apiTokenStr,clientToggleEvaluationRequestDTO.getProofs(), constrGroupId);
-
-            Boolean enable = check && checkZKP;
-            if(enable){
-                String payload = toggleService.getPayload(clientToggleEvaluationRequestDTO.getToggleName(), apiTokenStr, enable);
-
-                clientToggleEvaluationResponseDTO.setEnabled(enable);
-                clientToggleEvaluationResponseDTO.setPayload(payload);
-                return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
-            }
-        }
-
-        String payload2 = toggleService.getPayload(clientToggleEvaluationRequestDTO.getToggleName(), apiTokenStr, false);
-        clientToggleEvaluationResponseDTO.setEnabled(false);
-        clientToggleEvaluationResponseDTO.setPayload(payload2);
+        ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO=toggleService.combinedEvaluateToggle(
+                toggle,
+                apiToken,
+                clientToggleEvaluationRequestDTO.getContextFields(),
+                clientToggleEvaluationRequestDTO.getProofs(),
+                constraints
+        );
 
         return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
     }
@@ -86,7 +63,7 @@ public class ClientController {
         System.out.println("Get constraints request.");
         ApiToken apiToken = apiTokenService.checkApiToken(apiTokenStr);
 
-        List<ConstraintDTO> filteredConstraints = toggleService.getConstraints(apiTokenStr, toggleName);
+        List<ConstraintDTO> filteredConstraints = toggleService.getConstraints(apiToken, toggleName);
 
         System.out.println("Constraints: "+filteredConstraints);
 
