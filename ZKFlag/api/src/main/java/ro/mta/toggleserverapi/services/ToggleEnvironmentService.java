@@ -56,10 +56,12 @@ public class ToggleEnvironmentService {
 
     @Transactional
     public void enableByToggleIdEnvNameAndInstanceId(Long toggleId, String environmentName, Long instanceId) {
+        System.out.println("intra in enable toggle din toggle env service");
         ToggleEnvironment toggleEnvironment = fetchByToggleIdEnvNameAndInstanceId(toggleId, environmentName, instanceId);
         toggleEnvironment.setEnabled(Boolean.TRUE);
 
         toggleEnvironmentRepository.save(toggleEnvironment);
+        System.out.println("stare noua: "+ toggleEnvironment.getEnabled());
     }
 
     public ToggleEnvironment fetchByToggleIdEnvNameAndInstanceId(Long toggleId, String environmentName, Long instanceId) {
@@ -84,11 +86,13 @@ public class ToggleEnvironmentService {
 
     @Transactional
     public void disableByToggleIdEnvNameAndInstanceId(Long toggleId, String environmentName, Long instanceId) {
+        System.out.println("intra in disable toggle din toggle env service");
         ToggleEnvironment toggleEnvironment = toggleEnvironmentRepository.findByToggleIdEnvNameAndInstanceId(toggleId, environmentName, instanceId)
                 .orElseThrow(() -> new NoSuchElementException("ToggleEnvironment not found for given toggle, environment, and instance."));
 
         toggleEnvironment.setEnabled(false);
         toggleEnvironmentRepository.save(toggleEnvironment);
+        System.out.println("stare noua= " + toggleEnvironment.getEnabled());
 
     }
 

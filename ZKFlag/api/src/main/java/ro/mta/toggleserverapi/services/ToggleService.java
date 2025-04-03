@@ -175,7 +175,7 @@ public class ToggleService {
     }
 
     public void enableToggleInEnvironment(Long projectId, Long toggleId, String environmentName, Long instanceId) {
-
+        System.out.println("intra in enable toggle din toggle service");
         Toggle toggle = fetchToggleByProjectIdAndToggleId(projectId, toggleId);
         Environment environment = environmentService.fetchEnvironmentByName(environmentName);
         Instance instance = instanceService.fetchInstance(instanceId);
@@ -187,6 +187,7 @@ public class ToggleService {
     }
 
     public void disableToggleInEnvironment(Long projectId, Long toggleId, String environmentName, Long instanceId) {
+        System.out.println("intra in disable toggle din toggle service");
         Toggle toggle = fetchToggleByProjectIdAndToggleId(projectId, toggleId);
         Environment environment = environmentService.fetchEnvironmentByName(environmentName);
         Instance instance = instanceService.fetchInstance(instanceId);

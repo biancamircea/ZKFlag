@@ -54,6 +54,7 @@ public class SecurityConfig  {
                         .requestMatchers("/auth/logout").permitAll()
                         .requestMatchers("/auth/me").authenticated()
                         .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/toggle-schedule/**").permitAll()
 
                         .requestMatchers("/events/**").authenticated()
 
