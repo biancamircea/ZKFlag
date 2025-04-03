@@ -1001,6 +1001,44 @@ ALTER TABLE ONLY public.instance_environment
 ALTER TABLE ONLY public.instances
     ADD CONSTRAINT instances_project_id_fkey FOREIGN KEY (project_id) REFERENCES public.projects(id) ON DELETE CASCADE;
 
+--
+-- Name: scheduled_tasks; Type: TABLE; Schema: public; Owner: bianca
+--
+
+CREATE TABLE public.scheduled_tasks (
+    task_name VARCHAR(128) NOT NULL,
+    task_instance VARCHAR(128) NOT NULL,
+    task_data BYTEA,
+    execution_time TIMESTAMP WITH TIME ZONE NOT NULL,
+    picked BOOLEAN NOT NULL DEFAULT FALSE,
+    picked_by VARCHAR(50),
+    last_success TIMESTAMP WITH TIME ZONE,
+    last_failure TIMESTAMP WITH TIME ZONE,
+    consecutive_failures INT NOT NULL DEFAULT 0,
+    last_heartbeat TIMESTAMP WITH TIME ZONE,
+    version BIGINT NOT NULL DEFAULT 0,
+    PRIMARY KEY (task_name, task_instance)
+);
+
+ALTER TABLE public.scheduled_tasks OWNER TO bianca;
+
+--
+-- Name: execution_time_idx; Type: INDEX; Schema: public; Owner: bianca
+--
+
+CREATE INDEX execution_time_idx ON public.scheduled_tasks (execution_time);
+
+--
+-- Name: last_heartbeat_idx; Type: INDEX; Schema: public; Owner: bianca
+--
+
+CREATE INDEX last_heartbeat_idx ON public.scheduled_tasks (last_heartbeat);
+
+--
+-- Name: priority_execution_time_idx; Type: INDEX; Schema: public; Owner: bianca
+--
+
+CREATE INDEX priority_execution_time_idx ON public.scheduled_tasks (execution_time, picked);
 
 --
 -- PostgreSQL database dump complete

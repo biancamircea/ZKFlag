@@ -85,6 +85,7 @@ public OneTimeTask<String> deactivateToggleTask(ToggleService toggleService) {
 @Bean
 public RecurringTask<String> activateToggleRecurringDaily(ToggleService toggleService) {
     return Tasks.recurring("activate-toggle-daily", FixedDelay.ofMinutes(7), String.class)
+            .doNotScheduleOnStartup()
             .execute((instance, executionContext) -> {
                 try {
                     String taskData = instance.getData();
@@ -114,8 +115,9 @@ public RecurringTask<String> activateToggleRecurringDaily(ToggleService toggleSe
         }
 
 @Bean
-public RecurringTask<String> deactivateToggleRecurring(ToggleService toggleService) {
+public RecurringTask<String> deactivateToggleRecurringDaily(ToggleService toggleService) {
     return Tasks.recurring("deactivate-toggle-daily", FixedDelay.ofMinutes(7), String.class)
+            .doNotScheduleOnStartup()
             .execute((instance, executionContext) -> {
                 String taskData = instance.getData();
                 System.out.println("Raw task data: " + instance.getData());
@@ -142,6 +144,7 @@ public RecurringTask<String> deactivateToggleRecurring(ToggleService toggleServi
     @Bean
     public RecurringTask<String> activateToggleRecurringWeekly(ToggleService toggleService) {
         return Tasks.recurring("activate-toggle-weekly", FixedDelay.ofHours(7*24), String.class)
+                .doNotScheduleOnStartup()
                 .execute((instance, executionContext) -> {
                     try {
                         String taskData = instance.getData();
@@ -173,6 +176,7 @@ public RecurringTask<String> deactivateToggleRecurring(ToggleService toggleServi
     @Bean
     public RecurringTask<String> deactivateToggleRecurringWeekly(ToggleService toggleService) {
         return Tasks.recurring("deactivate-toggle-weekly", FixedDelay.ofHours(7*24), String.class)
+                .doNotScheduleOnStartup()
                 .execute((instance, executionContext) -> {
                     String taskData = instance.getData();
                     System.out.println("Raw task data: " + instance.getData());
@@ -198,6 +202,7 @@ public RecurringTask<String> deactivateToggleRecurring(ToggleService toggleServi
     @Bean
     public RecurringTask<String> activateToggleRecurringMonthly(ToggleService toggleService) {
         return Tasks.recurring("activate-toggle-monthly", FixedDelay.ofHours(30*7*24), String.class)
+                .doNotScheduleOnStartup()
                 .execute((instance, executionContext) -> {
                     try {
                         String taskData = instance.getData();
@@ -229,6 +234,7 @@ public RecurringTask<String> deactivateToggleRecurring(ToggleService toggleServi
     @Bean
     public RecurringTask<String> deactivateToggleRecurringMonthly(ToggleService toggleService) {
         return Tasks.recurring("deactivate-toggle-monthly", FixedDelay.ofHours(30*24), String.class)
+                .doNotScheduleOnStartup()
                 .execute((instance, executionContext) -> {
                     String taskData = instance.getData();
                     System.out.println("Raw task data: " + instance.getData());

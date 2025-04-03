@@ -1,79 +1,80 @@
 import React, { useState } from 'react';
 import { toast } from 'react-toastify';
-import { Dialog, DialogActions, DialogContent, DialogTitle } from '@mui/material';
+import {
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogTitle,
+    FormControl,
+    InputLabel,
+    MenuItem,
+    Select,
+    TextField,
+    Button
+} from '@mui/material';
 import { Form } from 'react-router-dom';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import './styles/ScheduleIntervalDialog.css';
+import { scheduleToggle } from '../../../api/featureToggleApi';
 
-function ScheduleIntervalDialog({ onClose, open, onSave }) {
+function ScheduleIntervalDialog({ onClose, open, onSave, projectId, toggleId, instanceId, environmentName }) {
     const [startDate, setStartDate] = useState(null);
     const [startHour, setStartHour] = useState("");
     const [startMinute, setStartMinute] = useState("");
     const [endDate, setEndDate] = useState(null);
     const [endHour, setEndHour] = useState("");
     const [endMinute, setEndMinute] = useState("");
+    const [recurrence, setRecurrence] = useState("ONE_TIME");
+
+    const createDateTime = (date, hours, minutes) => {
+        if (!date || hours === "" || minutes === "") return null;
+
+        const newDate = new Date(date);
+        newDate.setHours(parseInt(hours, 10));
+        newDate.setMinutes(parseInt(minutes, 10));
+        newDate.setSeconds(0);
+        newDate.setMilliseconds(0);
+
+        return newDate;
+    };
 
     const handleClose = () => {
         onClose();
     };
 
-    function handleSubmit(event) {
+    const handleSubmit = async (event) => {
         event.preventDefault();
 
-        if (!startDate || !startHour || !startMinute || !endDate || !endHour || !endMinute) {
-            toast.error("All fields are required!");
+        if (!projectId || !toggleId || !instanceId || !environmentName) {
+            toast.error('Missing required parameters');
             return;
         }
 
-        const now = new Date();
+        const activateAt = new Date(startDate);
+        activateAt.setHours(parseInt(startHour), parseInt(startMinute), 0, 0);
 
-        const startDateTime = new Date(startDate);
-        startDateTime.setHours(parseInt(startHour, 10), parseInt(startMinute, 10), 0, 0);
+        const deactivateAt = new Date(endDate);
+        deactivateAt.setHours(parseInt(endHour), parseInt(endMinute), 0, 0);
 
-        const endDateTime = new Date(endDate);
-        endDateTime.setHours(parseInt(endHour, 10), parseInt(endMinute, 10), 0, 0);
-
-        if (startDateTime < now) {
-            toast.error("Start date and time must not be in the past!");
-            return;
+        try {
+            await scheduleToggle(
+                projectId,
+                toggleId,
+                instanceId,
+                environmentName,
+                activateAt,
+                deactivateAt,
+                recurrence
+            );
+            toast.success("Schedule created successfully!");
+            onSave();
+            handleClose();
+        } catch (error) {
+            console.error('Error:', error);
+            toast.error(`Failed to create schedule: ${error.message}`);
         }
-
-        if (endDateTime < now) {
-            toast.error("End date and time must not be in the past!");
-            return;
-        }
-
-        if (endDateTime <= startDateTime) {
-            toast.error("End date and time must be after the start date and time!");
-            return;
-        }
-
-        const formattedDate2 = endDate
-            ? endDate.toLocaleDateString("en-GB")
-            : "No date selected";
-        const formattedTime2 =
-            endHour && endMinute
-                ? `${endHour}:${endMinute}`
-                : "No time selected";
-
-        const formattedDate1 = startDate
-            ? startDate.toLocaleDateString("en-GB")
-            : "No date selected";
-        const formattedTime1 =
-            startHour && startMinute
-                ? `${startHour}:${startMinute}`
-                : "No time selected";
-
-        onSave({
-                startDate: formattedDate1,
-                startTime: formattedTime1,
-                endDate: formattedDate2,
-                endTime: formattedTime2,
-        });
-
-        handleClose();
-    }
+    };
 
     return (
         <Dialog
@@ -83,101 +84,166 @@ function ScheduleIntervalDialog({ onClose, open, onSave }) {
             maxWidth="sm"
             fullWidth
         >
-            <DialogTitle className="schedule-interval-dialog-title">Schedule Interval of Activation</DialogTitle>
+            <DialogTitle className="schedule-interval-dialog-title">
+                Schedule Interval of Activation
+            </DialogTitle>
             <Form method="post" onSubmit={handleSubmit}>
                 <DialogContent className="schedule-interval-dialog-content">
                     <div className="schedule-interval-dialog-fields">
-                        <div className="schedule-interval-dialog-field-item">
-                            <label htmlFor="startDate">Start Date:</label>
+                        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                            <InputLabel id="recurrence-label">Recurrence</InputLabel>
+                            <Select
+                                labelId="recurrence-label"
+                                id="recurrence-select"
+                                value={recurrence}
+                                label="Recurrence"
+                                onChange={(e) => setRecurrence(e.target.value)}
+                            >
+                                <MenuItem value="ONE_TIME">One Time</MenuItem>
+                                <MenuItem value="DAILY">Daily</MenuItem>
+                                <MenuItem value="WEEKLY">Weekly</MenuItem>
+                                <MenuItem value="MONTHLY">Monthly</MenuItem>
+                            </Select>
+                        </FormControl>
+
+                        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                            <InputLabel shrink htmlFor="start-date">
+                                Start Date
+                            </InputLabel>
                             <DatePicker
                                 selected={startDate}
                                 onChange={(date) => setStartDate(date)}
                                 className="schedule-interval-dialog-datepicker"
                                 dateFormat="dd/MM/yyyy"
                                 placeholderText="Select start date"
+                                minDate={new Date()}
                                 isClearable
+                                customInput={
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        id="start-date"
+                                        sx={{ mt: 1 }}
+                                    />
+                                }
                             />
-                        </div>
-                        <div className="schedule-interval-dialog-field-item">
-                            <label>Start Time:</label>
-                            <div className="schedule-interval-dialog-time-container">
-                                <select
+                        </FormControl>
+
+                        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                            <InputLabel shrink id="start-hour-label">Start Time</InputLabel>
+                            <div className="time-select-container">
+                                <Select
+                                    labelId="start-hour-label"
+                                    id="start-hour"
                                     value={startHour}
+                                    label="Hour"
                                     onChange={(e) => setStartHour(e.target.value)}
-                                    className="schedule-interval-dialog-timepicker"
+                                    size="small"
+                                    sx={{ width: '48%', mr: '4%' }}
                                 >
-                                    <option value="">HH</option>
+                                    <MenuItem value="">HH</MenuItem>
                                     {Array.from({ length: 24 }, (_, i) => (
-                                        <option key={i} value={i < 10 ? `0${i}` : `${i}`}>
-                                            {i < 10 ? `0${i}` : `${i}`}
-                                        </option>
+                                        <MenuItem
+                                            key={i}
+                                            value={i.toString().padStart(2, '0')}
+                                        >
+                                            {i.toString().padStart(2, '0')}
+                                        </MenuItem>
                                     ))}
-                                </select>
-                                :
-                                <select
+                                </Select>
+                                <Select
+                                    id="start-minute"
                                     value={startMinute}
+                                    label="Minute"
                                     onChange={(e) => setStartMinute(e.target.value)}
-                                    className="schedule-interval-dialog-timepicker"
+                                    size="small"
+                                    sx={{ width: '48%' }}
                                 >
-                                    <option value="">MM</option>
+                                    <MenuItem value="">MM</MenuItem>
                                     {Array.from({ length: 60 }, (_, i) => (
-                                        <option key={i} value={i < 10 ? `0${i}` : `${i}`}>
-                                            {i < 10 ? `0${i}` : `${i}`}
-                                        </option>
+                                        <MenuItem
+                                            key={i}
+                                            value={i.toString().padStart(2, '0')}
+                                        >
+                                            {i.toString().padStart(2, '0')}
+                                        </MenuItem>
                                     ))}
-                                </select>
+                                </Select>
                             </div>
-                        </div>
-                        <div className="schedule-interval-dialog-field-item">
-                            <label htmlFor="endDate">End Date:</label>
+                        </FormControl>
+
+                        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                            <InputLabel shrink htmlFor="end-date">
+                                End Date
+                            </InputLabel>
                             <DatePicker
                                 selected={endDate}
                                 onChange={(date) => setEndDate(date)}
                                 className="schedule-interval-dialog-datepicker"
                                 dateFormat="dd/MM/yyyy"
                                 placeholderText="Select end date"
+                                minDate={startDate || new Date()}
                                 isClearable
+                                customInput={
+                                    <TextField
+                                        fullWidth
+                                        size="small"
+                                        id="end-date"
+                                        sx={{ mt: 1 }}
+                                    />
+                                }
                             />
-                        </div>
-                        <div className="schedule-interval-dialog-field-item">
-                            <label>End Time:</label>
-                            <div className="schedule-interval-dialog-time-container">
-                                <select
+                        </FormControl>
+
+                        <FormControl fullWidth size="small" sx={{ mb: 2 }}>
+                            <InputLabel shrink id="end-hour-label">End Time</InputLabel>
+                            <div className="time-select-container">
+                                <Select
+                                    labelId="end-hour-label"
+                                    id="end-hour"
                                     value={endHour}
+                                    label="Hour"
                                     onChange={(e) => setEndHour(e.target.value)}
-                                    className="schedule-interval-dialog-timepicker"
+                                    size="small"
+                                    sx={{ width: '48%', mr: '4%' }}
                                 >
-                                    <option value="">HH</option>
+                                    <MenuItem value="">HH</MenuItem>
                                     {Array.from({ length: 24 }, (_, i) => (
-                                        <option key={i} value={i < 10 ? `0${i}` : `${i}`}>
-                                            {i < 10 ? `0${i}` : `${i}`}
-                                        </option>
+                                        <MenuItem
+                                            key={i}
+                                            value={i.toString().padStart(2, '0')}
+                                        >
+                                            {i.toString().padStart(2, '0')}
+                                        </MenuItem>
                                     ))}
-                                </select>
-                                :
-                                <select
+                                </Select>
+                                <Select
+                                    id="end-minute"
                                     value={endMinute}
+                                    label="Minute"
                                     onChange={(e) => setEndMinute(e.target.value)}
-                                    className="schedule-interval-dialog-timepicker"
+                                    size="small"
+                                    sx={{ width: '48%' }}
                                 >
-                                    <option value="">MM</option>
+                                    <MenuItem value="">MM</MenuItem>
                                     {Array.from({ length: 60 }, (_, i) => (
-                                        <option key={i} value={i < 10 ? `0${i}` : `${i}`}>
-                                            {i < 10 ? `0${i}` : `${i}`}
-                                        </option>
+                                        <MenuItem
+                                            key={i}
+                                            value={i.toString().padStart(2, '0')}
+                                        >
+                                            {i.toString().padStart(2, '0')}
+                                        </MenuItem>
                                     ))}
-                                </select>
+                                </Select>
                             </div>
-                        </div>
+                        </FormControl>
                     </div>
                 </DialogContent>
-                <DialogActions className="schedule-interval-dialog-actions">
-                    <button className="schedule-interval-dialog-cancel-btn" onClick={handleClose}>
+                <DialogActions>
+                    <button className="schedule-dialog-cancel-btn" onClick={(event) => { event.preventDefault(); handleClose(); }}>
                         Cancel
                     </button>
-                    <button type="submit" className="schedule-interval-dialog-save-btn">
-                        Save
-                    </button>
+                    <button className="schedule-dialog-save-btn" type="submit">Save</button>
                 </DialogActions>
             </Form>
         </Dialog>

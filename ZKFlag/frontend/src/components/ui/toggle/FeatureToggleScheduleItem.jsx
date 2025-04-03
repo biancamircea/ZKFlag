@@ -1,87 +1,73 @@
 import React, { useState, useEffect } from 'react';
-import ScheduleActivationDialog from './ScheduleActivationDialog';
-import ScheduleDeactivationDialog from './ScheduleDeactivationDialog';
 import ScheduleIntervalDialog from './ScheduleIntervalDialog';
-import { setToggleSchedule, getStrategyForEnvironment } from '../../../api/featureToggleApi';
+import { getToggleStrategies, cancelScheduledToggle } from '../../../api/featureToggleApi';
 import { toast } from 'react-toastify';
 
-function FeatureToggleScheduleItem({ environmentName, featureId, environmentId,instanceId }) {
-    const [isActivationOpen, setIsActivationOpen] = useState(false);
-    const [isDeactivationOpen, setIsDeactivationOpen] = useState(false);
+function FeatureToggleScheduleItem({ environmentName, featureId, environmentId, instanceId,projectId }) {
     const [isIntervalOpen, setIsIntervalOpen] = useState(false);
-    const [schedulingStrategy, setSchedulingStrategy] = useState(null);
+    const [strategyPairs, setStrategyPairs] = useState([]);
 
     useEffect(() => {
-        const fetchSchedulingStrategy = async () => {
+        const fetchAndGroupStrategies = async () => {
             try {
-                const schedule = await getStrategyForEnvironment(featureId, environmentId,instanceId);
-                if (schedule && (schedule.startDate || schedule.startOn || schedule.endDate || schedule.startOff)) {
-                    const strategyDetails = {
-                        startDate: schedule.startDate || null,
-                        startTime: schedule.startOn || null,
-                        endDate: schedule.endDate || null,
-                        endTime: schedule.startOff || null,
-                    };
-
-                    let strategyType = null;
-                    if ((schedule.startDate || schedule.startOn) && !(schedule.endDate || schedule.startOff)) {
-                        strategyType = "Activation";
-                    } else if (!(schedule.startDate || schedule.startOn) && (schedule.endDate || schedule.startOff)) {
-                        strategyType = "Deactivation";
-                    } else if (schedule.startDate && schedule.endDate) {
-                        strategyType = "Interval";
-                    }
-
-                    setSchedulingStrategy({ type: strategyType, details: strategyDetails });
-                } else {
-                    setSchedulingStrategy(null);
-                }
+                const strategies = await getToggleStrategies(featureId, instanceId, environmentName);
+                setStrategyPairs(groupStrategies(strategies));
             } catch (error) {
-                toast.error(`Failed to fetch scheduling strategy: ${error.message}`);
+                if (error.message !== "No scheduling strategies found for the specified criteria") {
+                    toast.error(`Failed to fetch scheduling strategies: ${error.message}`);
+                }
+                setStrategyPairs([]);
             }
         };
 
-        fetchSchedulingStrategy();
-    }, [ featureId, environmentId]);
+        fetchAndGroupStrategies();
+    }, [featureId, environmentId, instanceId, environmentName]);
 
-    const handleSaveStrategy = async (strategy, details) => {
-        const formatDate = (date) => {
-            const [day, month, year] = date.split('/');
-            return `${year}-${month}-${day}`;
-        };
+    const groupStrategies = (strategies) => {
+        const groups = {};
 
-        const formatTime = (time) => {
-            return `${time}:00`;
-        };
+        strategies.forEach(strategy => {
+            const baseInstanceId = strategy.taskInstanceId;
 
-        const scheduleData = {
-            startOn: details.startTime ? `${formatTime(details.startTime)}` : null,
-            startOff: details.endTime ? `${formatTime(details.endTime)}` : null,
-            startDate: details.startDate ? formatDate(details.startDate) : null,
-            endDate: details.endDate ? formatDate(details.endDate) : null,
-        };
+            if (!groups[baseInstanceId]) {
+                groups[baseInstanceId] = {
+                    instanceId: baseInstanceId,
+                    activation: null,
+                    deactivation: null,
+                    recurrenceType: strategy.recurenceType
+                };
+            }
 
-        try {
-            await setToggleSchedule(featureId, environmentId,instanceId, scheduleData)
-            setSchedulingStrategy({ type: strategy, details });
-            toast.success('Scheduling strategy saved successfully!');
-        } catch (error) {
-            toast.error(`Failed to save strategy: ${error.message}`);
+            if (strategy.taskType === 'activate') {
+                groups[baseInstanceId].activation = strategy;
+            } else {
+                groups[baseInstanceId].deactivation = strategy;
+            }
+        });
+
+        return Object.values(groups);
+    };
+
+    const formatDateTime = (instant) => {
+        if (!instant) return 'Not scheduled';
+        return new Date(instant).toLocaleString();
+    };
+
+    const getRecurrenceDisplay = (recurrenceType) => {
+        switch(recurrenceType) {
+            case 'ONE_TIME': return 'One-time Schedule';
+            case 'DAILY': return 'Daily Schedule';
+            case 'WEEKLY': return 'Weekly Schedule';
+            case 'MONTHLY': return 'Monthly Schedule';
+            default: return recurrenceType;
         }
     };
 
-    const handleDeleteStrategy = async () => {
+    const handleDeletePair = async (baseInstanceId) => {
         try {
-            const resetScheduleData = {
-                startOn: null,
-                startOff: null,
-                startDate: null,
-                endDate: null,
-            };
-
-            await setToggleSchedule(featureId, environmentId,instanceId, resetScheduleData)
-            setSchedulingStrategy(null);
-            toast.success('Scheduling strategy deleted successfully!');
+            await cancelScheduledToggle(baseInstanceId);
+            setStrategyPairs(prev => prev.filter(pair => pair.instanceId !== baseInstanceId));
+            toast.success('Scheduled strategy pair deleted successfully!');
         } catch (error) {
             toast.error(`Failed to delete strategy: ${error.message}`);
         }
@@ -95,90 +81,46 @@ function FeatureToggleScheduleItem({ environmentName, featureId, environmentId,i
             </div>
 
             <div className="schedule-status-container">
-                {schedulingStrategy ? (
-                    <div>
-                        <p className="no-strategy-message">
-                            Scheduled Strategy: <strong>{schedulingStrategy?.type || "No strategy"}</strong>
-                        </p>
-                        {schedulingStrategy?.details?.startDate && schedulingStrategy?.details?.startTime && (
-                            <p className="no-strategy-message">
-                                Start Date:{" "}
-                                <strong>
-                                    {schedulingStrategy.details.startDate} at {schedulingStrategy.details.startTime}
-                                </strong>
-                            </p>
-                        )}
-                        {schedulingStrategy?.details?.startDate && !schedulingStrategy?.details?.startTime && (
-                            <p className="no-strategy-message">
-                                Start Date:{" "}
-                                <strong>
-                                    {schedulingStrategy.details.startDate}
-                                </strong>
-                            </p>
-                        )}
-                        {!schedulingStrategy?.details?.startDate && schedulingStrategy?.details?.startTime && (
-                            <p className="no-strategy-message">
-                                Start Hour:{" "}
-                                <strong>
-                                    {schedulingStrategy.details.startTime}
-                                </strong>
-                            </p>
-                        )}
-                        {schedulingStrategy?.details?.endDate && (
-                            <p className="no-strategy-message">
-                                End Date:{" "}
-                                <strong>
-                                    {schedulingStrategy.details.endDate} at {schedulingStrategy.details.endTime}
-                                </strong>
-                            </p>
-                        )}
-                        <div className="schedule-buttons">
-                            <button onClick={handleDeleteStrategy}>
-                                Delete scheduling strategy
-                            </button>
-                        </div>
+                {strategyPairs.length > 0 ? (
+                    <div className="strategy-pairs-container">
+                        {strategyPairs.map((pair, index) => (
+                            <div key={index} className="strategy-pair" style={{ display: "flex", justifyContent: "space-between", alignItems: "center", width: "100%" }}>
+                                <div style={{ flex:"1",display: "flex", alignItems: "center" }}>
+                                    <h4 className="strategy-title">{getRecurrenceDisplay(pair.recurrenceType)}</h4>
+                                </div>
+                                <div style={{ flex:"1",display: "flex", alignItems: "center" }}>
+                                    <p className="strategy-time"><strong>Activation:</strong> {formatDateTime(pair.activation?.executionTime)}</p>
+                                </div>
+                                <div style={{ flex:"1",display: "flex", alignItems: "center" }}>
+                                    <p className="strategy-time"><strong>Deactivation:</strong> {formatDateTime(pair.deactivation?.executionTime)}</p>
+                                </div>
+                                <div style={{ flex:"1",display: "flex", justifyContent:"flex-end", alignItems: "center" }}>
+                                    <button onClick={() => handleDeletePair(pair.instanceId)} className="delete-pair-btn">
+                                        Delete this schedule
+                                    </button>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 ) : (
-                    <div>
-                        <p className="no-strategy-message">No scheduling strategy</p>
-                        <div className="schedule-buttons">
-                            <button onClick={() => setIsActivationOpen(true)}>
-                                Schedule activation
-                            </button>
-                            <button onClick={() => setIsDeactivationOpen(true)}>
-                                Schedule deactivation
-                            </button>
-                            <button onClick={() => setIsIntervalOpen(true)}>
-                                Schedule interval of activation
-                            </button>
-                        </div>
-                    </div>
+                    <p className="no-strategy-message">No scheduling strategy</p>
                 )}
+
+                <div style={{display:"flex", justifyContent:"center", alignItems: "center"}}>
+                    <button onClick={() => setIsIntervalOpen(true)}>
+                        Schedule activation
+                    </button>
+                </div>
             </div>
 
-            <ScheduleActivationDialog
-                open={isActivationOpen}
-                onClose={() => setIsActivationOpen(false)}
-                onSave={(details) => {
-                    handleSaveStrategy("Activation", details);
-                    setIsActivationOpen(false);
-                }}
-            />
-            <ScheduleDeactivationDialog
-                open={isDeactivationOpen}
-                onClose={() => setIsDeactivationOpen(false)}
-                onSave={(details) => {
-                    handleSaveStrategy("Deactivation", details);
-                    setIsDeactivationOpen(false);
-                }}
-            />
             <ScheduleIntervalDialog
                 open={isIntervalOpen}
                 onClose={() => setIsIntervalOpen(false)}
-                onSave={(details) => {
-                    handleSaveStrategy("Interval", details);
-                    setIsIntervalOpen(false);
-                }}
+                onSave={(details) => setIsIntervalOpen(false)}
+                projectId={projectId}
+                toggleId={featureId}
+                instanceId={instanceId}
+                environmentName={environmentName}
             />
         </div>
     );

@@ -360,38 +360,38 @@ public class ToggleController {
         return ResponseEntity.noContent().build();
     }
 
-    @PutMapping(path = "/toggles/{toggleId}/instances/{instanceId}/environments/{environmentId}/schedule")
-    public ResponseEntity<?> setToggleSchedule(@RequestBody ToggleScheduleDTO toggleScheduleDTO,
-                                               @PathVariable String toggleId,
-                                               @PathVariable String instanceId,
-                                               @PathVariable String environmentId) {
-        Environment env=environmentRepository.findByHashId(environmentId).orElseThrow();
-        Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
-        Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
-        ToggleEnvironment updatedToggleEnvironment = toggleEnvironmentService.setToggleSchedule(
-                toggle.getId(),
-                env.getId(),
-                instance.getId(),
-                toggleScheduleDTO.getStartOn(),
-                toggleScheduleDTO.getStartOff(),
-                toggleScheduleDTO.getStartDate(),
-                toggleScheduleDTO.getEndDate(),
-                ZoneId.of("Europe/Bucharest")
-        );
-        return ResponseEntity.ok(updatedToggleEnvironment);
-    }
-
-
-    @GetMapping(path = "/toggles/{toggleId}/instances/{instanceId}/schedule_strategies")
-    public List<ToggleScheduleDTO> getAllStrategiesForFlag( @PathVariable String toggleId, @PathVariable String instanceId) {
-        Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
-        Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
-        List<ToggleScheduleDTO> strategies = toggleService.getAllStrategiesForFlag( toggle.getId(),instance.getId());
-        for (ToggleScheduleDTO toggleScheduleDTO : strategies) {
-            System.out.println("ToggleEnvironmentDTO: " + toggleScheduleDTO.getEnvironmentId()+" "+ toggleScheduleDTO.getStartDate());
-        }
-        return strategies;
-    }
+//    @PutMapping(path = "/toggles/{toggleId}/instances/{instanceId}/environments/{environmentId}/schedule")
+//    public ResponseEntity<?> setToggleSchedule(@RequestBody ToggleScheduleDTO toggleScheduleDTO,
+//                                               @PathVariable String toggleId,
+//                                               @PathVariable String instanceId,
+//                                               @PathVariable String environmentId) {
+//        Environment env=environmentRepository.findByHashId(environmentId).orElseThrow();
+//        Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
+//        Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
+//        ToggleEnvironment updatedToggleEnvironment = toggleEnvironmentService.setToggleSchedule(
+//                toggle.getId(),
+//                env.getId(),
+//                instance.getId(),
+//                toggleScheduleDTO.getStartOn(),
+//                toggleScheduleDTO.getStartOff(),
+//                toggleScheduleDTO.getStartDate(),
+//                toggleScheduleDTO.getEndDate(),
+//                ZoneId.of("Europe/Bucharest")
+//        );
+//        return ResponseEntity.ok(updatedToggleEnvironment);
+//    }
+//
+//
+//    @GetMapping(path = "/toggles/{toggleId}/instances/{instanceId}/schedule_strategies")
+//    public List<ToggleScheduleDTO> getAllStrategiesForFlag( @PathVariable String toggleId, @PathVariable String instanceId) {
+//        Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
+//        Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
+//        List<ToggleScheduleDTO> strategies = toggleService.getAllStrategiesForFlag( toggle.getId(),instance.getId());
+//        for (ToggleScheduleDTO toggleScheduleDTO : strategies) {
+//            System.out.println("ToggleEnvironmentDTO: " + toggleScheduleDTO.getEnvironmentId()+" "+ toggleScheduleDTO.getStartDate());
+//        }
+//        return strategies;
+//    }
 
 
     @GetMapping("/toggles/{toggleId}/environments/{envId}/instances/{instanceId}/enabled")
@@ -405,5 +405,14 @@ public class ToggleController {
         Toggle toggle = toggleService.fetchToggleById(toggle2.getId());
         Boolean isEnabled = toggleEnvironmentService.fetchByToggleAndEnvIdAndInstanceId(toggle, env.getId(), instance.getId());
         return ResponseEntity.ok(isEnabled);
+    }
+
+    @GetMapping("/toggles/{toggleId}/getProjectId")
+    public ResponseEntity<?> getProjectByToggleId(@PathVariable String toggleId) {
+        System.out.println("intra aici: "+toggleId);
+        Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
+        Project project = toggle.getProject();
+        System.out.println("id="+project.getHashId());
+        return ResponseEntity.ok(project.getHashId());
     }
 }

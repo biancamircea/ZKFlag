@@ -294,28 +294,6 @@ export async function deletePayloadFromToggleEnv(projectId, toggleId, environmen
     }
 }
 
-export async function setToggleSchedule(toggleId, environmentId, instanceId, scheduleData) {
-    const url = `${toggleBaseUrl}/${toggleId}/instances/${instanceId}/environments/${environmentId}/schedule`;
-    try {
-        const response = await fetch(url, {
-            method: 'PUT',
-            credentials: "include",
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(scheduleData),
-        });
-
-        if (!response.ok) {
-            throw new Error(`Failed to save schedule: ${response.statusText}`);
-        }
-
-        return await response.json();
-    } catch (error) {
-        throw error;
-    }
-}
-
 
 export async function getAllStrategiesForFlag(toggleId, instanceId) {
     const url = `${toggleBaseUrl}/${toggleId}/instances/${instanceId}/schedule_strategies`;
@@ -449,5 +427,130 @@ export async function uploadFile(file) {
         }
     } catch (error) {
         throw error;
+    }
+}
+
+
+export async function getToggleStrategies(toggleId, instanceId, environmentName) {
+    const url = `/api/toggle-schedule/strategies`;
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                toggleId,
+                instanceId,
+                environmentName
+            })
+        });
+
+        if (!response.ok) {
+            if (response.status === 404) {
+                throw new Error("No scheduling strategies found for the specified criteria");
+            } else {
+                const errorText = await response.text();
+                throw new Error(errorText || "Error retrieving strategies");
+            }
+        }
+        return await response.json();
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('Network error occurred. Please check your internet connection.');
+        } else {
+            throw error;
+        }
+    }
+}
+
+
+export async function scheduleToggle(projectId, toggleId, instanceId, environmentName, activateAt, deactivateAt, recurrence = "ONE_TIME") {
+    const url = '/api/toggle-schedule/schedule';
+
+    const formatDate = (date) => {
+        return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
+    };
+
+    const requestBody = {
+        projectId,
+        toggleId,
+        instanceId,
+        environmentName,
+        activateAt: formatDate(activateAt),
+        deactivateAt: formatDate(deactivateAt),
+        recurrence
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || `Error scheduling toggle: ${response.statusText}`);
+        }
+
+        return await response.text();
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('Network error occurred. Please check your internet connection.');
+        } else {
+            throw error;
+        }
+    }
+}
+
+
+export async function cancelScheduledToggle(taskInstance) {
+    const encodedTaskInstance = encodeURIComponent(taskInstance);
+    const url = `/api/toggle-schedule/cancel/${encodedTaskInstance}`;
+
+    try {
+        const response = await fetch(url, {
+            method: 'DELETE',
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText || `Error canceling scheduled toggle: ${response.statusText}`);
+        }
+
+        return await response.text();
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('Network error occurred. Please check your internet connection.');
+        } else {
+            throw error;
+        }
+    }
+}
+
+export async function getProjectByToggleId(toggleId) {
+    const url = `/api/toggles/${toggleId}/getProjectId`;
+    try {
+        const response = await fetch(url, { credentials: "include" });
+        if (!response.ok) {
+            throw new Error(`Error retrieving project ID: ${response.statusText}`);
+        }
+       return await response.text();
+
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('Network error occurred. Please check your internet connection.');
+        } else {
+            throw error;
+        }
     }
 }

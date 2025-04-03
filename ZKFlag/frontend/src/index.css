@@ -2365,3 +2365,82 @@ margin-top: 20px;
   width: 50px;
   text-align: center;
 }
+/*SCHEDULE*/
+
+.schedule-interval-dialog-recurrence {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 5px;
+  background-color: white;
+}
+
+.schedule-interval-dialog-datepicker {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-top: 5px;
+}
+
+.schedule-interval-dialog-timepicker {
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin: 0 5px;
+}
+
+/* Add required field styling */
+select:required:invalid {
+  color: #666;
+}
+option[value=""][disabled] {
+  display: none;
+}
+option {
+  color: #000;
+}
+
+.time-select-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 16px;
+}
+
+/* Adjust date picker input to match Material-UI style */
+.react-datepicker-wrapper {
+  width: 100%;
+}
+
+/* Style for the form controls */
+.schedule-interval-dialog-content .MuiFormControl-root {
+  margin-bottom: 24px;
+}
+
+/* Dialog actions styling */
+.schedule-interval-dialog-actions {
+  padding: 16px 24px;
+  justify-content: flex-end;
+}
+
+/* Add to your ScheduleIntervalDialog.css */
+.time-select-container {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 8px;
+}
+
+.schedule-interval-dialog-content .MuiFormControl-root {
+  margin-bottom: 16px;
+}
+
+.schedule-interval-dialog-actions {
+  padding: 16px 24px;
+}
+
+/* Adjust the date picker input */
+.react-datepicker-wrapper {
+  width: 100%;
+  margin-top: 8px;
+}

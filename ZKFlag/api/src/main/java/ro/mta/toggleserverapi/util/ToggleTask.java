@@ -28,6 +28,7 @@ public class ToggleTask {
     private final RecurringTask<String> deactivateToggleRecurringWeekly;
     private final RecurringTask<String> deactivateToggleRecurringMonthly;
 
+
     public void scheduleToggleActivation(Long projectId, Long toggleId, String environmentName, Long instanceId, Instant activateAt, Instant deactivateAt, String recurrence) {
         try {
             ScheduleDTO toggleScheduleDTO = new ScheduleDTO();
@@ -43,7 +44,7 @@ public class ToggleTask {
             String taskData = objectMapper.writeValueAsString(toggleScheduleDTO);
             System.out.println("task data: " + taskData);
 
-            String taskInstance = "toggle-" + toggleId + "-" + activateAt.toEpochMilli();
+            String taskInstance = "toggle-" + toggleId + "-instance-"+instanceId+"-env-"+environmentName+"-"+ activateAt.toEpochMilli()+"-"+recurrence;
 
            if(recurrence.equals("ONE_TIME")) {
                     scheduler.schedule(activateToggleTask.instance(taskInstance, taskData), activateAt);

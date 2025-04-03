@@ -54,7 +54,10 @@ public class SecurityConfig  {
                         .requestMatchers("/auth/logout").permitAll()
                         .requestMatchers("/auth/me").authenticated()
                         .requestMatchers(HttpMethod.POST, "/auth/refresh").permitAll()
-                        .requestMatchers(HttpMethod.POST,"/toggle-schedule/**").permitAll()
+
+                        .requestMatchers(HttpMethod.POST,"/toggle-schedule/schedule").permitAll()
+                        .requestMatchers(HttpMethod.DELETE,"/toggle-schedule/cancel/**").permitAll()
+                        .requestMatchers(HttpMethod.POST,"/toggle-schedule/strategies").permitAll()
 
                         .requestMatchers("/events/**").authenticated()
 
