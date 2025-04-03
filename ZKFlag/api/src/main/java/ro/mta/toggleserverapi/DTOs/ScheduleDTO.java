@@ -13,7 +13,4 @@ public class ScheduleDTO {
     private Long projectId;
     private Instant activateAt;
     private Instant deactivateAt;
-
-    private ScheduleType scheduleType;
-    private Integer recurrenceCount;
 }

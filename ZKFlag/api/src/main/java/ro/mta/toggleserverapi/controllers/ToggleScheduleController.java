@@ -29,6 +29,9 @@ public class ToggleScheduleController {
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) Instant deactivateAt,
             @RequestParam(required = false) String recurrence) {
 
+        if(recurrence == null) {
+            recurrence = "ONE_TIME";
+        }
         try {
             toggleScheduleService.scheduleToggleActivation(
                     projectId, toggleId, instanceId, environmentName,
