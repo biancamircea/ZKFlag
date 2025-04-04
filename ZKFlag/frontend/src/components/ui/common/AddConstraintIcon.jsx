@@ -9,7 +9,7 @@ function AddConstraintIcon({ onClick }) {
                 onClick();
             }}
             style={{display:"flex",justifyContent:"center"}}>
-            <Tooltip title={"Add an OR constraint"} arrow>
+            <Tooltip title={"Add an AND constraint"} arrow>
                 <img src={"/images/add_constraint.png"}
                      alt={"Add"}
                      className={"small-icon"} />

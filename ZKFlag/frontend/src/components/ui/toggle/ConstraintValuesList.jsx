@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { toast } from "react-toastify";
+import {Info} from "react-feather";
+import Tooltip from "@mui/material/Tooltip";
 
 function ConstraintValuesList({ values, setValues, instanceId }) {
     const [inputValue, setInputValue] = useState('');
@@ -67,6 +69,15 @@ function ConstraintValuesList({ values, setValues, instanceId }) {
                 <button onClick={handleAdd}>
                     Add
                 </button>
+
+                <Tooltip
+                    title={"You can add only one value at a time (string or number). For the \"Greater Than\" and \"Less Than\" operators, only integers are allowed."}
+                    arrow style={{display:"flex", alignItems:"center"}}
+                >
+                            <span style={{display:"flex", alignItems:"center"}}>
+                                <Info className="info-icon" size={25} />
+                            </span>
+                </Tooltip>
             </div>
             <div className="constraint-values-list">
                 {valuesEl.length === 0 ? (

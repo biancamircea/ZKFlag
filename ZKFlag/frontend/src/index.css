@@ -885,7 +885,7 @@ footer {
 
 .create-form-field-item.color-field input {
   box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.1);
-  outline: 2px solid steelblue;
+  outline: 2px solid #2e34a9;
   transition: background-color 0.15s ease-in-out;
 
 }
@@ -905,7 +905,7 @@ footer {
 
 
 .create-form-fields input:focus, textarea:focus {
-    outline: 2px solid steelblue;
+    outline: 2px solid #1e40af;
     box-shadow: 2px 2px 4px 0 rgba(0, 0, 0, 0.1);
 }
 
@@ -2181,7 +2181,7 @@ margin-top: 20px;
 
 .create-form-fields input:focus,
 .create-form-fields select:focus {
-  border-color: #007bff;
+  border-color: #1e40af;
   outline: none;
 }
 

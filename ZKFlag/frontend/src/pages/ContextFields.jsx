@@ -8,6 +8,8 @@ import DeleteIcon from "../components/ui/common/DeleteIcon.jsx";
 import EmptySearchResult from "../components/ui/common/EmptySearchResult.jsx";
 import EmptyList from "../components/ui/common/EmptyList.jsx";
 import {toast} from "react-toastify";
+import { Info } from "react-feather";
+import Tooltip from "@mui/material/Tooltip";
 
 export async function loader({ params }){
     return defer({ contextFields: getContextFields(params.projectId) })
@@ -104,12 +106,26 @@ function ContextFields() {
                 hasButton={true}
                 searchQuery={searchQuery}
                 handleSearch={handleSearch}
+                hasInfo={true}
+                infoText={"Context fields are used to create constraints. They can be used to manage feature toggles and other configurations."}
             />
             <div className={"list-container"}>
-                <div className={"context-fields list-item item-header"}>
-                    <p>Name</p>
-                    <p>Type</p>
-                    <p>Actions</p>
+                <div className="context-fields list-item item-header" style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    width: "100%"
+                }}>
+                    <p style={{ flex: 1, display:"flex", justifyContent:"flex-start" }}>Name</p>
+                    <div style={{ flex: 1, display: "flex", alignItems: "center", justifyContent:"center",gap: "4px"}}>
+                        <p>Type</p>
+                        <Tooltip title={"ZKP context field values won't be transmitted to the server - only a cryptographic proof will be sent."} arrow>
+                            <span>
+                                <Info className="info-icon" size={18} />
+                            </span>
+                        </Tooltip>
+                    </div>
+                    <p style={{ flex: 1, display:"flex", justifyContent:"flex-end" }}>Actions</p>
                 </div>
                 <Suspense fallback={<LoadingBanner/>}>
                     <Await resolve={loaderDataPromise.contextFields}>
