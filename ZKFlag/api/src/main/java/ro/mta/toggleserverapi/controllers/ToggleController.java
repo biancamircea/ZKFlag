@@ -360,39 +360,6 @@ public class ToggleController {
         return ResponseEntity.noContent().build();
     }
 
-//    @PutMapping(path = "/toggles/{toggleId}/instances/{instanceId}/environments/{environmentId}/schedule")
-//    public ResponseEntity<?> setToggleSchedule(@RequestBody ToggleScheduleDTO toggleScheduleDTO,
-//                                               @PathVariable String toggleId,
-//                                               @PathVariable String instanceId,
-//                                               @PathVariable String environmentId) {
-//        Environment env=environmentRepository.findByHashId(environmentId).orElseThrow();
-//        Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
-//        Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
-//        ToggleEnvironment updatedToggleEnvironment = toggleEnvironmentService.setToggleSchedule(
-//                toggle.getId(),
-//                env.getId(),
-//                instance.getId(),
-//                toggleScheduleDTO.getStartOn(),
-//                toggleScheduleDTO.getStartOff(),
-//                toggleScheduleDTO.getStartDate(),
-//                toggleScheduleDTO.getEndDate(),
-//                ZoneId.of("Europe/Bucharest")
-//        );
-//        return ResponseEntity.ok(updatedToggleEnvironment);
-//    }
-//
-//
-//    @GetMapping(path = "/toggles/{toggleId}/instances/{instanceId}/schedule_strategies")
-//    public List<ToggleScheduleDTO> getAllStrategiesForFlag( @PathVariable String toggleId, @PathVariable String instanceId) {
-//        Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
-//        Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
-//        List<ToggleScheduleDTO> strategies = toggleService.getAllStrategiesForFlag( toggle.getId(),instance.getId());
-//        for (ToggleScheduleDTO toggleScheduleDTO : strategies) {
-//            System.out.println("ToggleEnvironmentDTO: " + toggleScheduleDTO.getEnvironmentId()+" "+ toggleScheduleDTO.getStartDate());
-//        }
-//        return strategies;
-//    }
-
 
     @GetMapping("/toggles/{toggleId}/environments/{envId}/instances/{instanceId}/enabled")
     public ResponseEntity<Boolean> isToggleEnabled(

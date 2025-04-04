@@ -84,7 +84,7 @@ public OneTimeTask<String> deactivateToggleTask(ToggleService toggleService) {
 
 @Bean
 public RecurringTask<String> activateToggleRecurringDaily(ToggleService toggleService) {
-    return Tasks.recurring("activate-toggle-daily", FixedDelay.ofMinutes(7), String.class)
+    return Tasks.recurring("activate-toggle-daily", FixedDelay.ofHours(24), String.class)
             .doNotScheduleOnStartup()
             .execute((instance, executionContext) -> {
                 try {
@@ -116,7 +116,7 @@ public RecurringTask<String> activateToggleRecurringDaily(ToggleService toggleSe
 
 @Bean
 public RecurringTask<String> deactivateToggleRecurringDaily(ToggleService toggleService) {
-    return Tasks.recurring("deactivate-toggle-daily", FixedDelay.ofMinutes(7), String.class)
+    return Tasks.recurring("deactivate-toggle-daily", FixedDelay.ofHours(24), String.class)
             .doNotScheduleOnStartup()
             .execute((instance, executionContext) -> {
                 String taskData = instance.getData();
@@ -201,7 +201,7 @@ public RecurringTask<String> deactivateToggleRecurringDaily(ToggleService toggle
 
     @Bean
     public RecurringTask<String> activateToggleRecurringMonthly(ToggleService toggleService) {
-        return Tasks.recurring("activate-toggle-monthly", FixedDelay.ofHours(30*7*24), String.class)
+        return Tasks.recurring("activate-toggle-monthly", FixedDelay.ofHours(30*24), String.class)
                 .doNotScheduleOnStartup()
                 .execute((instance, executionContext) -> {
                     try {

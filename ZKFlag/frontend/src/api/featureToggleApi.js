@@ -432,7 +432,7 @@ export async function uploadFile(file) {
 
 
 export async function getToggleStrategies(toggleId, instanceId, environmentName) {
-    const url = `/api/toggle-schedule/strategies`;
+    const url = `${toggleBaseUrl}/toggle-schedule/strategies`;
     try {
         const response = await fetch(url, {
             method: 'POST',
@@ -467,7 +467,7 @@ export async function getToggleStrategies(toggleId, instanceId, environmentName)
 
 
 export async function scheduleToggle(projectId, toggleId, instanceId, environmentName, activateAt, deactivateAt, recurrence = "ONE_TIME") {
-    const url = '/api/toggle-schedule/schedule';
+    const url = `${toggleBaseUrl}/toggle-schedule/schedule`;
 
     const formatDate = (date) => {
         return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
@@ -511,7 +511,7 @@ export async function scheduleToggle(projectId, toggleId, instanceId, environmen
 
 export async function cancelScheduledToggle(taskInstance) {
     const encodedTaskInstance = encodeURIComponent(taskInstance);
-    const url = `/api/toggle-schedule/cancel/${encodedTaskInstance}`;
+    const url = `${toggleBaseUrl}/toggle-schedule/cancel/${encodedTaskInstance}`;
 
     try {
         const response = await fetch(url, {

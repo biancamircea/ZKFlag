@@ -8,7 +8,6 @@ import ro.mta.toggleserverapi.util.ListUtil;
 
 @Data
 public class ProjectDTO {
-    //aici era long
     private String id;
 
     @NotNull
@@ -16,10 +15,6 @@ public class ProjectDTO {
     private String name;
 
     private String description;
-
-
-//    TODO: add attribute "createdAt"
-//    TODO: add attribute "favorite"
 
     public static ProjectDTO toDTO(Project project){
         ProjectDTO projectDTO = new ProjectDTO();

@@ -1,6 +1,7 @@
 package ro.mta.toggleserverapi.controllers;
 
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -21,7 +22,7 @@ import java.time.Instant;
 import java.util.List;
 
 @RestController
-@RequestMapping("/toggle-schedule")
+@RequestMapping("/toggles/toggle-schedule")
 @AllArgsConstructor
 public class ToggleScheduleController {
 

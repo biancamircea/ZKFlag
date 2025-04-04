@@ -5,7 +5,7 @@ import 'swagger-ui-react/swagger-ui.css';
 function SwaggerUiComponent(props) {
     return (
         <SwaggerUI
-            url="/v3/api-docs"
+            url="/api/v3/api-docs"
             requestInterceptor={(request) => {
                 request.credentials = 'include';
                 return request;

@@ -8,7 +8,6 @@ import ro.mta.toggleserverapi.enums.EnvironmentType;
 
 @Data
 public class InstanceEnvironmentDTO {
-    //id environment
     private String id;
 
     private String name;

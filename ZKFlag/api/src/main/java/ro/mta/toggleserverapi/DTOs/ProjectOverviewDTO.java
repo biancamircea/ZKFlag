@@ -10,7 +10,6 @@ import java.util.List;
 
 @Data
 public class ProjectOverviewDTO {
-    //aici era long
     private String  id;
 
     @NotNull

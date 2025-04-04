@@ -1,4 +1,3 @@
-// src/main/java/ro/mta/toggleserverapi/DTOs/ConstraintValueUpdateDTO.java
 package ro.mta.toggleserverapi.DTOs;
 
 import lombok.Data;

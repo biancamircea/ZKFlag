@@ -21,8 +21,6 @@ public class ProjectEnvironmentDTO {
 
     private Integer enabledProjectToggleCount;
 
-//    TODO: add projectAPITokenCount
-
     public static ProjectEnvironmentDTO toDTO(ProjectEnvironment projectEnvironment){
         ProjectEnvironmentDTO projectEnvironmentDTO = new ProjectEnvironmentDTO();
         projectEnvironmentDTO.setId(projectEnvironment.getEnvironment().getId());

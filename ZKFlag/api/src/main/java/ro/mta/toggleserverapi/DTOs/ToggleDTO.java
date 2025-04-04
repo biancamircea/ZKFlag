@@ -36,9 +36,6 @@ public class ToggleDTO {
 
     private LocalDateTime createdAt;
 
-    /*TODO de pus pe not null dupa ce sterg toate toggles actuale*/
-//    @NotNull
-//    @NotBlank
     private Integer toggle_type;
 
     public static ToggleDTO toDTO(Toggle toggle){

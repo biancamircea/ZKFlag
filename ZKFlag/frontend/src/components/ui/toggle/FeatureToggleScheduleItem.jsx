@@ -7,6 +7,22 @@ function FeatureToggleScheduleItem({ environmentName, featureId, environmentId, 
     const [isIntervalOpen, setIsIntervalOpen] = useState(false);
     const [strategyPairs, setStrategyPairs] = useState([]);
 
+    const refreshStrategies = async () => {
+        try {
+            const strategies = await getToggleStrategies(featureId, instanceId, environmentName);
+            setStrategyPairs(groupStrategies(strategies));
+        } catch (error) {
+            if (error.message !== "No scheduling strategies found for the specified criteria") {
+                toast.error(`Failed to fetch scheduling strategies: ${error.message}`);
+            }
+            setStrategyPairs([]);
+        }
+    };
+    useEffect(() => {
+        refreshStrategies();
+    }, [featureId, environmentId, instanceId, environmentName]);
+
+
     useEffect(() => {
         const fetchAndGroupStrategies = async () => {
             try {
@@ -116,7 +132,10 @@ function FeatureToggleScheduleItem({ environmentName, featureId, environmentId, 
             <ScheduleIntervalDialog
                 open={isIntervalOpen}
                 onClose={() => setIsIntervalOpen(false)}
-                onSave={(details) => setIsIntervalOpen(false)}
+                onSave={() => {
+                    setIsIntervalOpen(false);
+                    refreshStrategies();
+                }}
                 projectId={projectId}
                 toggleId={featureId}
                 instanceId={instanceId}
