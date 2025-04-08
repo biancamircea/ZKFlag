@@ -48,7 +48,7 @@ To integrate the server with Java applications, use the following steps:
 <dependency>
   <groupId>ro.mta.sdk</groupId>
   <artifactId>toggle-system</artifactId>
-  <version>1.0.10</version>
+  <version>1.1.4</version>
 </dependency>
 ```
 
@@ -56,7 +56,7 @@ To integrate the server with Java applications, use the following steps:
 
 ```bash
 ToggleSystemConfig toggleSystemConfig = ToggleSystemConfig.builder()
-            .toggleServerAPI("http://localhost:8080")
+            .toggleServerAPI("https://localhost:8443")
             .apiKey("<api-key>")
             .build();
 ToggleSystemClient toggleSystem = new ToggleSystemClient(toggleSystemConfig);
@@ -70,7 +70,7 @@ With constraints:
 
 ```bash
 ToggleSystemContext context = ToggleSystemContext.builder()
-                .addProperty("key", "value")
+                ntext("key", "value")
                 .build();
 boolean isEnabled = toggleSystemClient.isEnabled("toggle_name", context);
 ```
@@ -94,7 +94,7 @@ For integrating the server into frontend applications or other programming langu
 An example of integration in JavaScript:
 
 ```bash
-const response = await fetch("http://localhost:8080/client/evaluate", {
+const response = await fetch("https://localhost:8443/client/evaluate", {
     method: "POST",
     headers: {
         "Content-Type": "application/json",
