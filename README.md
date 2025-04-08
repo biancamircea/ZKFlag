@@ -70,7 +70,7 @@ With constraints:
 
 ```bash
 ToggleSystemContext context = ToggleSystemContext.builder()
-                ntext("key", "value")
+                .addContext("key", "value")
                 .build();
 boolean isEnabled = toggleSystemClient.isEnabled("toggle_name", context);
 ```
