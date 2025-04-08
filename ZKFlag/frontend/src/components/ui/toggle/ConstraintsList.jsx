@@ -152,7 +152,7 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
 
                                 <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
                                 {instanceId == null &&
-                                    <AddConstraintToGroupButton submitHandler={addConstraint} groupId={groupId} />
+                                    <AddConstraintToGroupButton submitHandler={addConstraint} groupId={groupId} toggleId={toggleId} />
                                 }
                                 </div>
                             </div>
@@ -183,7 +183,7 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
                     ))
                 )}
             </div>
-            {instanceId == null && <AddConstraintButton submitHandler={addConstraint} />}
+            {instanceId == null && <AddConstraintButton submitHandler={addConstraint}  toggleId={toggleId}/>}
         </>
     );}
 

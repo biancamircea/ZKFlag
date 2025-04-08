@@ -382,4 +382,10 @@ public class ToggleController {
         System.out.println("id="+project.getHashId());
         return ResponseEntity.ok(project.getHashId());
     }
+
+    @GetMapping("/toggles/{toggleId}/getType")
+    public ResponseEntity<?> getTypeByToggleId(@PathVariable String toggleId) {
+        Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
+        return ResponseEntity.ok(toggle.getToggleType());
+    }
 }

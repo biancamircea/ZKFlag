@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import ro.mta.toggleserverapi.DTOs.ScheduleDTO;
 import ro.mta.toggleserverapi.DTOs.ScheduleInfoDTO;
+import ro.mta.toggleserverapi.DTOs.ToggleScheduleHistoryDto;
 import ro.mta.toggleserverapi.entities.*;
 import ro.mta.toggleserverapi.enums.ScheduleType;
 import ro.mta.toggleserverapi.repositories.*;
@@ -26,7 +27,6 @@ public class ToggleScheduleService {
     private final InstanceRepository instanceRepository;
     private final EnvironmentRepository environmentRepository;
     private final ProjectRepository projectRepository;
-    private final ObjectMapper objectMapper;
 
 
     @Transactional
@@ -99,6 +99,25 @@ public class ToggleScheduleService {
                     }
                     return info;
                 })
+                .collect(Collectors.toList());
+    }
+
+    public List<ToggleScheduleHistoryDto> getToggleScheduleHistory(Long environmentId, Long instanceId, Long toggleId) {
+        List<ToggleSchedule> schedules = toggleScheduleRepository
+                .findHistoryByEnvironmentInstanceAndToggle(environmentId, instanceId, toggleId);
+
+        return schedules.stream()
+                .map(schedule -> new ToggleScheduleHistoryDto(
+                        schedule.getId(),
+                        schedule.getActivateAt(),
+                        schedule.getDeactivateAt(),
+                        schedule.getEnvironment().getHashId(),
+                        schedule.getInstance().getHashId(),
+                        schedule.getToggle().getHashId(),
+                        schedule.getProject().getHashId(),
+                        schedule.getEnvironment().getName(),
+                        schedule.getRecurrenceCount(),
+                        schedule.getScheduleType().toString()))
                 .collect(Collectors.toList());
     }
 

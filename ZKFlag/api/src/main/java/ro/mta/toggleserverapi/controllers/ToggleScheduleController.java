@@ -1,8 +1,6 @@
 package ro.mta.toggleserverapi.controllers;
 
 import lombok.AllArgsConstructor;
-import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
-import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -10,15 +8,16 @@ import org.springframework.web.bind.annotation.*;
 import ro.mta.toggleserverapi.DTOs.ScheduleInfoDTO;
 import ro.mta.toggleserverapi.DTOs.ScheduleRequest;
 import ro.mta.toggleserverapi.DTOs.StrategiesRequest;
+import ro.mta.toggleserverapi.DTOs.ToggleScheduleHistoryDto;
+import ro.mta.toggleserverapi.entities.Environment;
 import ro.mta.toggleserverapi.entities.Instance;
 import ro.mta.toggleserverapi.entities.Project;
 import ro.mta.toggleserverapi.entities.Toggle;
+import ro.mta.toggleserverapi.repositories.EnvironmentRepository;
 import ro.mta.toggleserverapi.repositories.InstanceRepository;
 import ro.mta.toggleserverapi.repositories.ProjectRepository;
 import ro.mta.toggleserverapi.repositories.ToggleRepository;
 import ro.mta.toggleserverapi.services.ToggleScheduleService;
-
-import java.time.Instant;
 import java.util.List;
 
 @RestController
@@ -30,6 +29,7 @@ public class ToggleScheduleController {
     private final ToggleRepository toggleRepository;
     private final InstanceRepository instanceRepository;
     private final ProjectRepository projectRepository;
+    private final EnvironmentRepository environmentRepository;
 
     @PostMapping(value = "/schedule", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<String> scheduleToggle(
@@ -93,6 +93,21 @@ public class ToggleScheduleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Error retrieving strategies: " + e.getMessage());
         }
+    }
+
+
+    @PostMapping("/history")
+    public ResponseEntity<List<ToggleScheduleHistoryDto>> getToggleScheduleHistory(
+            @RequestBody StrategiesRequest request) {
+
+        Toggle toggle = toggleRepository.findByHashId(request.getToggleId()).orElseThrow();
+        Instance instance = instanceRepository.findByHashId(request.getInstanceId()).orElseThrow();
+        Environment environment=environmentRepository.findByName(request.getEnvironmentName());
+
+        List<ToggleScheduleHistoryDto> history = toggleScheduleService
+                .getToggleScheduleHistory(environment.getId(), instance.getId(), toggle.getId());
+
+        return ResponseEntity.ok(history);
     }
 }
 

@@ -554,3 +554,53 @@ export async function getProjectByToggleId(toggleId) {
         }
     }
 }
+
+
+export async function getToggleScheduleHistory(toggleId, instanceId, environmentName) {
+    const url = `${toggleBaseUrl}/toggle-schedule/history`;
+    const requestBody = {
+        toggleId,
+        instanceId,
+        environmentName
+    };
+
+    try {
+        const response = await fetch(url, {
+            method: 'POST',
+            credentials: "include",
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(requestBody)
+        });
+
+        if (!response.ok) {
+            throw new Error(`Error retrieving toggle schedule history: ${response.statusText}`);
+        }
+
+        return await response.json();
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('Network error occurred. Please check your internet connection.');
+        } else {
+            throw error;
+        }
+    }
+}
+
+export async function getTypeByToggleId(toggleId) {
+    const url = `${toggleBaseUrl}/${toggleId}/getType`;
+    try {
+        const response = await fetch(url, { credentials: "include" });
+        if (!response.ok) {
+            throw new Error(`Error retrieving toggle type: ${response.statusText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('Network error occurred. Please check your internet connection.');
+        } else {
+            throw error;
+        }
+    }
+}

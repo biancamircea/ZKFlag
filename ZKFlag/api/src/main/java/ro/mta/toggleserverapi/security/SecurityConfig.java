@@ -77,6 +77,7 @@ public class SecurityConfig  {
                         .requestMatchers(HttpMethod.GET,"/projects/{projectId}/tags").hasAnyAuthority("ProjectAdmin", "InstanceAdmin")
                         .requestMatchers(HttpMethod.GET,"/projects/{projectId}/context-fields").hasAnyAuthority("ProjectAdmin", "InstanceAdmin")
 
+                        .requestMatchers(HttpMethod.GET,"/toggles/{toggleId}/getType").hasAuthority("ProjectAdmin")
                         .requestMatchers("/toggles/**").hasAuthority("InstanceAdmin")
 
                         .requestMatchers(HttpMethod.POST,"/projects/{projectId}/toggles/{toggleId}/instances/{instanceId}/environments/{environmentName}/on").hasAuthority("InstanceAdmin")

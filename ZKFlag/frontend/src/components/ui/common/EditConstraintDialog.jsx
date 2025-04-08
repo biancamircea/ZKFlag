@@ -2,7 +2,11 @@ import React, { Suspense, useState, useEffect } from 'react';
 import Tooltip from "@mui/material/Tooltip";
 import FeatureToggleAddConstraintDialog from "../toggle/FeatureToggleAddConstraintDialog.jsx";
 import { useOutletContext } from "react-router-dom";
-import {getConstraintFromToggleEnvironment, getConstraintValues} from "../../../api/featureToggleApi.js";
+import {
+    getConstraintFromToggleEnvironment,
+    getConstraintValues,
+    getTypeByToggleId
+} from "../../../api/featureToggleApi.js";
 import LoadingBanner from "../common/LoadingBanner.jsx";
 import {getToggleEnvironment} from "../../../api/featureToggleApi.js";
 
@@ -12,6 +16,28 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
     const [pvalues, setPValues] = useState(values);
     const [isLoading, setIsLoading] = useState(true);
     const [elementWithName, setElementWithName] = useState(null);
+    const [filteredContextFields, setFilteredContextFields] = useState([]);
+
+    useEffect(() => {
+        const fetchToggleType = async () => {
+            try {
+                const type = await getTypeByToggleId(toggleId);
+                if  (type === 0 || type === 2) {
+                    setFilteredContextFields(contextFields.filter(field => !field.isConfidential));
+                } else {
+                    setFilteredContextFields(contextFields);
+                }
+            } catch (error) {
+                console.error("Failed to fetch toggle type:", error);
+                setFilteredContextFields(contextFields);
+            }
+        };
+
+        if (toggleId) {
+            fetchToggleType();
+        }
+    }, [toggleId, contextFields]);
+
 
 
     useEffect(() => {
@@ -82,7 +108,7 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
                     <FeatureToggleAddConstraintDialog
                         open={open}
                         onClose={handleClose}
-                        contextFields={contextFields}
+                        contextFields={filteredContextFields}
                         pContext={elementWithName}
                         pOperator={operator}
                         pValues={pvalues}
