@@ -76,10 +76,6 @@ function Projects() {
                             <p>Members</p>
                             <span>{el.memberCount}</span>
                         </div>
-                        <div className={"project-list-details"}>
-                            <p>Tokens</p>
-                            <span>{el.apiTokenCount}</span>
-                        </div>
                     </div>
                 </div>
             ))

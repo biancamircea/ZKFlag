@@ -4,9 +4,9 @@ import FeatureToggleMetadataCard from "../../components/ui/toggle/FeatureToggleM
 import FeatureToggleDetailsCard from "../../components/ui/toggle/FeatureToggleDetailsCard.jsx";
 import FeatureToggleInstanceSectionRight from "../../components/ui/toggle/FeatureToggleInstanceSectionRight.jsx";
 import { getAllEnvironmentsFromInstance, getInstanceOverview } from "../../api/instanceApi.js";
-import FeatureToggleSectionRight from "../../components/ui/toggle/FeatureToggleSectionRight.jsx";
 import { getAllConstraintsInToggle } from "../../api/projectApi.js";
-import EmptyList from "../../components/ui/common/EmptyList.jsx";
+import FeatureToggleInstanceStatistics from "../../components/ui/toggle/FeatureToggleInstanceStatistics.jsx";
+import {getStatisticsByToggleId} from "../../api/featureToggleApi.js";
 
 export async function loader({ params }) {
     return defer({ constraints: getAllConstraintsInToggle(params.projectId, params.featureId) });
@@ -18,6 +18,7 @@ function FeatureToggleInstanceOverview(props) {
     const { toggle, removeFeatureTag } = useOutletContext();
     const [environments, setEnvironments] = useState([]);
     const [instanceName, setInstanceName] = useState("");
+    const [statistics, setStatistics] = useState([]);
 
     useEffect(() => {
         async function fetchEnvironments() {
@@ -43,6 +44,19 @@ function FeatureToggleInstanceOverview(props) {
         getInstanceName();
     }, [instanceId]);
 
+    useEffect(() => {
+        async function fetchStatistics() {
+            try {
+                const data = await getStatisticsByToggleId(featureId, instanceId);
+                setStatistics(data);
+                console.log("Statistics data:", data);
+            } catch (error) {
+                console.error("Error fetching statistics:", error);
+            }
+        }
+        fetchStatistics();
+    }, [featureId, instanceId]);
+
 
     return (
         <div className="project-overview-wrapper" key={toggle.id}>
@@ -57,6 +71,11 @@ function FeatureToggleInstanceOverview(props) {
                     tags={toggle.tags}
                     instanceId={instanceId}
                 />
+                <div className="feature-toggle-statistics-grid">
+                    {statistics.map((stat,index) => (
+                        <FeatureToggleInstanceStatistics key={stat.environmentId} statistics={stat} index={index} />
+                    ))}
+                </div>
             </div>
             <div className="feature-toggle-overview-section-right">
                 <FeatureToggleInstanceSectionRight

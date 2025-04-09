@@ -28,6 +28,7 @@ public class ToggleController {
     private final ToggleRepository toggleRepository;
     private final EnvironmentRepository environmentRepository;
     private final TagRepository tagRepository;
+    private final ToggleEnvironmentRepository toggleEnvironmentRepository;
 
 
     @GetMapping(path = "/toggles")
@@ -371,6 +372,8 @@ public class ToggleController {
         Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
         Toggle toggle = toggleService.fetchToggleById(toggle2.getId());
         Boolean isEnabled = toggleEnvironmentService.fetchByToggleAndEnvIdAndInstanceId(toggle, env.getId(), instance.getId());
+        ToggleEnvironment toggleEnvironment=toggleEnvironmentRepository.findByToggleAndEnvironmentAndInstance(toggle, env, instance);
+
         return ResponseEntity.ok(isEnabled);
     }
 
@@ -387,5 +390,57 @@ public class ToggleController {
     public ResponseEntity<?> getTypeByToggleId(@PathVariable String toggleId) {
         Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
         return ResponseEntity.ok(toggle.getToggleType());
+    }
+
+    @GetMapping("/toggles/{toggleId}/instances/{instanceId}/statistics")
+    public ResponseEntity<?> getStatisticsByToggleIdAndInstanceId(@PathVariable String toggleId,@PathVariable String instanceId ) {
+        Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
+        Instance instance=instanceRepository.findByHashId(instanceId).orElseThrow();
+
+        List<ToggleEnvironment> toggleEnvironments = toggleEnvironmentRepository.findByInstanceIdAndToggleId(instance.getId(), toggle.getId());
+        List<ToggleEnvStatisticsDTO> response = toggleEnvironments.stream()
+                .map(toggleEnv -> {
+                    ToggleEnvStatisticsDTO dto = new ToggleEnvStatisticsDTO();
+                    dto.setEnvironmentId(toggleEnv.getEnvironment().getHashId());
+                    dto.setTrueCount(toggleEnv.getEvaluated_true_count());
+                    dto.setFalseCount(toggleEnv.getEvaluated_false_count());
+                    dto.setTruePercentage(
+                            (double) toggleEnv.getEvaluated_true_count() /
+                                    (toggleEnv.getEvaluated_true_count() + toggleEnv.getEvaluated_false_count())
+                    );
+                    dto.setFalsePercentage(
+                            (double) toggleEnv.getEvaluated_false_count() /
+                                    (toggleEnv.getEvaluated_true_count() + toggleEnv.getEvaluated_false_count())
+                    );
+                    dto.setEnvironmentName(toggleEnv.getEnvironment().getName());
+                    return dto;
+                })
+                .toList();
+
+
+        return ResponseEntity.ok(response);
+    }
+
+
+    @GetMapping("/toggles/{toggleId}/statistics")
+    public ResponseEntity<?> getStatisticsByToggleId(@PathVariable String toggleId) {
+        Toggle toggle=toggleRepository.findByHashId(toggleId).orElseThrow();
+        List<ToggleEnvironment> toggleEnvironments = toggleEnvironmentRepository.findAllByToggleId(toggle.getId());
+
+        Integer totalTrueCount = toggleEnvironments.stream()
+                .mapToInt(ToggleEnvironment::getEvaluated_true_count)
+                .sum();
+        Integer totalFalseCount = toggleEnvironments.stream()
+                .mapToInt(ToggleEnvironment::getEvaluated_false_count)
+                .sum();
+
+        System.out.println("total true:"+totalTrueCount);
+        System.out.println("total false:"+totalFalseCount);
+
+        ToggleEnvStatisticsDTO response = new ToggleEnvStatisticsDTO();
+        response.setTrueCount(totalTrueCount);
+        response.setFalseCount(totalFalseCount);
+
+        return ResponseEntity.ok(response);
     }
 }

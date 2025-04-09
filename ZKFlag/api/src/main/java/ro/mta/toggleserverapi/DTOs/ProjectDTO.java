@@ -15,12 +15,16 @@ public class ProjectDTO {
     private String name;
 
     private String description;
+    private Long toggleCount;
+    private Long memberCount;
 
     public static ProjectDTO toDTO(Project project){
         ProjectDTO projectDTO = new ProjectDTO();
         projectDTO.setId(project.getHashId());
         projectDTO.setName(project.getName());
         projectDTO.setDescription(project.getDescription());
+        projectDTO.setMemberCount(project.getUserProjectRole().stream().count());
+        projectDTO.setToggleCount(project.getUserProjectRole().stream().count());
         return projectDTO;
     }
 

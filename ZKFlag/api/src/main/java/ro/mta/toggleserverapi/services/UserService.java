@@ -167,6 +167,8 @@ public class UserService {
                     dto.setId(project.getHashId());
                     dto.setName(project.getName());
                     dto.setDescription(project.getDescription());
+                    dto.setMemberCount(project.getUserProjectRole().stream().count());
+                    dto.setToggleCount(project.getToggleList().stream().count());
                     return dto;
                 })
                 .collect(Collectors.toList());

@@ -1,12 +1,16 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { defer, useLoaderData, useOutletContext, useParams} from "react-router-dom";
-import { removeTagFromToggle} from "../../api/featureToggleApi.js";
+import {
+    getOverallStatisticsByToggleId,
+    removeTagFromToggle
+} from "../../api/featureToggleApi.js";
 import FeatureToggleMetadataCard from "../../components/ui/toggle/FeatureToggleMetadataCard.jsx";
 import FeatureToggleDetailsCard from "../../components/ui/toggle/FeatureToggleDetailsCard.jsx";
 import {toast} from "react-toastify";
 import FeatureToggleSectionRight from "../../components/ui/toggle/FeatureToggleSectionRight.jsx";
 import { getAllConstraintsInToggle } from "../../api/projectApi";
 import { useRevalidator } from 'react-router-dom';
+import FeatureToggleInstanceStatistics from "../../components/ui/toggle/FeatureToggleInstanceStatistics.jsx";
 
 export async function loader({ params }) {
     const { projectId, featureId } = params;
@@ -26,6 +30,7 @@ function FeatureToggleOverview(props) {
     const {toggle, removeFeatureTag, contextFields} = useOutletContext()
     const { constraints } = useLoaderData();
     const revalidator = useRevalidator();
+    const [stat, setStatistics] = React.useState([])
 
     const refreshConstraints = () => {
         revalidator.revalidate();
@@ -41,6 +46,19 @@ function FeatureToggleOverview(props) {
         }
     }
 
+    useEffect(() => {
+        async function fetchOverallStatistics() {
+            try {
+                const data = await getOverallStatisticsByToggleId(featureId)
+                setStatistics(data);
+                console.log("Statistics data:", data);
+            } catch (error) {
+                console.error("Error fetching statistics:", error);
+            }
+        }
+        fetchOverallStatistics();
+    }, [featureId]);
+
     return (
         <>
             <div className={"project-overview-wrapper"} key={toggle.id}>
@@ -54,6 +72,9 @@ function FeatureToggleOverview(props) {
                         tags={toggle.tags}
                         removeTag={removeTag}
                     />
+                    <div className="feature-toggle-statistics-grid">
+                        <FeatureToggleInstanceStatistics statistics={stat} index={0}/>
+                    </div>
                 </div>
                 <div className={"feature-toggle-overview-section-right"}>
                     <FeatureToggleSectionRight

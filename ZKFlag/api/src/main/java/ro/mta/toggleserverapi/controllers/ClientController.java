@@ -11,10 +11,7 @@ import ro.mta.toggleserverapi.DTOs.ClientToggleEvaluationRequestZKPDTO;
 import ro.mta.toggleserverapi.DTOs.ClientToggleEvaluationResponseDTO;
 import ro.mta.toggleserverapi.DTOs.ConstraintDTO;
 import ro.mta.toggleserverapi.entities.*;
-import ro.mta.toggleserverapi.repositories.EnvironmentRepository;
-import ro.mta.toggleserverapi.repositories.InstanceRepository;
-import ro.mta.toggleserverapi.repositories.ProjectRepository;
-import ro.mta.toggleserverapi.repositories.ToggleRepository;
+import ro.mta.toggleserverapi.repositories.*;
 import ro.mta.toggleserverapi.services.ApiTokenService;
 import ro.mta.toggleserverapi.services.ProjectService;
 import ro.mta.toggleserverapi.services.ToggleEnvironmentService;
@@ -35,6 +32,7 @@ public class ClientController {
     private final ApiTokenService apiTokenService;
     private static final Logger LOG = LoggerFactory.getLogger(ClientController.class);
     private final ToggleRepository toggleRepository;
+    private final ToggleEnvironmentRepository toggleEnvironmentRepository;
 
     @PostMapping(path = "/evaluate")
     public ResponseEntity<?> evaluateClient(@RequestHeader("Authorization") String apiTokenStr,
@@ -46,6 +44,9 @@ public class ClientController {
         try {
             Toggle toggle =toggleRepository.findByNameAndProjectAndToggleType(clientToggleEvaluationRequestDTO.getToggleName(),apiToken.getProject(),Math.toIntExact(apiToken.getType()))
                     .orElseThrow(() -> new NoSuchElementException("Toggle not found"));
+            ToggleEnvironment toggleEnvironment = toggleEnvironmentRepository.findByToggleIdAndEnvironmentNameAndInstanceId(toggle.getId(),apiToken.getEnvironment().getName(),
+                    apiToken.getInstance().getId()).orElseThrow(() -> new NoSuchElementException("Toggle environment not found"));
+
             List<Constraint> constraints = toggle.getConstraints();
 
             ClientToggleEvaluationResponseDTO clientToggleEvaluationResponseDTO = toggleService.combinedEvaluateToggle(
@@ -56,6 +57,12 @@ public class ClientController {
                     constraints
             );
 
+            if(clientToggleEvaluationResponseDTO.getEnabled()){
+                toggleEnvironment.setEvaluated_true_count(toggleEnvironment.getEvaluated_true_count()+1);
+            }else{
+                toggleEnvironment.setEvaluated_false_count(toggleEnvironment.getEvaluated_false_count()+1);
+            }
+
             return ResponseEntity.ok(clientToggleEvaluationResponseDTO);
         } catch (NoSuchElementException e) {
             ClientToggleEvaluationResponseDTO defaultResponse = new ClientToggleEvaluationResponseDTO();
@@ -63,6 +70,7 @@ public class ClientController {
             defaultResponse.setPayload("default");
             return ResponseEntity.ok(defaultResponse);
         }
+
     }
 
     @PostMapping(path = "/constraints")

@@ -604,3 +604,37 @@ export async function getTypeByToggleId(toggleId) {
         }
     }
 }
+
+export async function getStatisticsByToggleId(toggleId, instanceId) {
+    const url = `${toggleBaseUrl}/${toggleId}/instances/${instanceId}/statistics`;
+    try {
+        const response = await fetch(url, { credentials: "include" });
+        if (!response.ok) {
+            throw new Error(`Error retrieving statistics: ${response.statusText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('Network error occurred. Please check your internet connection.');
+        } else {
+            throw error;
+        }
+    }
+}
+
+export async function getOverallStatisticsByToggleId(toggleId) {
+    const url = `/api/toggles/${toggleId}/statistics`;
+    try {
+        const response = await fetch(url, { credentials: "include" });
+        if (!response.ok) {
+            throw new Error(`Error retrieving overall statistics: ${response.statusText}`);
+        }
+        return await response.json();
+    } catch (error) {
+        if (error instanceof TypeError) {
+            throw new Error('Network error occurred. Please check your internet connection.');
+        } else {
+            throw error;
+        }
+    }
+}

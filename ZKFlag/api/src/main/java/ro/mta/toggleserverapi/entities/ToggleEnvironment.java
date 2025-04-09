@@ -63,4 +63,8 @@ public class ToggleEnvironment {
     private LocalTime startOff = null;
     private LocalDate startDate=null;
     private LocalDate endDate=null;
+
+    //STATISTICS
+    private Integer evaluated_true_count;
+    private Integer evaluated_false_count;
 }
