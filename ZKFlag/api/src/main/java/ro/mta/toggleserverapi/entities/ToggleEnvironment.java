@@ -65,6 +65,6 @@ public class ToggleEnvironment {
     private LocalDate endDate=null;
 
     //STATISTICS
-    private Integer evaluated_true_count;
-    private Integer evaluated_false_count;
+    private Integer evaluated_true_count=0;
+    private Integer evaluated_false_count=0;
 }

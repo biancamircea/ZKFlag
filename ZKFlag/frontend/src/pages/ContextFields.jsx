@@ -65,9 +65,16 @@ function ContextFields() {
                     <p>{el.name}</p>
                     <span className={"gray-text"}>{el.description === "" ? "No description" : el.description}</span>
                 </div>
-                <div style={{display: "flex", justifyContent:"center"}}>
-                    <p>{el.isConfidential === 1 ? "ZKP evaluation" : "Normal evaluation"}</p>
+                <div style={{ display: "flex", justifyContent: "center" }}>
+                    <p>
+                        {el.isConfidential === 2
+                            ? "Location evaluation"
+                            : el.isConfidential === 1
+                                ? "ZKP evaluation"
+                                : "Normal evaluation"}
+                    </p>
                 </div>
+
                 <div className={"context-fields list-item actions"}>
                     <EditIcon
                         id={el.id}

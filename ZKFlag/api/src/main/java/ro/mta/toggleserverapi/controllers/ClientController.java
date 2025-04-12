@@ -57,10 +57,17 @@ public class ClientController {
                     constraints
             );
 
+            System.out.println("Client evaluation response: " + clientToggleEvaluationResponseDTO.getEnabled());
             if(clientToggleEvaluationResponseDTO.getEnabled()){
-                toggleEnvironment.setEvaluated_true_count(toggleEnvironment.getEvaluated_true_count()+1);
+                System.out.println("nr true: "+toggleEnvironment.getEvaluated_true_count());
+                Integer nr_true = toggleEnvironment.getEvaluated_true_count();
+                toggleEnvironment.setEvaluated_true_count(nr_true+1);
+                toggleEnvironmentRepository.save(toggleEnvironment);
             }else{
-                toggleEnvironment.setEvaluated_false_count(toggleEnvironment.getEvaluated_false_count()+1);
+                System.out.println("nr false: "+toggleEnvironment.getEvaluated_false_count());
+                Integer nr_false = toggleEnvironment.getEvaluated_false_count();
+                toggleEnvironment.setEvaluated_false_count(nr_false+1);
+                toggleEnvironmentRepository.save(toggleEnvironment);
             }
 
             return ResponseEntity.ok(clientToggleEvaluationResponseDTO);

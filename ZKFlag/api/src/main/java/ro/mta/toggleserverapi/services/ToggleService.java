@@ -175,27 +175,30 @@ public class ToggleService {
     }
 
     public void enableToggleInEnvironment(Long projectId, Long toggleId, String environmentName, Long instanceId) {
-        System.out.println("intra in enable toggle din toggle service");
         Toggle toggle = fetchToggleByProjectIdAndToggleId(projectId, toggleId);
         Environment environment = environmentService.fetchEnvironmentByName(environmentName);
         Instance instance = instanceService.fetchInstance(instanceId);
         Project project = projectService.fetchProject(projectId);
 
-        eventService.submitAction(ActionType.ENABLE,project,toggle,environment,instance);
+        if(environment!=null && instance!=null && toggle!=null && project!=null){
+            System.out.println("Enabling toggle in environment: " + environment.getName());
+            eventService.submitAction(ActionType.ENABLE,project,toggle,environment,instance);
 
-        toggleEnvironmentService.enableByToggleIdEnvNameAndInstanceId(toggle.getId(), environmentName, instanceId);
+            toggleEnvironmentService.enableByToggleIdEnvNameAndInstanceId(toggle.getId(), environmentName, instanceId);
+        }
     }
 
     public void disableToggleInEnvironment(Long projectId, Long toggleId, String environmentName, Long instanceId) {
-        System.out.println("intra in disable toggle din toggle service");
         Toggle toggle = fetchToggleByProjectIdAndToggleId(projectId, toggleId);
         Environment environment = environmentService.fetchEnvironmentByName(environmentName);
         Instance instance = instanceService.fetchInstance(instanceId);
         Project project = projectService.fetchProject(projectId);
 
-        eventService.submitAction(ActionType.DISABLE,project,toggle,environment,instance);
+        if(environment!=null && instance!=null && toggle!=null && project!=null) {
+            eventService.submitAction(ActionType.DISABLE, project, toggle, environment, instance);
 
-        toggleEnvironmentService.disableByToggleIdEnvNameAndInstanceId(toggle.getId(), environmentName, instanceId);
+            toggleEnvironmentService.disableByToggleIdEnvNameAndInstanceId(toggle.getId(), environmentName, instanceId);
+        }
     }
 
 
@@ -505,7 +508,11 @@ public class ToggleService {
 
         for (ClientToggleEvaluationRequestDTO.ProofFromClientDTO proof : proofs) {
             try {
-                boolean isValid = zkpVerifier.verifyProof(proof.getProof());
+                System.out.println("proof type: " + proof.getType());
+                if(proof.getType()==null){
+                    proof.setType("normal");
+                }
+                boolean isValid = zkpVerifier.verifyProof(proof.getProof(), proof.getType());
                 proofResults.add(isValid);
 
                 if (isValid) {
@@ -540,7 +547,7 @@ public class ToggleService {
         Environment environment=apiToken.getEnvironment();
 
         List<Constraint> confidentialConstraints = toggle.getConstraints().stream()
-                .filter(c -> c.getIsConfidential() != null && c.getIsConfidential() == 1)
+                .filter(c -> c.getIsConfidential() != null && c.getIsConfidential() != 0)
                 .toList();
 
         List<Constraint> filteredList= new ArrayList<>();

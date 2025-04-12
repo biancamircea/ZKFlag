@@ -44,4 +44,5 @@ public class Constraint {
 
     private Long isConfidential;
     private Long constrGroupId;
+    private Long marginCode=null;
 }

@@ -15,7 +15,7 @@ function ContextFieldsCreate() {
     const { projectId } = useParams();
     const navigate = useNavigate();
     const [disableSubmit, setDisableSubmit] = useState(false)
-    const [isConfidential, setIsConfidential] = useState(0); // Schimbă din false în 0
+    const [isConfidential, setIsConfidential] = useState(0);
 
     async function handleSubmit(event){
         event.preventDefault();
@@ -23,12 +23,13 @@ function ContextFieldsCreate() {
         console.log("Form data:", {
             name: formData.get("name"),
             description: formData.get("description"),
-            isConfidential: formData.get("isConfidential") // Verifică ce valoare primești
+            isConfidential: formData.get("isConfidential")
         })
 
         const name = formData.get("name");
         const description = formData.get("description");
-        const isConfidential = Number(formData.get("isConfidential"));
+        const isConfidential = Number(formData.get("isConfidential") ?? 0);
+
 
         console.log("is conf in create", isConfidential)
 

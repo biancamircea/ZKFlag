@@ -157,7 +157,7 @@ public class EnvironmentService {
     }
 
     public Environment fetchEnvironmentByName(String name) {
-        return environmentRepository.findByName(name);
+        return  environmentRepository.findByName(name);
     }
 
     public List<ToggleEnvironmentDTO> getAllToggleEnvironmentsForEnvironment(Long envId){

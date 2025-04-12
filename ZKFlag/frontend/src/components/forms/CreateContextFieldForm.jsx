@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import CancelButton from "../ui/common/CancelButton.jsx";
 import {Form} from "react-router-dom";
 import WarningField from "../ui/common/WarningField.jsx";
@@ -7,10 +7,24 @@ import {
     InputLabel,
     MenuItem,
     OutlinedInput,
-    Select
+    Select,
+    FormControlLabel,
+    Checkbox
 } from "@mui/material";
 
-function CreateContextFieldForm({handleSubmit, handleNameInput, disableSubmit,isConfidential, handleConfidentialChange}) {
+function CreateContextFieldForm({handleSubmit, handleNameInput, disableSubmit, isConfidential, handleConfidentialChange}) {
+    const [isLocationField, setIsLocationField] = useState(false);
+
+    const handleLocationChange = (event) => {
+        const isLocation = event.target.checked;
+        setIsLocationField(isLocation);
+        if (isLocation) {
+            handleConfidentialChange({ target: { value: 2 } });
+        } else {
+            handleConfidentialChange({ target: { value: 0 } });
+        }
+    };
+
     return (
         <Form
             className={"create-form-container"}
@@ -20,13 +34,7 @@ function CreateContextFieldForm({handleSubmit, handleNameInput, disableSubmit,is
                 <span className={"title"}>Create context field</span>
                 <div className={"create-form-field-item"}>
                     <label htmlFor={"name"}>What is your context name?</label>
-                    {
-                        disableSubmit
-                        &&
-                        <WarningField
-                            message={"*context field with that name already exists"}
-                        />
-                    }
+                    {disableSubmit && <WarningField message={"*context field with that name already exists"} />}
                     <input
                         className={disableSubmit ? "invalid" : ""}
                         id={"name"}
@@ -37,20 +45,42 @@ function CreateContextFieldForm({handleSubmit, handleNameInput, disableSubmit,is
                     />
                 </div>
 
+                {/* Checkbox pentru locație */}
+                <div className={"create-form-field-item"}>
+                    <FormControlLabel
+                        control={
+                            <Checkbox
+                                checked={isLocationField}
+                                onChange={handleLocationChange}
+                                name="isLocation"
+                                color="primary"
+                            />
+                        }
+                        label="Is this a location field?"
+                    />
+                </div>
 
-                <FormControl sx={{ m: 1, width:"30em"}}>
-                    {/*<InputLabel id="confidential-select-label">Confidential</InputLabel>*/}
-                    <label htmlFor="confidential-select-label">Does this context field need ZKP verification?</label>
+                <input
+                    type="hidden"
+                    name="isConfidential"
+                    value={isLocationField ? 2 : isConfidential}
+                />
+
+                <FormControl sx={{ m: 1, width: "30em" }}>
+                    <label htmlFor="confidential-select-label">
+                        Does this context field need ZKP verification?
+                    </label>
                     <Select
                         labelId="confidential-select-label"
                         id="confidential-select"
-                        name="isConfidential"
-                        value={isConfidential}
-                        onChange={handleConfidentialChange}
+                        value={isLocationField ? 2 : isConfidential}
                         input={<OutlinedInput label="Confidential" />}
+                        disabled={isLocationField}
+                        onChange={handleConfidentialChange}
                     >
                         <MenuItem value={1}>Yes</MenuItem>
                         <MenuItem value={0}>No</MenuItem>
+                        <MenuItem value={2}>Yes</MenuItem>
                     </Select>
                 </FormControl>
 

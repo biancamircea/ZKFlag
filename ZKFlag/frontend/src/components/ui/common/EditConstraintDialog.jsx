@@ -80,6 +80,7 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
     }, [instanceId, values, context, contextFields]);
 
 
+
     const handleClickOpen = () => {
         setOpen(true);
     };
@@ -115,6 +116,7 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
                         submitHandler={submitHandler}
                         edit
                         instanceId={instanceId}
+                        isConfidential={elementWithName.isConfidential}
                     />
                 )}
             </Suspense>

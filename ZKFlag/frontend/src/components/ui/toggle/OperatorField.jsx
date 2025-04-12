@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 
 function OperatorField({ defaultOperator }) {
-    // Setăm operatorul implicit la 'IN' dacă nu există un operator prestabilit
     const [operator, setOperator] = useState(defaultOperator ? defaultOperator : "IN");
 
     function handleOperatorChange(e) {

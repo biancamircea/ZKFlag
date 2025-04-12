@@ -38,6 +38,12 @@ function UpdateFeatureProjectForm({handleSubmit, name, description, handleTypeIn
                         onChange={handleTypeInput}
                         defaultValue={types.find(type2 => type2.value === type)}
                         placeholder={"Select an option"}
+                        isDisabled={true}
+                        sx={{
+                            cursor: "not-allowed",
+                            backgroundColor: "#f5f5f5",
+                            color: "rgba(0, 0, 0, 0.6)",
+                        }}
                     />
                 </div>
                 <div className={"create-form-field-item"}>

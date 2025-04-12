@@ -31,14 +31,14 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
         opacity: '0.5'
     };
 
-    async function addConstraint(data, groupId = null) {
-        if (constraints.some(el => el.contextName === data.contextName && el.isConfidential === 1)) {
+    async function addConstraint(data,isConfidential = 0,groupId = null) {
+        if (constraints.some(el => el.contextName === data.contextName && el.isConfidential !== 0)) {
             toast.error("You can add only one ZKP constraint with the same context name.");
             return;
         }
 
-        if (data.values.length > 1) {
-            toast.error("Only one value is allowed for this operator.");
+        if (data.values.length > 1 && isConfidential!==2) {
+            toast.error("Only one value is allowed.");
             return;
         }
 
@@ -63,13 +63,13 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
     }
 
 
-    async function modifyConstraint(constraintId, data) {
-        if (constraints.some(el => el.contextName === data.contextName && el.id!==constraintId && el.isConfidential === 1)) {
+    async function modifyConstraint(constraintId, data, isConfidential = 0) {
+        if (constraints.some(el => el.contextName === data.contextName && el.id!==constraintId && el.isConfidential !==0)) {
             toast.error("Constraint with same context name already exists.");
             return;
         }
 
-        if( data.values.length>1){
+        if( data.values.length>1 && isConfidential!==2){
             toast.error("Only one value is allowed for this operator.");
             return;
         }
@@ -165,10 +165,11 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
                                         operator={el.operator}
                                         values={el.values}
                                         remove={() => deleteConstraint(el.id)}
-                                        update={(data) => modifyConstraint(el.id, data)}
+                                        update={(data,isConfidential) => modifyConstraint(el.id, data, isConfidential)}
                                         instanceId={instanceId}
                                         environmentId={environmentId}
                                         toggleId={toggleId}
+                                        isConfidential={el.isConfidential}
                                     />
 
                                     {i < groupConstraints.length - 1 && (

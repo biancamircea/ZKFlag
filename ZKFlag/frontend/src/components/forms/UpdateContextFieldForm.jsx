@@ -34,15 +34,24 @@ function UpdateContextFieldForm({handleSubmit, formData, handleChange}) {
                     <FormControl sx={{ m: 1, width: "30em" }}>
                         <Select
                             id="isConfidential"
-                            name="isConfidential"
+                            name="isConfidential-disabled"
                             value={formData.isConfidential}
-                            onChange={handleChange}
                             input={<OutlinedInput />}
+                            disabled
+                            sx={{
+                                cursor: "not-allowed",
+                                backgroundColor: "#f5f5f5",
+                                color: "rgba(0, 0, 0, 0.6)",
+                            }}
                         >
                             <MenuItem value={1}>Yes</MenuItem>
                             <MenuItem value={0}>No</MenuItem>
+                            <MenuItem value={2}>Yes</MenuItem>
                         </Select>
+
+                        <input type="hidden" name="isConfidential" value={formData.isConfidential} />
                     </FormControl>
+
                 </div>
 
                 <div className={"create-form-field-item"}>

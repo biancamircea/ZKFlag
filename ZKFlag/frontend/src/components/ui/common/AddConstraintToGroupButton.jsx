@@ -48,7 +48,7 @@ function AddConstraintToGroupButton({ submitHandler, groupId, toggleId }) {
                 open={open}
                 onClose={handleClose}
                 contextFields={filteredContextFields}
-                submitHandler={(data) => submitHandler(data, groupId)}
+                submitHandler={(data,isConfidential) => submitHandler(data,isConfidential, groupId)}
             />
         </>
     );

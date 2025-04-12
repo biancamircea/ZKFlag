@@ -9,11 +9,12 @@ import org.springframework.http.*;
 import org.springframework.web.client.RestTemplate;
 
 public class ZKPVerifier {
-    private static final String SERVER_URL = "http://localhost:4000/verifyProof";
+    private static final String SERVER_URL_NORMAL = "http://localhost:4000/verifyProof";
+    private static final String SERVER_URL_LOCATION = "http://localhost:4000/verifyLocationProof";
     private static final String PROOF_FILE_PATH = "src/main/resources/zkp/proof.json";
     private static final String PUBLIC_SIGNALS_FILE_PATH = "src/main/resources/zkp/publicSignals.json";
 
-    public boolean verifyProof(JsonNode combinedJson) throws Exception {
+    public boolean verifyProof(JsonNode combinedJson,String type) throws Exception {
         System.out.println("Verifying proof...");
 
         JsonNode proofNode = combinedJson.get("proof");
@@ -40,7 +41,12 @@ public class ZKPVerifier {
 
         HttpEntity<String> entity = new HttpEntity<>(objectMapper.writeValueAsString(requestPayload), headers);
 
-        ResponseEntity<String> response = restTemplate.exchange(SERVER_URL, HttpMethod.POST, entity, String.class);
+        ResponseEntity<String> response;
+        if(type.equals("normal")) {
+            response = restTemplate.exchange(SERVER_URL_NORMAL, HttpMethod.POST, entity, String.class);
+        } else {
+            response = restTemplate.exchange(SERVER_URL_LOCATION, HttpMethod.POST, entity, String.class);
+        }
 
         JsonNode jsonResponse = objectMapper.readTree(response.getBody());
         System.out.println("Proof verification result: " + jsonResponse.get("isValid").asBoolean());

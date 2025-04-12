@@ -24,6 +24,7 @@ public class ClientToggleEvaluationRequestDTO {
     public static class ProofFromClientDTO {
         private String name;
         private JsonNode proof;
+        private String type; //normal, location
     }
 
     public static Optional<String> getValueByName(List<ContextFromClientDTO> contextFields, String name){
