@@ -365,8 +365,10 @@ public class ToggleService {
                     List<ConstraintValue> specificValues = constraintValueRepository.findAllByConstraintIdAndToggleEnvironmentId(constraint.getId(), toggleEnvironment.getId());
 
                     if (!specificValues.isEmpty()) {
-                        constraint.setValues(specificValues);
-                    } else {
+                        List<ConstraintValue> reversed = new ArrayList<>(specificValues);
+                        Collections.reverse(reversed);
+                        constraint.setValues(reversed);
+                } else {
                         List<ConstraintValue> defaultValues = constraint.getValues().stream()
                                 .filter(value -> value.getToggleEnvironment() == null)
                                 .collect(Collectors.toList());

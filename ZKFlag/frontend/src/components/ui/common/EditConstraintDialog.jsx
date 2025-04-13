@@ -46,7 +46,7 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
         }else{
             setElementWithName(contextFields.find((element) => element.name === context.contextName));
         }
-
+        console.log("values inainte de filtrare: ", values)
         async function fetchConstraintValues() {
             try {
                 if (instanceId) {
@@ -59,12 +59,12 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
                         ? constraint_values["constraint-values"].filter(value => value.toggle_environment_id !== null && value.toggle_environment_id !== undefined && toggleEnv.id==value.toggle_environment_id)
                         : [];
 
-                    const structuredValues = filteredValues.map(value => ({
-                        id: value.id,
-                        name: value.value
-                    }));
+                    const structuredValues = filteredValues.map(value => value.value);
+
+                    structuredValues.reverse();
 
                     setPValues(structuredValues);
+                    console.log("values dupa filtrare: ", structuredValues)
 
                 } else {
                     setPValues(values);

@@ -31,20 +31,25 @@ function FeatureToggleAddConstraintDialog({
     const [values, setValues] = useState([]);
     const [latitude, setLatitude] = useState('');
     const [longitude, setLongitude] = useState('');
-    const [radius, setRadius] = useState(0);
+    const [radius, setRadius] = useState("0");
     const [isLocation, setIsLocation] = useState(false);
 
-    useEffect(() => {
-        if (edit) {
-            setContext(pContext?.name || '');
+    console.log("pValues: ", pValues);
 
-            if (pValues.length>=3) {
-                setLatitude(pValues[1] || '');
-                setLongitude(pValues[2] || '');
-                setRadius(pValues[0] || 0);
+    useEffect(() => {
+        if ( edit &&  pValues) {
+
+            if (isConfidential===2 && pValues.length >= 3) {
+                const [rad, lat, lng] = pValues;
+
+                console.log("lat:", lat, " lng: ", lng, " rad:", rad);
+
+                setLatitude(lat === "0" ? '' : lat);
+                setLongitude(lng === "0" ? '' : lng)
+                setRadius(rad)
             }
         }
-    }, [edit, pContext, pValues]);
+    }, [ pValues,open]);
 
 
     useEffect(() => {
@@ -58,24 +63,19 @@ function FeatureToggleAddConstraintDialog({
 
     useEffect(() => {
         if (pValues) {
-            if (instanceId) {
-                setValues(pValues.map((v) => v.name));
-            } else {
                 setValues(pValues);
             }
-        }
     }, [pValues, instanceId]);
 
 
     const handleClose = () => {
         onClose();
-        if (!edit) {
             setContext('');
             setValues([]);
             setLatitude('');
             setLongitude('');
             setRadius(0);
-        }
+
     };
 
     const handleChange = (event) => {
@@ -91,10 +91,24 @@ function FeatureToggleAddConstraintDialog({
         const contextValue = formData.get("context");
         const operator = formData.get("operator");
 
+        if (isLocation) {
+            const lat = parseFloat(latitude);
+            const lng = parseFloat(longitude);
+
+            if (
+                isNaN(lat) || isNaN(lng) ||
+                lat < -90 || lat > 90 ||
+                lng < -180 || lng > 180
+            ) {
+                toast.error("Latitude must be between -90 and 90, and longitude between -180 and 180.");
+                return;
+            }
+        }
+
         if (instanceId == null) {
             const elementWithId = contextFields.find((obj) => obj.id === contextValue);
             if (!contextValue || (isLocation
-                ? (!longitude || !latitude || !radius)
+                ? (!longitude || !latitude )
                 : values.length === 0)) {
                 toast.error("Please fill all required fields!");
                 return;
@@ -113,6 +127,8 @@ function FeatureToggleAddConstraintDialog({
             const finalValues = isLocation
                 ? [longitude,latitude,radius]
                 : values;
+
+            console.log("finalValues: ", finalValues);
 
             submitHandler({
                 contextName: pContext.name,
@@ -136,7 +152,7 @@ function FeatureToggleAddConstraintDialog({
             <Form method="post" onSubmit={handleSubmit}>
                 <DialogContent>
                     {instanceId == null && (
-                        <FormControl sx={{ m: 1, minWidth: 250 }}>
+                        <FormControl sx={{ m: 1, width: 320 }}>
                             <InputLabel id="context-select-label">Context</InputLabel>
                             <Select
                                 labelId="context-select-label"
@@ -168,31 +184,32 @@ function FeatureToggleAddConstraintDialog({
                                     IN
                                 </label>
                             </div>
+                                <br/>
 
                                 <TextField
                                     label="Latitude"
                                     type="number"
-                                    fullWidth
-                                    sx={{ m: 1 }}
-                                    value={Number(latitude)}
+                                    fullWidth={false} 
+                                    sx={{ width: "150px", m: 1 }}
+                                    value={latitude}
                                     onChange={(e) => setLatitude(e.target.value)}
-                                    inputProps={{ step: "0.0001" }}
+                                    inputProps={{ step: "0.0001", min: -90, max: 90 }}
                                     required
                                 />
 
                                 <TextField
                                     label="Longitude"
                                     type="number"
-                                    fullWidth
-                                    sx={{ m: 1 }}
-                                    value={Number(longitude)}
+                                    fullWidth={false}
+                                    sx={{ width: "150px", m: 1 }}
+                                    value={longitude}
                                     onChange={(e) => setLongitude(e.target.value)}
-                                    inputProps={{ step: "0.0001" }}
+                                    inputProps={{ step: "0.0001", min: -180, max: 180 }}
                                     required
                                 />
 
                                 {instanceId == null &&
-                                <FormControl sx={{ m: 1, minWidth: 250 }}>
+                                <FormControl sx={{ m: 1, width: 320 }}>
                                     <InputLabel id="radius-label">Coverage</InputLabel>
                                     <Select
                                         labelId="radius-label"
