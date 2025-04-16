@@ -470,7 +470,7 @@ export async function scheduleToggle(projectId, toggleId, instanceId, environmen
     const url = `${toggleBaseUrl}/toggle-schedule/schedule`;
 
     const formatDate = (date) => {
-        return date.toISOString().replace(/\.\d{3}Z$/, 'Z');
+        return date ? date.toISOString().replace(/\.\d{3}Z$/, 'Z') : null;
     };
 
     const requestBody = {

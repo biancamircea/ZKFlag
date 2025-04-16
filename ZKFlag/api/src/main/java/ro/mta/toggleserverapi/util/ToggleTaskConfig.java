@@ -34,12 +34,15 @@ public class ToggleTaskConfig {
 
                         try {
                             ScheduleDTO toggleSchedule = objectMapper.readValue(taskData, ScheduleDTO.class);
-                            toggleService.enableToggleInEnvironment(
-                                    toggleSchedule.getProjectId(),
-                                    toggleSchedule.getToggleId(),
-                                    toggleSchedule.getEnvironmentName(),
-                                    toggleSchedule.getInstanceId()
-                            );
+
+                            if (toggleSchedule.getActivateAt() != null) {
+                                toggleService.enableToggleInEnvironment(
+                                        toggleSchedule.getProjectId(),
+                                        toggleSchedule.getToggleId(),
+                                        toggleSchedule.getEnvironmentName(),
+                                        toggleSchedule.getInstanceId()
+                                );
+                            }
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException("Failed to deserialize task data", e);
                         }
@@ -68,7 +71,7 @@ public OneTimeTask<String> deactivateToggleTask(ToggleService toggleService) {
                     ScheduleDTO toggleSchedule = objectMapper.readValue(taskData, ScheduleDTO.class);
                     System.out.println("Toggle name: " + toggleSchedule.getToggleId() + ", Deactivate at: " + toggleSchedule.getDeactivateAt());
 
-                    if (toggleSchedule.getActivateAt() != null) {
+                    if (toggleSchedule.getDeactivateAt() != null) {
                         toggleService.disableToggleInEnvironment(
                                 toggleSchedule.getProjectId(),
                                 toggleSchedule.getToggleId(),
@@ -98,12 +101,15 @@ public RecurringTask<String> activateToggleRecurringDaily(ToggleService toggleSe
 
                     try {
                         ScheduleDTO toggleSchedule = objectMapper.readValue(taskData, ScheduleDTO.class);
-                        toggleService.enableToggleInEnvironment(
-                                toggleSchedule.getProjectId(),
-                                toggleSchedule.getToggleId(),
-                                toggleSchedule.getEnvironmentName(),
-                                toggleSchedule.getInstanceId()
-                        );
+
+                        if (toggleSchedule.getActivateAt() != null) {
+                            toggleService.enableToggleInEnvironment(
+                                    toggleSchedule.getProjectId(),
+                                    toggleSchedule.getToggleId(),
+                                    toggleSchedule.getEnvironmentName(),
+                                    toggleSchedule.getInstanceId()
+                            );
+                        }
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException("Failed to deserialize task data", e);
                     }
@@ -129,11 +135,13 @@ public RecurringTask<String> deactivateToggleRecurringDaily(ToggleService toggle
 
                 try {
                     ScheduleDTO toggleSchedule = objectMapper.readValue(taskData, ScheduleDTO.class);
-                    toggleService.disableToggleInEnvironment(
-                            toggleSchedule.getProjectId(),
-                            toggleSchedule.getToggleId(),
-                            toggleSchedule.getEnvironmentName(),
-                            toggleSchedule.getInstanceId());
+                    if (toggleSchedule.getDeactivateAt() != null) {
+                        toggleService.disableToggleInEnvironment(
+                                toggleSchedule.getProjectId(),
+                                toggleSchedule.getToggleId(),
+                                toggleSchedule.getEnvironmentName(),
+                                toggleSchedule.getInstanceId());
+                    }
                 } catch (JsonProcessingException e) {
                     throw new RuntimeException("Failed to deserialize task data", e);
                 }
@@ -157,12 +165,15 @@ public RecurringTask<String> deactivateToggleRecurringDaily(ToggleService toggle
 
                         try {
                             ScheduleDTO toggleSchedule = objectMapper.readValue(taskData, ScheduleDTO.class);
-                            toggleService.enableToggleInEnvironment(
-                                    toggleSchedule.getProjectId(),
-                                    toggleSchedule.getToggleId(),
-                                    toggleSchedule.getEnvironmentName(),
-                                    toggleSchedule.getInstanceId()
-                            );
+
+                            if (toggleSchedule.getActivateAt() != null) {
+                                toggleService.enableToggleInEnvironment(
+                                        toggleSchedule.getProjectId(),
+                                        toggleSchedule.getToggleId(),
+                                        toggleSchedule.getEnvironmentName(),
+                                        toggleSchedule.getInstanceId()
+                                );
+                            }
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException("Failed to deserialize task data", e);
                         }
@@ -188,11 +199,14 @@ public RecurringTask<String> deactivateToggleRecurringDaily(ToggleService toggle
 
                     try {
                         ScheduleDTO toggleSchedule = objectMapper.readValue(taskData, ScheduleDTO.class);
-                        toggleService.disableToggleInEnvironment(
-                                toggleSchedule.getProjectId(),
-                                toggleSchedule.getToggleId(),
-                                toggleSchedule.getEnvironmentName(),
-                                toggleSchedule.getInstanceId());
+
+                        if (toggleSchedule.getDeactivateAt() != null) {
+                            toggleService.disableToggleInEnvironment(
+                                    toggleSchedule.getProjectId(),
+                                    toggleSchedule.getToggleId(),
+                                    toggleSchedule.getEnvironmentName(),
+                                    toggleSchedule.getInstanceId());
+                        }
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException("Failed to deserialize task data", e);
                     }
@@ -215,12 +229,15 @@ public RecurringTask<String> deactivateToggleRecurringDaily(ToggleService toggle
 
                         try {
                             ScheduleDTO toggleSchedule = objectMapper.readValue(taskData, ScheduleDTO.class);
-                            toggleService.enableToggleInEnvironment(
-                                    toggleSchedule.getProjectId(),
-                                    toggleSchedule.getToggleId(),
-                                    toggleSchedule.getEnvironmentName(),
-                                    toggleSchedule.getInstanceId()
-                            );
+
+                            if (toggleSchedule.getActivateAt() != null) {
+                                toggleService.enableToggleInEnvironment(
+                                        toggleSchedule.getProjectId(),
+                                        toggleSchedule.getToggleId(),
+                                        toggleSchedule.getEnvironmentName(),
+                                        toggleSchedule.getInstanceId()
+                                );
+                            }
                         } catch (JsonProcessingException e) {
                             throw new RuntimeException("Failed to deserialize task data", e);
                         }
@@ -246,15 +263,18 @@ public RecurringTask<String> deactivateToggleRecurringDaily(ToggleService toggle
 
                     try {
                         ScheduleDTO toggleSchedule = objectMapper.readValue(taskData, ScheduleDTO.class);
-                        toggleService.disableToggleInEnvironment(
-                                toggleSchedule.getProjectId(),
-                                toggleSchedule.getToggleId(),
-                                toggleSchedule.getEnvironmentName(),
-                                toggleSchedule.getInstanceId());
+
+                        if (toggleSchedule.getDeactivateAt() != null) {
+                            toggleService.disableToggleInEnvironment(
+                                    toggleSchedule.getProjectId(),
+                                    toggleSchedule.getToggleId(),
+                                    toggleSchedule.getEnvironmentName(),
+                                    toggleSchedule.getInstanceId());
+                        }
                     } catch (JsonProcessingException e) {
                         throw new RuntimeException("Failed to deserialize task data", e);
                     }
                 });
     }
 
-    }
+}

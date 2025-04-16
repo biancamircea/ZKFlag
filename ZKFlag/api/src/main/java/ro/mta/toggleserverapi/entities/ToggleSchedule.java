@@ -33,7 +33,10 @@ public class ToggleSchedule {
     @JoinColumn(name = "project_id")
     private Project project;
 
+    @Column(nullable = true)
     private Instant activateAt;
+
+    @Column(nullable = true)
     private Instant deactivateAt;
 
     @Enumerated(EnumType.STRING)

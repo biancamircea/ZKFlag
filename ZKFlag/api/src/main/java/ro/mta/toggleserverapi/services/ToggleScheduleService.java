@@ -44,8 +44,13 @@ public class ToggleScheduleService {
         toggleSchedule.setToggle(toggle);
         toggleSchedule.setInstance(instance);
         toggleSchedule.setEnvironment(environment);
-        toggleSchedule.setActivateAt(activateAt);
-        toggleSchedule.setDeactivateAt(deactivateAt);
+
+        if (activateAt != null) {
+            toggleSchedule.setActivateAt(activateAt);
+        }
+        if( deactivateAt != null) {
+            toggleSchedule.setDeactivateAt(deactivateAt);
+        }
         toggleSchedule.setProject(project);
         toggleSchedule.setScheduleType(ScheduleType.valueOf(recurrence));
 

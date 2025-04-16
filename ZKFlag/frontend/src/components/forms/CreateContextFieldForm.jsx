@@ -68,7 +68,7 @@ function CreateContextFieldForm({handleSubmit, handleNameInput, disableSubmit, i
 
                 <FormControl sx={{ m: 1, width: "30em" }}>
                     <label htmlFor="confidential-select-label">
-                        Does this context field need ZKP verification?
+                        Does this context field need private verification?
                     </label>
                     <Select
                         labelId="confidential-select-label"

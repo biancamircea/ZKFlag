@@ -70,7 +70,7 @@ function ContextFields() {
                         {el.isConfidential === 2
                             ? "Location evaluation"
                             : el.isConfidential === 1
-                                ? "ZKP evaluation"
+                                ? "Private evaluation"
                                 : "Normal evaluation"}
                     </p>
                 </div>
