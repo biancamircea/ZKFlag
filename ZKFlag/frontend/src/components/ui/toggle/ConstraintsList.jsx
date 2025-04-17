@@ -32,10 +32,10 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
     };
 
     async function addConstraint(data,isConfidential = 0,groupId = null) {
-        if (constraints.some(el => el.contextName === data.contextName && el.isConfidential !== 0)) {
-            toast.error("You can add only one ZKP constraint with the same context name.");
-            return;
-        }
+        // if (constraints.some(el => el.contextName === data.contextName && el.isConfidential !== 0)) {
+        //     toast.error("You can add only one ZKP constraint with the same context name.");
+        //     return;
+        // }
 
         if (data.values.length > 1 && isConfidential!==2) {
             toast.error("Only one value is allowed.");

@@ -24,7 +24,6 @@ public class ConstraintDTO {
 
     private Long isConfidential;
     private Long constrGroupId;
-    private Long marginCode; //only for location
 
     public static ConstraintDTO toDTO(Constraint constraint) {
         ConstraintDTO constraintDTO = new ConstraintDTO();
@@ -41,11 +40,6 @@ public class ConstraintDTO {
 
         constraintDTO.setIsConfidential(constraint.getIsConfidential());
         constraintDTO.setConstrGroupId(constraint.getConstrGroupId());
-        if(constraint.getMarginCode() != null) {
-            constraintDTO.setMarginCode(constraint.getMarginCode());
-        } else {
-            constraintDTO.setMarginCode(null);
-        }
         return constraintDTO;
     }
 }

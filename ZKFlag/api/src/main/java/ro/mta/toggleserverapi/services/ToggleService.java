@@ -519,6 +519,7 @@ public class ToggleService {
 
                 if (isValid) {
                     JsonNode publicSignalsNode = proof.getProof().get("publicSignals");
+                    System.out.println("public signals pt "+proof.getName()+" ="+ publicSignalsNode.get(0).asText());
                     publicValues.add(publicSignalsNode.get(0).asText());
                 } else {
                     publicValues.add("0");
@@ -559,25 +560,43 @@ public class ToggleService {
             }
         }
 
-        if (!filteredList.isEmpty() && !(proofs == null) && filteredList.size() != proofs.size()) {
-            return false;
-        }else if(filteredList.isEmpty()){
+        if(filteredList.isEmpty()){
             return true;
         }else if(proofs == null){
             return false;
         }
 
-        for(ClientToggleEvaluationRequestDTO.ProofFromClientDTO proof : proofs) {
+        List<ClientToggleEvaluationRequestDTO.ProofFromClientDTO> filteredProofs = proofs.stream()
+                .filter(p -> {
+                    String proofName = p.getName();
+                    String groupIdSuffix = String.valueOf(constrGroupId);
+                    return proofName.endsWith(groupIdSuffix);
+                })
+                .toList();
+
+        if ( filteredList.size() != filteredProofs.size()) {
+            return false;
+        }
+
+        for (ClientToggleEvaluationRequestDTO.ProofFromClientDTO proof : filteredProofs) {
+            String proofName = proof.getName();
+            String groupIdStr = String.valueOf(constrGroupId);
+
+            String contextName = proofName.substring(0, proofName.length() - groupIdStr.length());
+            System.out.println("nume proof dupa eliminare grId "+contextName);
+
             boolean haveSameContextname = false;
             for (Constraint constraint : filteredList) {
-                if (constraint.getContextField().getName().equals(proof.getName())) {
+                if (constraint.getContextField().getName().equals(contextName)) {
                     haveSameContextname = true;
+                    break;
                 }
             }
-            if(!haveSameContextname) {
+            if (!haveSameContextname) {
                 return false;
             }
         }
+
 
         Set<String> proofHashes = new HashSet<>();
         for (ClientToggleEvaluationRequestDTO.ProofFromClientDTO proof : proofs) {
@@ -600,7 +619,7 @@ public class ToggleService {
             return false;
         }
 
-        return verifyAllProofsZKP(proofs);
+        return verifyAllProofsZKP(filteredProofs);
     }
 
 
