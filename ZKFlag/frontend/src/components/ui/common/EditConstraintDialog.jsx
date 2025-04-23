@@ -46,7 +46,6 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
         }else{
             setElementWithName(contextFields.find((element) => element.name === context.contextName));
         }
-        console.log("values inainte de filtrare: ", values)
         async function fetchConstraintValues() {
             try {
                 if (instanceId) {
@@ -64,8 +63,6 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
                     structuredValues.reverse();
 
                     setPValues(structuredValues);
-                    console.log("values dupa filtrare: ", structuredValues)
-
                 } else {
                     setPValues(values);
                 }

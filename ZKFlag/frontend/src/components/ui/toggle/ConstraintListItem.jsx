@@ -8,10 +8,8 @@ function ConstraintListItem({contextName, operator, values, remove, update, inst
     if (values) {
         if (isConfidential === 2) {
             const [radius, latitude, longitude] = values;
-            console.log("values in constraint list item: ", values);
-
             let radiusText = '';
-            console.log("radius", radius);
+
             if (radius === "0") {
                 radiusText = 'City';
             } else if (radius === "1") {

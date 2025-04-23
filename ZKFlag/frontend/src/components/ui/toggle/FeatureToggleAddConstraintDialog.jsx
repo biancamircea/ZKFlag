@@ -34,8 +34,6 @@ function FeatureToggleAddConstraintDialog({
     const [radius, setRadius] = useState("0");
     const [isLocation, setIsLocation] = useState(false);
 
-    console.log("pValues: ", pValues);
-
     useEffect(() => {
         if ( edit &&  pValues) {
 
@@ -127,8 +125,6 @@ function FeatureToggleAddConstraintDialog({
             const finalValues = isLocation
                 ? [longitude,latitude,radius]
                 : values;
-
-            console.log("finalValues: ", finalValues);
 
             submitHandler({
                 contextName: pContext.name,

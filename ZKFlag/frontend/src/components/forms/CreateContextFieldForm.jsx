@@ -80,7 +80,11 @@ function CreateContextFieldForm({handleSubmit, handleNameInput, disableSubmit, i
                     >
                         <MenuItem value={1}>Yes</MenuItem>
                         <MenuItem value={0}>No</MenuItem>
-                        <MenuItem value={2}>Yes</MenuItem>
+                        {isLocationField && (
+                            <MenuItem value={2} disabled>
+                                Location-based (automatic)
+                            </MenuItem>
+                        )}
                     </Select>
                 </FormControl>
 
