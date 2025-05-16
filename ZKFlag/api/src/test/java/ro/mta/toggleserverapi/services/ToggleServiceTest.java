@@ -1,420 +1,272 @@
-//package ro.mta.toggleserverapi.services;
-//
-//import static org.junit.jupiter.api.Assertions.assertSame;
-//import static org.junit.jupiter.api.Assertions.assertThrows;
-//import static org.junit.jupiter.api.Assertions.assertTrue;
-//import static org.mockito.Mockito.mock;
-//import static org.mockito.Mockito.verify;
-//import static org.mockito.Mockito.when;
-//
-//import java.util.ArrayList;
-//import java.util.List;
-//import java.util.Optional;
-//
-//import org.junit.jupiter.api.Test;
-//import org.mockito.Mockito;
-//import ro.mta.toggleserverapi.converters.ConstraintConverter;
-//import ro.mta.toggleserverapi.converters.ProjectOverviewConverter;
-//import ro.mta.toggleserverapi.converters.ToggleConverter;
-//import ro.mta.toggleserverapi.converters.ToggleEnvironmentConverter;
-//import ro.mta.toggleserverapi.entities.Toggle;
-//import ro.mta.toggleserverapi.exceptions.ToggleNotFoundException;
-//import ro.mta.toggleserverapi.repositories.ApiTokenRepository;
-//import ro.mta.toggleserverapi.repositories.ConstraintRepository;
-//import ro.mta.toggleserverapi.repositories.ConstraintValueRepository;
-//import ro.mta.toggleserverapi.repositories.ContextFieldRepository;
-//import ro.mta.toggleserverapi.repositories.EnvironmentRepository;
-//import ro.mta.toggleserverapi.repositories.EventRepository;
-//import ro.mta.toggleserverapi.repositories.ProjectEnvironmentRepository;
-//import ro.mta.toggleserverapi.repositories.ProjectRepository;
-//import ro.mta.toggleserverapi.repositories.ProjectRoleRepository;
-//import ro.mta.toggleserverapi.repositories.TagRepository;
-//import ro.mta.toggleserverapi.repositories.ToggleEnvironmentRepository;
-//import ro.mta.toggleserverapi.repositories.ToggleRepository;
-//import ro.mta.toggleserverapi.repositories.ToggleTagRepository;
-//import ro.mta.toggleserverapi.repositories.UserProjectRepository;
-//import ro.mta.toggleserverapi.repositories.UserRepository;
-//
-//class ToggleServiceTest {
-//    /**
-//     * Method under test: {@link ToggleService#fetchAllToggles()}
-//     */
-//    //@Test
-////    void testFetchAllToggles() {
-////        ToggleRepository toggleRepository = mock(ToggleRepository.class);
-////        ArrayList<Toggle> toggleList = new ArrayList<>();
-////        when(toggleRepository.findAll()).thenReturn(toggleList);
-////        ProjectRepository projectRepository = mock(ProjectRepository.class);
-////        ApiTokenRepository apiTokenRepository = mock(ApiTokenRepository.class);
-////        ProjectEnvironmentRepository projectEnvironmentRepository = mock(ProjectEnvironmentRepository.class);
-////        ProjectRepository projectRepository2 = mock(ProjectRepository.class);
-////        EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
-////        ProjectEnvironmentService projectEnvironmentService = new ProjectEnvironmentService(projectEnvironmentRepository,
-////                projectRepository2, environmentRepository, new EventService(mock(EventRepository.class)));
-////
-////        UserProjectRepository userProjectRepository = mock(UserProjectRepository.class);
-////        UserRepository userRepository = mock(UserRepository.class);
-////        ProjectRepository projectRepository3 = mock(ProjectRepository.class);
-////        UserProjectService userProjectService = new UserProjectService(userProjectRepository, userRepository,
-////                projectRepository3, new ProjectRoleService(mock(ProjectRoleRepository.class)));
-////
-////        ProjectRoleService projectRoleService = new ProjectRoleService(mock(ProjectRoleRepository.class));
-////        ToggleConverter toggleConverter = new ToggleConverter(new ToggleEnvironmentConverter());
-////        ProjectOverviewConverter projectOverviewConverter = new ProjectOverviewConverter(
-////                new ToggleConverter(new ToggleEnvironmentConverter()));
-////        ProjectService projectService = new ProjectService(projectRepository, apiTokenRepository, projectEnvironmentService,
-////                userProjectService, projectRoleService, toggleConverter, projectOverviewConverter,
-////                new EventService(mock(EventRepository.class)));
-////
-////        ToggleEnvironmentRepository toggleEnvironmentRepository = mock(ToggleEnvironmentRepository.class);
-////        ToggleRepository toggleRepository2 = mock(ToggleRepository.class);
-////        EnvironmentRepository environmentRepository2 = mock(EnvironmentRepository.class);
-////        ToggleEnvironmentService toggleEnvironmentService = new ToggleEnvironmentService(toggleEnvironmentRepository,
-////                toggleRepository2, environmentRepository2, new EventService(mock(EventRepository.class)));
-////
-////        ToggleTagService toggleTagService = new ToggleTagService(mock(ToggleTagRepository.class),
-////                mock(ToggleRepository.class), mock(TagRepository.class));
-////
-////        ConstraintConverter constraintConverter = new ConstraintConverter();
-////        ConstraintRepository constraintRepository = mock(ConstraintRepository.class);
-////        ConstraintValueRepository valueRepository = mock(ConstraintValueRepository.class);
-////        ToggleEnvironmentRepository toggleEnvironmentRepository2 = mock(ToggleEnvironmentRepository.class);
-////        ToggleRepository toggleRepository3 = mock(ToggleRepository.class);
-////        EnvironmentRepository environmentRepository3 = mock(EnvironmentRepository.class);
-////        ToggleEnvironmentService toggleEnvironmentService2 = new ToggleEnvironmentService(toggleEnvironmentRepository2,
-////                toggleRepository3, environmentRepository3, new EventService(mock(EventRepository.class)));
-////
-////        ContextFieldRepository contextFieldRepository = mock(ContextFieldRepository.class);
-////        ProjectRepository projectRepository4 = mock(ProjectRepository.class);
-////        ApiTokenRepository apiTokenRepository2 = mock(ApiTokenRepository.class);
-////        ProjectEnvironmentService projectEnvironmentService2 = new ProjectEnvironmentService(
-////                mock(ProjectEnvironmentRepository.class), mock(ProjectRepository.class), mock(EnvironmentRepository.class),
-////                null);
-////
-////        UserProjectService userProjectService2 = new UserProjectService(mock(UserProjectRepository.class),
-////                mock(UserRepository.class), mock(ProjectRepository.class), null);
-////
-////        ProjectRoleService projectRoleService2 = new ProjectRoleService(mock(ProjectRoleRepository.class));
-////        ToggleConverter toggleConverter2 = new ToggleConverter(new ToggleEnvironmentConverter());
-////        ProjectOverviewConverter projectOverviewConverter2 = new ProjectOverviewConverter(null);
-////        ConstraintService constraintService = new ConstraintService(constraintRepository, valueRepository,
-////                toggleEnvironmentService2,
-////                new ContextFieldService(contextFieldRepository,
-////                        new ProjectService(projectRepository4, apiTokenRepository2, projectEnvironmentService2, userProjectService2,
-////                                projectRoleService2, toggleConverter2, projectOverviewConverter2,
-////                                new EventService(mock(EventRepository.class)))));
-////
-////        ToggleEnvironmentConverter toggleEnvironmentConverter = new ToggleEnvironmentConverter();
-////        List<Toggle> actualFetchAllTogglesResult = (new ToggleService(toggleRepository, projectService,
-////                toggleEnvironmentService, toggleTagService, constraintConverter, constraintService, toggleEnvironmentConverter,
-////                new EventService(mock(EventRepository.class)))).fetchAllToggles();
-////        assertSame(toggleList, actualFetchAllTogglesResult);
-////        assertTrue(actualFetchAllTogglesResult.isEmpty());
-////        verify(toggleRepository).findAll();
-////    }
-//
-//    /**
-//     * Method under test: {@link ToggleService#fetchAllToggles()}
-//     */
-////    @Test
-////    void testFetchAllToggles2() {
-////        ToggleRepository toggleRepository = mock(ToggleRepository.class);
-////        when(toggleRepository.findAll()).thenThrow(new ToggleNotFoundException(1L));
-////        ProjectRepository projectRepository = mock(ProjectRepository.class);
-////        ApiTokenRepository apiTokenRepository = mock(ApiTokenRepository.class);
-////        ProjectEnvironmentRepository projectEnvironmentRepository = mock(ProjectEnvironmentRepository.class);
-////        ProjectRepository projectRepository2 = mock(ProjectRepository.class);
-////        EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
-////        ProjectEnvironmentService projectEnvironmentService = new ProjectEnvironmentService(projectEnvironmentRepository,
-////                projectRepository2, environmentRepository, new EventService(mock(EventRepository.class)));
-////
-////        UserProjectRepository userProjectRepository = mock(UserProjectRepository.class);
-////        UserRepository userRepository = mock(UserRepository.class);
-////        ProjectRepository projectRepository3 = mock(ProjectRepository.class);
-////        UserProjectService userProjectService = new UserProjectService(userProjectRepository, userRepository,
-////                projectRepository3, new ProjectRoleService(mock(ProjectRoleRepository.class)));
-////
-////        ProjectRoleService projectRoleService = new ProjectRoleService(mock(ProjectRoleRepository.class));
-////        ToggleConverter toggleConverter = new ToggleConverter(new ToggleEnvironmentConverter());
-////        ProjectOverviewConverter projectOverviewConverter = new ProjectOverviewConverter(
-////                new ToggleConverter(new ToggleEnvironmentConverter()));
-////        ProjectService projectService = new ProjectService(projectRepository, apiTokenRepository,
-////                projectEnvironmentService, userProjectService, projectRoleService, toggleConverter, projectOverviewConverter,
-////                new EventService(mock(EventRepository.class)));
-////
-////        ToggleEnvironmentRepository toggleEnvironmentRepository = mock(ToggleEnvironmentRepository.class);
-////        ToggleRepository toggleRepository2 = mock(ToggleRepository.class);
-////        EnvironmentRepository environmentRepository2 = mock(EnvironmentRepository.class);
-////        ToggleEnvironmentService toggleEnvironmentService = new ToggleEnvironmentService(toggleEnvironmentRepository,
-////                toggleRepository2, environmentRepository2, new EventService(mock(EventRepository.class)));
-////
-////        ToggleTagService toggleTagService = new ToggleTagService(mock(ToggleTagRepository.class),
-////                mock(ToggleRepository.class), mock(TagRepository.class));
-////
-////        ConstraintConverter constraintConverter = new ConstraintConverter();
-////        ConstraintRepository constraintRepository = mock(ConstraintRepository.class);
-////        ConstraintValueRepository valueRepository = mock(ConstraintValueRepository.class);
-////        ToggleEnvironmentRepository toggleEnvironmentRepository2 = mock(ToggleEnvironmentRepository.class);
-////        ToggleRepository toggleRepository3 = mock(ToggleRepository.class);
-////        EnvironmentRepository environmentRepository3 = mock(EnvironmentRepository.class);
-////        ToggleEnvironmentService toggleEnvironmentService2 = new ToggleEnvironmentService(toggleEnvironmentRepository2,
-////                toggleRepository3, environmentRepository3, new EventService(mock(EventRepository.class)));
-////
-////        ContextFieldRepository contextFieldRepository = mock(ContextFieldRepository.class);
-////        ProjectRepository projectRepository4 = mock(ProjectRepository.class);
-////        ApiTokenRepository apiTokenRepository2 = mock(ApiTokenRepository.class);
-////        ProjectEnvironmentService projectEnvironmentService2 = new ProjectEnvironmentService(
-////                mock(ProjectEnvironmentRepository.class), mock(ProjectRepository.class), mock(EnvironmentRepository.class),
-////                null);
-////
-////        UserProjectService userProjectService2 = new UserProjectService(mock(UserProjectRepository.class),
-////                mock(UserRepository.class), mock(ProjectRepository.class), null);
-////
-////        ProjectRoleService projectRoleService2 = new ProjectRoleService(mock(ProjectRoleRepository.class));
-////        ToggleConverter toggleConverter2 = new ToggleConverter(new ToggleEnvironmentConverter());
-////        ProjectOverviewConverter projectOverviewConverter2 = new ProjectOverviewConverter(null);
-////        ConstraintService constraintService = new ConstraintService(constraintRepository, valueRepository,
-////                toggleEnvironmentService2,
-////                new ContextFieldService(contextFieldRepository,
-////                        new ProjectService(projectRepository4, apiTokenRepository2, projectEnvironmentService2,
-////                                userProjectService2, projectRoleService2, toggleConverter2, projectOverviewConverter2,
-////                                new EventService(mock(EventRepository.class)))));
-////
-////        ToggleEnvironmentConverter toggleEnvironmentConverter = new ToggleEnvironmentConverter();
-////        assertThrows(ToggleNotFoundException.class,
-////                () -> (new ToggleService(toggleRepository, projectService, toggleEnvironmentService, toggleTagService,
-////                        constraintConverter, constraintService, toggleEnvironmentConverter,
-////                        new EventService(mock(EventRepository.class)))).fetchAllToggles());
-////        verify(toggleRepository).findAll();
-////    }
-//
-//    /**
-//     * Method under test: {@link ToggleService#fetchToggleByProjectIdAndToggleId(Long, Long)}
-//     */
-//    @Test
-//    void testFetchToggleByProjectIdAndToggleId() {
-//        ToggleRepository toggleRepository = mock(ToggleRepository.class);
-//        Toggle toggle = new Toggle();
-//        when(toggleRepository.findByIdAndProjectId(Mockito.<Long>any(), Mockito.<Long>any()))
-//                .thenReturn(Optional.of(toggle));
-//        ProjectRepository projectRepository = mock(ProjectRepository.class);
-//        ApiTokenRepository apiTokenRepository = mock(ApiTokenRepository.class);
-//        ProjectEnvironmentRepository projectEnvironmentRepository = mock(ProjectEnvironmentRepository.class);
-//        ProjectRepository projectRepository2 = mock(ProjectRepository.class);
-//        EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
-//        ProjectEnvironmentService projectEnvironmentService = new ProjectEnvironmentService(projectEnvironmentRepository,
-//                projectRepository2, environmentRepository, new EventService(mock(EventRepository.class)));
-//
-//        UserProjectRepository userProjectRepository = mock(UserProjectRepository.class);
-//        UserRepository userRepository = mock(UserRepository.class);
-//        ProjectRepository projectRepository3 = mock(ProjectRepository.class);
-//        UserProjectService userProjectService = new UserProjectService(userProjectRepository, userRepository,
-//                projectRepository3, new ProjectRoleService(mock(ProjectRoleRepository.class)));
-//
-//        ProjectRoleService projectRoleService = new ProjectRoleService(mock(ProjectRoleRepository.class));
-//        ToggleConverter toggleConverter = new ToggleConverter(new ToggleEnvironmentConverter());
-//        ProjectOverviewConverter projectOverviewConverter = new ProjectOverviewConverter(
-//                new ToggleConverter(new ToggleEnvironmentConverter()));
-//        ProjectService projectService = new ProjectService(projectRepository, apiTokenRepository, projectEnvironmentService,
-//                userProjectService, projectRoleService, toggleConverter, projectOverviewConverter,
-//                new EventService(mock(EventRepository.class)));
-//
-//        ToggleEnvironmentRepository toggleEnvironmentRepository = mock(ToggleEnvironmentRepository.class);
-//        ToggleRepository toggleRepository2 = mock(ToggleRepository.class);
-//        EnvironmentRepository environmentRepository2 = mock(EnvironmentRepository.class);
-//        ToggleEnvironmentService toggleEnvironmentService = new ToggleEnvironmentService(toggleEnvironmentRepository,
-//                toggleRepository2, environmentRepository2, new EventService(mock(EventRepository.class)));
-//
-//        ToggleTagService toggleTagService = new ToggleTagService(mock(ToggleTagRepository.class),
-//                mock(ToggleRepository.class), mock(TagRepository.class));
-//
-//        ConstraintConverter constraintConverter = new ConstraintConverter();
-//        ConstraintRepository constraintRepository = mock(ConstraintRepository.class);
-//        ConstraintValueRepository valueRepository = mock(ConstraintValueRepository.class);
-//        ToggleEnvironmentRepository toggleEnvironmentRepository2 = mock(ToggleEnvironmentRepository.class);
-//        ToggleRepository toggleRepository3 = mock(ToggleRepository.class);
-//        EnvironmentRepository environmentRepository3 = mock(EnvironmentRepository.class);
-//        ToggleEnvironmentService toggleEnvironmentService2 = new ToggleEnvironmentService(toggleEnvironmentRepository2,
-//                toggleRepository3, environmentRepository3, new EventService(mock(EventRepository.class)));
-//
-//        ContextFieldRepository contextFieldRepository = mock(ContextFieldRepository.class);
-//        ProjectRepository projectRepository4 = mock(ProjectRepository.class);
-//        ApiTokenRepository apiTokenRepository2 = mock(ApiTokenRepository.class);
-//        ProjectEnvironmentService projectEnvironmentService2 = new ProjectEnvironmentService(
-//                mock(ProjectEnvironmentRepository.class), mock(ProjectRepository.class), mock(EnvironmentRepository.class),
-//                null);
-//
-//        UserProjectService userProjectService2 = new UserProjectService(mock(UserProjectRepository.class),
-//                mock(UserRepository.class), mock(ProjectRepository.class), null);
-//
-//        ProjectRoleService projectRoleService2 = new ProjectRoleService(mock(ProjectRoleRepository.class));
-//        ToggleConverter toggleConverter2 = new ToggleConverter(new ToggleEnvironmentConverter());
-//        ProjectOverviewConverter projectOverviewConverter2 = new ProjectOverviewConverter(null);
-//        ConstraintService constraintService = new ConstraintService(constraintRepository, valueRepository,
-//                toggleEnvironmentService2,
-//                new ContextFieldService(contextFieldRepository,
-//                        new ProjectService(projectRepository4, apiTokenRepository2, projectEnvironmentService2, userProjectService2,
-//                                projectRoleService2, toggleConverter2, projectOverviewConverter2,
-//                                new EventService(mock(EventRepository.class)))));
-//
-//        ToggleEnvironmentConverter toggleEnvironmentConverter = new ToggleEnvironmentConverter();
-//        assertSame(toggle,
-//                (new ToggleService(toggleRepository, projectService, toggleEnvironmentService, toggleTagService,
-//                        constraintConverter, constraintService, toggleEnvironmentConverter,
-//                        new EventService(mock(EventRepository.class)))).fetchToggleByProjectIdAndToggleId(1L, 1L));
-//        verify(toggleRepository).findByIdAndProjectId(Mockito.<Long>any(), Mockito.<Long>any());
-//    }
-//
-//    /**
-//     * Method under test: {@link ToggleService#fetchToggleByProjectIdAndToggleId(Long, Long)}
-//     */
-//    @Test
-//    void testFetchToggleByProjectIdAndToggleId2() {
-//        ToggleRepository toggleRepository = mock(ToggleRepository.class);
-//        when(toggleRepository.findByIdAndProjectId(Mockito.<Long>any(), Mockito.<Long>any()))
-//                .thenReturn(Optional.empty());
-//        ProjectRepository projectRepository = mock(ProjectRepository.class);
-//        ApiTokenRepository apiTokenRepository = mock(ApiTokenRepository.class);
-//        ProjectEnvironmentRepository projectEnvironmentRepository = mock(ProjectEnvironmentRepository.class);
-//        ProjectRepository projectRepository2 = mock(ProjectRepository.class);
-//        EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
-//        ProjectEnvironmentService projectEnvironmentService = new ProjectEnvironmentService(projectEnvironmentRepository,
-//                projectRepository2, environmentRepository, new EventService(mock(EventRepository.class)));
-//
-//        UserProjectRepository userProjectRepository = mock(UserProjectRepository.class);
-//        UserRepository userRepository = mock(UserRepository.class);
-//        ProjectRepository projectRepository3 = mock(ProjectRepository.class);
-//        UserProjectService userProjectService = new UserProjectService(userProjectRepository, userRepository,
-//                projectRepository3, new ProjectRoleService(mock(ProjectRoleRepository.class)));
-//
-//        ProjectRoleService projectRoleService = new ProjectRoleService(mock(ProjectRoleRepository.class));
-//        ToggleConverter toggleConverter = new ToggleConverter(new ToggleEnvironmentConverter());
-//        ProjectOverviewConverter projectOverviewConverter = new ProjectOverviewConverter(
-//                new ToggleConverter(new ToggleEnvironmentConverter()));
-//        ProjectService projectService = new ProjectService(projectRepository, apiTokenRepository,
-//                projectEnvironmentService, userProjectService, projectRoleService, toggleConverter, projectOverviewConverter,
-//                new EventService(mock(EventRepository.class)));
-//
-//        ToggleEnvironmentRepository toggleEnvironmentRepository = mock(ToggleEnvironmentRepository.class);
-//        ToggleRepository toggleRepository2 = mock(ToggleRepository.class);
-//        EnvironmentRepository environmentRepository2 = mock(EnvironmentRepository.class);
-//        ToggleEnvironmentService toggleEnvironmentService = new ToggleEnvironmentService(toggleEnvironmentRepository,
-//                toggleRepository2, environmentRepository2, new EventService(mock(EventRepository.class)));
-//
-//        ToggleTagService toggleTagService = new ToggleTagService(mock(ToggleTagRepository.class),
-//                mock(ToggleRepository.class), mock(TagRepository.class));
-//
-//        ConstraintConverter constraintConverter = new ConstraintConverter();
-//        ConstraintRepository constraintRepository = mock(ConstraintRepository.class);
-//        ConstraintValueRepository valueRepository = mock(ConstraintValueRepository.class);
-//        ToggleEnvironmentRepository toggleEnvironmentRepository2 = mock(ToggleEnvironmentRepository.class);
-//        ToggleRepository toggleRepository3 = mock(ToggleRepository.class);
-//        EnvironmentRepository environmentRepository3 = mock(EnvironmentRepository.class);
-//        ToggleEnvironmentService toggleEnvironmentService2 = new ToggleEnvironmentService(toggleEnvironmentRepository2,
-//                toggleRepository3, environmentRepository3, new EventService(mock(EventRepository.class)));
-//
-//        ContextFieldRepository contextFieldRepository = mock(ContextFieldRepository.class);
-//        ProjectRepository projectRepository4 = mock(ProjectRepository.class);
-//        ApiTokenRepository apiTokenRepository2 = mock(ApiTokenRepository.class);
-//        ProjectEnvironmentService projectEnvironmentService2 = new ProjectEnvironmentService(
-//                mock(ProjectEnvironmentRepository.class), mock(ProjectRepository.class), mock(EnvironmentRepository.class),
-//                null);
-//
-//        UserProjectService userProjectService2 = new UserProjectService(mock(UserProjectRepository.class),
-//                mock(UserRepository.class), mock(ProjectRepository.class), null);
-//
-//        ProjectRoleService projectRoleService2 = new ProjectRoleService(mock(ProjectRoleRepository.class));
-//        ToggleConverter toggleConverter2 = new ToggleConverter(new ToggleEnvironmentConverter());
-//        ProjectOverviewConverter projectOverviewConverter2 = new ProjectOverviewConverter(null);
-//        ConstraintService constraintService = new ConstraintService(constraintRepository, valueRepository,
-//                toggleEnvironmentService2,
-//                new ContextFieldService(contextFieldRepository,
-//                        new ProjectService(projectRepository4, apiTokenRepository2, projectEnvironmentService2,
-//                                userProjectService2, projectRoleService2, toggleConverter2, projectOverviewConverter2,
-//                                new EventService(mock(EventRepository.class)))));
-//
-//        ToggleEnvironmentConverter toggleEnvironmentConverter = new ToggleEnvironmentConverter();
-//        assertThrows(ToggleNotFoundException.class,
-//                () -> (new ToggleService(toggleRepository, projectService, toggleEnvironmentService, toggleTagService,
-//                        constraintConverter, constraintService, toggleEnvironmentConverter,
-//                        new EventService(mock(EventRepository.class)))).fetchToggleByProjectIdAndToggleId(1L, 1L));
-//        verify(toggleRepository).findByIdAndProjectId(Mockito.<Long>any(), Mockito.<Long>any());
-//    }
-//
-//    /**
-//     * Method under test: {@link ToggleService#fetchToggleByProjectIdAndToggleId(Long, Long)}
-//     */
-//    @Test
-//    void testFetchToggleByProjectIdAndToggleId3() {
-//        ToggleRepository toggleRepository = mock(ToggleRepository.class);
-//        when(toggleRepository.findByIdAndProjectId(Mockito.<Long>any(), Mockito.<Long>any()))
-//                .thenThrow(new ToggleNotFoundException(1L));
-//        ProjectRepository projectRepository = mock(ProjectRepository.class);
-//        ApiTokenRepository apiTokenRepository = mock(ApiTokenRepository.class);
-//        ProjectEnvironmentRepository projectEnvironmentRepository = mock(ProjectEnvironmentRepository.class);
-//        ProjectRepository projectRepository2 = mock(ProjectRepository.class);
-//        EnvironmentRepository environmentRepository = mock(EnvironmentRepository.class);
-//        ProjectEnvironmentService projectEnvironmentService = new ProjectEnvironmentService(projectEnvironmentRepository,
-//                projectRepository2, environmentRepository, new EventService(mock(EventRepository.class)));
-//
-//        UserProjectRepository userProjectRepository = mock(UserProjectRepository.class);
-//        UserRepository userRepository = mock(UserRepository.class);
-//        ProjectRepository projectRepository3 = mock(ProjectRepository.class);
-//        UserProjectService userProjectService = new UserProjectService(userProjectRepository, userRepository,
-//                projectRepository3, new ProjectRoleService(mock(ProjectRoleRepository.class)));
-//
-//        ProjectRoleService projectRoleService = new ProjectRoleService(mock(ProjectRoleRepository.class));
-//        ToggleConverter toggleConverter = new ToggleConverter(new ToggleEnvironmentConverter());
-//        ProjectOverviewConverter projectOverviewConverter = new ProjectOverviewConverter(
-//                new ToggleConverter(new ToggleEnvironmentConverter()));
-//        ProjectService projectService = new ProjectService(projectRepository, apiTokenRepository,
-//                projectEnvironmentService, userProjectService, projectRoleService, toggleConverter, projectOverviewConverter,
-//                new EventService(mock(EventRepository.class)));
-//
-//        ToggleEnvironmentRepository toggleEnvironmentRepository = mock(ToggleEnvironmentRepository.class);
-//        ToggleRepository toggleRepository2 = mock(ToggleRepository.class);
-//        EnvironmentRepository environmentRepository2 = mock(EnvironmentRepository.class);
-//        ToggleEnvironmentService toggleEnvironmentService = new ToggleEnvironmentService(toggleEnvironmentRepository,
-//                toggleRepository2, environmentRepository2, new EventService(mock(EventRepository.class)));
-//
-//        ToggleTagService toggleTagService = new ToggleTagService(mock(ToggleTagRepository.class),
-//                mock(ToggleRepository.class), mock(TagRepository.class));
-//
-//        ConstraintConverter constraintConverter = new ConstraintConverter();
-//        ConstraintRepository constraintRepository = mock(ConstraintRepository.class);
-//        ConstraintValueRepository valueRepository = mock(ConstraintValueRepository.class);
-//        ToggleEnvironmentRepository toggleEnvironmentRepository2 = mock(ToggleEnvironmentRepository.class);
-//        ToggleRepository toggleRepository3 = mock(ToggleRepository.class);
-//        EnvironmentRepository environmentRepository3 = mock(EnvironmentRepository.class);
-//        ToggleEnvironmentService toggleEnvironmentService2 = new ToggleEnvironmentService(toggleEnvironmentRepository2,
-//                toggleRepository3, environmentRepository3, new EventService(mock(EventRepository.class)));
-//
-//        ContextFieldRepository contextFieldRepository = mock(ContextFieldRepository.class);
-//        ProjectRepository projectRepository4 = mock(ProjectRepository.class);
-//        ApiTokenRepository apiTokenRepository2 = mock(ApiTokenRepository.class);
-//        ProjectEnvironmentService projectEnvironmentService2 = new ProjectEnvironmentService(
-//                mock(ProjectEnvironmentRepository.class), mock(ProjectRepository.class), mock(EnvironmentRepository.class),
-//                null);
-//
-//        UserProjectService userProjectService2 = new UserProjectService(mock(UserProjectRepository.class),
-//                mock(UserRepository.class), mock(ProjectRepository.class), null);
-//
-//        ProjectRoleService projectRoleService2 = new ProjectRoleService(mock(ProjectRoleRepository.class));
-//        ToggleConverter toggleConverter2 = new ToggleConverter(new ToggleEnvironmentConverter());
-//        ProjectOverviewConverter projectOverviewConverter2 = new ProjectOverviewConverter(null);
-//        ConstraintService constraintService = new ConstraintService(constraintRepository, valueRepository,
-//                toggleEnvironmentService2,
-//                new ContextFieldService(contextFieldRepository,
-//                        new ProjectService(projectRepository4, apiTokenRepository2, projectEnvironmentService2,
-//                                userProjectService2, projectRoleService2, toggleConverter2, projectOverviewConverter2,
-//                                new EventService(mock(EventRepository.class)))));
-//
-//        ToggleEnvironmentConverter toggleEnvironmentConverter = new ToggleEnvironmentConverter();
-//        assertThrows(ToggleNotFoundException.class,
-//                () -> (new ToggleService(toggleRepository, projectService, toggleEnvironmentService, toggleTagService,
-//                        constraintConverter, constraintService, toggleEnvironmentConverter,
-//                        new EventService(mock(EventRepository.class)))).fetchToggleByProjectIdAndToggleId(1L, 1L));
-//        verify(toggleRepository).findByIdAndProjectId(Mockito.<Long>any(), Mockito.<Long>any());
-//    }
-//}
-//
+package ro.mta.toggleserverapi.services;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import ro.mta.toggleserverapi.DTOs.ClientToggleEvaluationRequestDTO;
+import ro.mta.toggleserverapi.DTOs.ToggleEnvironmentDTO;
+import ro.mta.toggleserverapi.converters.ToggleEnvironmentConverter;
+import ro.mta.toggleserverapi.entities.*;
+import ro.mta.toggleserverapi.enums.ActionType;
+import ro.mta.toggleserverapi.exceptions.ToggleNotFoundException;
+import ro.mta.toggleserverapi.repositories.ToggleRepository;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.when;
+
+@ExtendWith(MockitoExtension.class)
+class ToggleServiceTest {
+
+    @Mock
+    private ToggleRepository toggleRepository;
+
+    @Mock private ProjectService projectService;
+    @Mock private EventService eventService;
+    @Mock private InstanceService instanceService;
+    @Mock private ToggleEnvironmentService toggleEnvironmentService;
+    @Mock private EnvironmentService environmentService;
+    @Mock private InstanceEnvironmentService instanceEnvironmentService;
+    @Mock private ToggleEnvironmentConverter toggleEnvironmentConverter;
+
+
+    @Spy
+    @InjectMocks private ToggleService toggleService;
+
+
+    @Test
+    void fetchAllToggles_shouldReturnAllToggles() {
+        Toggle toggle1 = new Toggle();
+        toggle1.setId(1L);
+        toggle1.setName("Flag 1");
+        toggle1.setDescription("Test description");
+
+        Toggle toggle2 = new Toggle();
+        toggle2.setId(2L);
+        toggle2.setName("Flag2");
+        toggle2.setDescription("Test description");
+
+        // arrange
+        List<Toggle> mockToggles = List.of(
+              toggle1,toggle2
+        );
+        when(toggleRepository.findAll()).thenReturn(mockToggles);
+
+        // act
+        List<Toggle> result = toggleService.fetchAllToggles();
+
+        // assert
+        assertEquals(2, result.size());
+        assertEquals("Flag 1", result.get(0).getName());
+    }
+
+    @Test
+    void fetchToggle_shouldReturnToggleIfExists() {
+        // arrange
+        Toggle toggle1 = new Toggle();
+        toggle1.setId(1L);
+        toggle1.setName("Test Flag1");
+        toggle1.setDescription("Test description");
+        when(toggleRepository.findById(1L)).thenReturn(Optional.of(toggle1));
+
+        // act
+        Toggle result = toggleService.fetchToggle(1L);
+
+        // assert
+        assertNotNull(result);
+        assertEquals("Test Flag1", result.getName());
+    }
+
+    @Test
+    void fetchToggle_shouldThrowExceptionIfNotFound() {
+        // arrange
+        when(toggleRepository.findById(99L)).thenReturn(Optional.empty());
+
+        // act & assert
+        assertThrows(ToggleNotFoundException.class, () -> toggleService.fetchToggle(99L));
+    }
+
+
+    @Test
+    void saveToggle_shouldSaveToggleAndAssociateWithEnvironments() {
+        // arrange
+        Long projectId = 1L;
+        Project mockProject = new Project();
+        mockProject.setId(projectId);
+
+        Toggle toggle = new Toggle();
+        toggle.setName("Test Toggle");
+
+        Toggle savedToggle = new Toggle();
+        savedToggle.setId(123L);
+        savedToggle.setName("Test Toggle");
+        savedToggle.setProject(mockProject);
+
+        when(projectService.fetchProject(projectId)).thenReturn(mockProject);
+        when(toggleRepository.save(Mockito.<Toggle>any())).thenReturn(savedToggle);
+        when(instanceService.fetchInstancesByProject(projectId)).thenReturn(List.of(new Instance()));
+        when(instanceService.fetchEnabledEnvironmentsInInstance(Mockito.<Instance>any())).thenReturn(List.of(new Environment()));
+
+        // act
+        Toggle result = toggleService.saveToggle(toggle, projectId);
+
+        // assert
+        assertNotNull(result);
+        assertEquals(123L, result.getId());
+        verify(toggleRepository, times(2)).save(Mockito.<Toggle>any());
+
+
+
+        verify(toggleEnvironmentService).createToggleEnvironmentAssociation(Mockito.<Toggle>any(), Mockito.<Environment>any(), Mockito.<Instance>any());
+    }
+
+    @Test
+    void enableToggleInEnvironment_shouldEnableToggleAndTriggerEvent() {
+        // arrange
+        Long projectId = 1L;
+        Long toggleId = 2L;
+        Long instanceId = 3L;
+        String envName = "prod";
+
+        Project project = new Project();
+        project.setId(projectId);
+
+        Toggle toggle = new Toggle();
+        toggle.setId(toggleId);
+
+        Environment environment = new Environment();
+        environment.setName(envName);
+
+        Instance instance = new Instance();
+        instance.setId(instanceId);
+
+        doReturn(toggle).when(toggleService).fetchToggleByProjectIdAndToggleId(projectId, toggleId);
+
+
+        when(environmentService.fetchEnvironmentByName(envName)).thenReturn(environment);
+        when(instanceService.fetchInstance(instanceId)).thenReturn(instance);
+        when(projectService.fetchProject(projectId)).thenReturn(project);
+
+        // act
+        toggleService.enableToggleInEnvironment(projectId, toggleId, envName, instanceId);
+
+        // assert
+        verify(eventService).submitAction(ActionType.ENABLE, project, toggle, environment, instance);
+        verify(toggleEnvironmentService).enableByToggleIdEnvNameAndInstanceId(toggleId, envName, instanceId);
+    }
+
+
+    @Test
+    void saveToggle_shouldSaveToggleAndGenerateHashId() {
+        Project mockProject = new Project();
+        mockProject.setId(1L);
+
+        Toggle toggle = new Toggle();
+        toggle.setName("TestFlag");
+
+        when(projectService.fetchProject(1L)).thenReturn(mockProject); //ret pr generat de noi
+        when(toggleRepository.save(any(Toggle.class))).thenAnswer(i -> { //simulam salvarea in baza de date si setamm id-ul manual
+            Toggle t = i.getArgument(0);
+            t.setId(100L);
+            return t;
+        });
+
+        when(instanceService.fetchInstancesByProject(1L)).thenReturn(Collections.emptyList()); // Nu avem instanta pentru test
+
+        // act
+        Toggle result = toggleService.saveToggle(toggle, 1L); // Salvam toggle-ul cu hash id
+
+        // assert
+        assertNotNull(result.getHashId()); // Verificam ca hash id-ul a fost generat
+        assertEquals("TestFlag", result.getName()); // Verificam ca numele este corect
+        verify(toggleRepository, times(2)).save(any()); //2 apeluri de salvare (cu si fara hash id)
+    }
+
+    @Test
+    void addPayloadInToggleEnvironment_shouldSavePayloadCorrectly() {
+        // arrange
+        Long projectId = 1L, instanceId = 1L, toggleId = 1L, envId = 2L;
+
+        Project project = new Project();
+        project.setId(projectId);
+
+        Instance instance = new Instance();
+        instance.setId(instanceId);
+
+        Toggle toggle = new Toggle();
+        toggle.setId(toggleId);
+        toggle.setProject(project);
+
+        InstanceEnvironment ie = new InstanceEnvironment();
+        Environment environment = new Environment();
+        environment.setId(envId);
+        ie.setEnvironment(environment);
+
+        ToggleEnvironment toggleEnv = new ToggleEnvironment();
+        toggleEnv.setToggle(toggle);
+        toggleEnv.setEnvironment(environment);
+
+        ToggleEnvironmentDTO dto = new ToggleEnvironmentDTO();
+
+        when(projectService.fetchInstanceByProjectIdAndInstanceId(projectId, instanceId)).thenReturn(instance);
+        when(instanceEnvironmentService.fetchAllByInstanceIdAndActiveTrue(instanceId)).thenReturn(List.of(ie));
+
+        when(toggleRepository.findByIdAndProjectId(toggleId, projectId)).thenReturn(Optional.of(toggle));
+
+        when(toggleEnvironmentService.addPayload(toggle, envId, instanceId, "img1.png", "text_off")).thenReturn(toggleEnv);
+        when(toggleEnvironmentConverter.toDTO(toggleEnv)).thenReturn(dto);
+
+        ToggleEnvironmentDTO result = toggleService.addPayloadInToggleEnvironment(
+                projectId, instanceId, toggleId, envId, "img1.png", "text_off"
+        );
+
+        assertNotNull(result);
+        assertEquals(dto, result);
+        verify(toggleEnvironmentService).addPayload(toggle, envId, instanceId, "img1.png", "text_off");
+        verify(eventService).submitAction(any(), any(), any(), any());
+    }
+
+
+    @Test
+    void evaluateToggleInContext_shouldReturnTrue_whenToggleIsValid() {
+        // arrange
+        Project project = new Project();
+        Instance instance = new Instance();
+        Environment environment = new Environment();
+
+        ApiToken apiToken = new ApiToken();
+        apiToken.setProject(project);
+        apiToken.setInstance(instance);
+        apiToken.setEnvironment(environment);
+        apiToken.setType(1L); // backend
+
+        Toggle toggle = new Toggle();
+        toggle.setName("flag1");
+        toggle.setToggleType(1);
+        toggle.setProject(project);
+
+        List<ClientToggleEvaluationRequestDTO.ContextFromClientDTO> context = new ArrayList<>();
+
+        when(toggleRepository.findByNameAndProjectAndToggleType("flag1", project, 1))
+                .thenReturn(Optional.of(toggle));
+        when(toggleEnvironmentService.evaluateToggleInContext(toggle, environment, instance.getId(), context, null))
+                .thenReturn(true);
+
+        // act
+        Boolean result = toggleService.evaluateToggleInContext("flag1", apiToken, context, null);
+
+        // assert
+        assertTrue(result);
+    }
+
+
+
+}

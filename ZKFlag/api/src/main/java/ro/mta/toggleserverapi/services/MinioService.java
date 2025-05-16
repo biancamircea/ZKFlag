@@ -21,6 +21,11 @@ public class MinioService {
                 .build();
     }
 
+    public MinioService(MinioClient minioClient) {
+        this.minioClient = minioClient;
+    }
+
+
     public String uploadFile(MultipartFile file) throws Exception {
         String fileName = UUID.randomUUID() + "-" + file.getOriginalFilename();
 
