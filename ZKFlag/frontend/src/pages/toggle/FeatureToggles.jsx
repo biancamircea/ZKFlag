@@ -34,6 +34,7 @@ function FeatureToggles(props) {
 
                     const allToggles = resolvedToggles.flatMap(obj => obj.toggles);
                     setToggles(allToggles);
+                    console.log("toate toggles: ", allToggles);
 
                 }
             } catch (error) {
@@ -52,8 +53,10 @@ function FeatureToggles(props) {
         setSearchQuery(query);
     }
     const handleFilter = (event) => {
-        setTag(Number(event.target.value) || '');
+        console.log("Tag selectat:", event.target.value);
+        setTag(event.target.value || '');
     };
+
 
     function extractTags(toggles){
         let tags = [];
@@ -77,7 +80,7 @@ function FeatureToggles(props) {
         let tagFilteredToggles = toggles || [];
 
         if(tag !== ''){
-            tagFilteredToggles = toggles.filter(toggle => toggle.tags.some(t => t.id === Number(tag)));
+            tagFilteredToggles = toggles.filter(toggle => toggle.tags.some(t => t.id === tag));
         }
 
         const filteredToggles = tagFilteredToggles.filter((el) =>

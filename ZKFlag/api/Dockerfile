@@ -29,5 +29,7 @@ USER appuser
 
 WORKDIR /app
 EXPOSE 8443 4000
+RUN mkdir -p logs && chmod -R 777 logs
+
 
 CMD ["sh", "-c", "(cd /app/zkp-verifier && node server.js &) && java -jar app.jar"]

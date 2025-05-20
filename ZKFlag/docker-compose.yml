@@ -9,6 +9,7 @@ volumes:
   minio_data:
   certs:
   pgadmin_data:
+  backend_logs:
 
 services:
   postgresql:
@@ -47,6 +48,8 @@ services:
       MINIO_BUCKET_NAME: my-bucket
     ports:
       - "8443:8443"
+    volumes:
+      - backend_logs:/app/logs
     depends_on:
       postgresql:
         condition: service_healthy

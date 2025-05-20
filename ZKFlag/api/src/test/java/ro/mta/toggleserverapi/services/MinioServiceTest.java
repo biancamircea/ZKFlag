@@ -27,12 +27,11 @@ class MinioServiceTest {
 
     @BeforeEach
     void setup() {
-        minioService = new MinioService(minioClient); // mock injectat manual
+        minioService = new MinioService(minioClient);
     }
 
     @Test
     void uploadFile_shouldCallMinioClientAndReturnUrl() throws Exception {
-        // arrange
         MockMultipartFile file = new MockMultipartFile(
                 "file",
                 "test-image.png",
@@ -43,12 +42,10 @@ class MinioServiceTest {
         when(minioClient.putObject(Mockito.any(PutObjectArgs.class)))
                 .thenReturn(Mockito.mock(ObjectWriteResponse.class));
 
-        // act
         String result = minioService.uploadFile(file);
+        System.out.println("Result: " + result);
 
-        // assert
-        assertTrue(result.contains("http://localhost:9000/public-bucket/")); //url ul este corect
-
+        assertTrue(result.contains("http://localhost:9000/public-bucket/"));
         verify(minioClient).putObject(putObjectArgsCaptor.capture());
         assertEquals("public-bucket", putObjectArgsCaptor.getValue().bucket());
     }

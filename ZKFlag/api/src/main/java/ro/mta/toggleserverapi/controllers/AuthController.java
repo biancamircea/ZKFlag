@@ -5,6 +5,7 @@ import io.jsonwebtoken.JwtException;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -22,7 +23,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-
+@Slf4j
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
@@ -39,11 +40,12 @@ public class AuthController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody LoginRequestDTO loginRequest, HttpServletResponse response) {
         try {
-
+        log.info("Login attempt for user {}", loginRequest.getEmail());
         Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         User user = userRepository.findByEmail(loginRequest.getEmail()).orElseThrow();
+        log.info("User {} authenticated successfully", user.getEmail());
 
         String accessToken = jwtUtil.generateAccessToken(
                 user.getId(),
@@ -69,6 +71,7 @@ public class AuthController {
         return ResponseEntity.ok(responseData);
 
         } catch (AuthenticationException e) {
+            log.warn("Failed login attempt for user {}", loginRequest.getEmail());
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid credentials");
         }
     }
@@ -76,14 +79,8 @@ public class AuthController {
 
     @PostMapping("/logout")
     public ResponseEntity<String> logout(HttpServletResponse response) {
-//        Cookie cookie = new Cookie("jwt", null);
-//        cookie.setHttpOnly(true);
-//        cookie.setSecure(false);
-//        cookie.setPath("/");
-//        cookie.setMaxAge(0);
-//        response.addCookie(cookie);
         jwtUtil.clearTokens(response);
-
+        log.info("User logged out");
         return ResponseEntity.ok("Logged out successfully!");
     }
 
@@ -99,6 +96,7 @@ public class AuthController {
         userData.put("email", user.getEmail());
         userData.put("role", user.getRole().getRoleType().name());
         userData.put("name", user.getName());
+        log.info("Fetching current user info for token belonging to {}", username);
 
         return ResponseEntity.ok(userData);
     }
@@ -107,8 +105,11 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<?> refreshToken(HttpServletRequest request, HttpServletResponse response) {
         try {
+            log.info("Attempting to refresh access token");
+
             Cookie[] cookies = request.getCookies();
             if (cookies == null) {
+                log.warn("Refresh token missing from request");
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "No cookies found");
             }
 
@@ -120,6 +121,7 @@ public class AuthController {
 
             if (!jwtUtil.validateToken(refreshToken)) {
                 jwtUtil.clearTokens(response);
+                log.warn("Invalid refresh token provided");
                 throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid refresh token");
             }
 
@@ -135,10 +137,13 @@ public class AuthController {
             Map<String, String> tokens = new HashMap<>();
             tokens.put("accessToken", newAccessToken);
 
+            log.info("Access token refreshed for user {}", claims.getSubject());
+
             return ResponseEntity.ok().build();
 
         } catch (JwtException ex) {
             jwtUtil.clearTokens(response);
+            log.error("Token refresh failed", ex);
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Token processing failed", ex);
         }
     }
