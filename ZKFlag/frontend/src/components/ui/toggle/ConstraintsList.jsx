@@ -27,6 +27,12 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
         return acc;
     }, {});
 
+    const totalGroups = Object.keys(groupedConstraints).length;
+
+    const MAX_GROUPS = 5;
+    const MAX_CONSTRAINTS_PER_GROUP = 5;
+    const canAddNewGroup = totalGroups < MAX_GROUPS
+
     const disabledStyle = {
         opacity: '0.5'
     };
@@ -152,9 +158,16 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
                                 </div>
 
                                 <div style={{ flex: 1, display: "flex", justifyContent: "center" }}>
-                                {instanceId == null &&
-                                    <AddConstraintToGroupButton submitHandler={addConstraint} groupId={groupId} toggleId={toggleId} />
-                                }
+                                    {instanceId == null &&
+                                        <AddConstraintToGroupButton
+                                            submitHandler={addConstraint}
+                                            groupId={groupId}
+                                            toggleId={toggleId}
+                                            disabled={groupConstraints.length>= MAX_CONSTRAINTS_PER_GROUP}
+                                            tooltip={"You can add only 5 constraints in a group."}
+                                        />
+                                    }
+
                                 </div>
                             </div>
 
@@ -185,7 +198,15 @@ function ConstraintsList({ toggleId, constraints,instanceId,environmentId,refres
                     ))
                 )}
             </div>
-            {instanceId == null && <AddConstraintButton submitHandler={addConstraint}  toggleId={toggleId}/>}
+            {instanceId == null && (
+                    <AddConstraintButton
+                        submitHandler={addConstraint}
+                        toggleId={toggleId}
+                        disabled={!canAddNewGroup}
+                        tooltip={"You can add only 5 groups of constraints."}
+                    />
+            )}
+
         </>
     );}
 

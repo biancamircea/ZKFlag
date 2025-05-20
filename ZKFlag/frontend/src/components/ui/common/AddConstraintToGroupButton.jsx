@@ -4,7 +4,7 @@ import {useOutletContext} from "react-router-dom";
 import AddConstraintIcon from "./AddConstraintIcon.jsx";
 import {getTypeByToggleId} from "../../../api/featureToggleApi.js";
 
-function AddConstraintToGroupButton({ submitHandler, groupId, toggleId }) {
+function AddConstraintToGroupButton({ submitHandler, groupId, toggleId, disabled = false, tooltip = "" }) {
     const { contextFields } = useOutletContext();
     const [open, setOpen] = React.useState(false);
     const [filteredContextFields, setFilteredContextFields] = useState([]);
@@ -29,11 +29,6 @@ function AddConstraintToGroupButton({ submitHandler, groupId, toggleId }) {
         }
     }, [toggleId, contextFields]);
 
-
-    const handleClickOpen = () => {
-        setOpen(true);
-    };
-
     const handleClose = (event, reason) => {
         if (reason !== 'backdropClick') {
             setOpen(false);
@@ -42,13 +37,26 @@ function AddConstraintToGroupButton({ submitHandler, groupId, toggleId }) {
 
     return (
         <>
-            <AddConstraintIcon onClick={() => setOpen(true)} />
+            <div title={disabled ? tooltip : ""}>
+                <AddConstraintIcon
+                    onClick={() => {
+                        if (!disabled) setOpen(true);
+                    }}
+                    style={{
+                        cursor: disabled ? "not-allowed" : "pointer",
+                        opacity: disabled ? 0.4 : 1
+                    }}
+                    text={disabled?"You can add only 5 constraints in a group.":"Add an AND constraint"}
+                />
+            </div>
 
             <FeatureToggleAddConstraintDialog
                 open={open}
                 onClose={handleClose}
                 contextFields={filteredContextFields}
-                submitHandler={(data,isConfidential) => submitHandler(data,isConfidential, groupId)}
+                submitHandler={(data, isConfidential) =>
+                    submitHandler(data, isConfidential, groupId)
+                }
             />
         </>
     );

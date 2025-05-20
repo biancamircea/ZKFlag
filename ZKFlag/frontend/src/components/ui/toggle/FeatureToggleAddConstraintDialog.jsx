@@ -227,10 +227,27 @@ function FeatureToggleAddConstraintDialog({
 
                             <>
                                 {instanceId == null && <OperatorField defaultOperator={pOperator} />}
+                                {/*<ConstraintValuesList*/}
+                                {/*    values={values}*/}
+                                {/*    setValues={setValues}*/}
+                                {/*/>*/}
                                 <ConstraintValuesList
                                     values={values}
                                     setValues={setValues}
+                                    onValueChange={(val) => {
+                                        if (val === '') return;
+                                        if (values.includes(val)) {
+                                            toast.error("Value already exists!");
+                                            return;
+                                        }
+                                        if (values.length >= 1 && !isLocation) {
+                                            toast.error("Only one value allowed.");
+                                            return;
+                                        }
+                                        setValues([val]);
+                                    }}
                                 />
+
                             </>
                     )}
                 </DialogContent>

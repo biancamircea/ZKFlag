@@ -36,7 +36,7 @@ public class ProjectController {
     private final ProjectRepository projectRepository;
     private final UserRepository userRepository;
 
-    @GetMapping("/projects")
+    @GetMapping
     public ResponseEntity<?> getAllProjects() {
         log.info("Fetching all projects");
         try {
@@ -48,7 +48,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/projects/{id}")
+    @GetMapping("/{id}")
     public ResponseEntity<?> getProjectOverview(@PathVariable String id) {
         log.info("Fetching project overview for id {}", id);
         try {
@@ -65,7 +65,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/projects/{projectId}/access")
+    @GetMapping("/{projectId}/access")
     public ResponseEntity<?> getProjectAccess(@PathVariable String projectId) {
         log.info("Fetching project access for project {}", projectId);
         try {
@@ -82,7 +82,7 @@ public class ProjectController {
         }
     }
 
-    @PostMapping("/projects")
+    @PostMapping
     public ResponseEntity<?> createProject(@RequestBody @Valid ProjectDTO newProjectDTO) {
         log.info("Creating new project with data: {}", newProjectDTO);
         try {
@@ -105,7 +105,7 @@ public class ProjectController {
         }
     }
 
-    @PostMapping("/projects/{projectId}/access")
+    @PostMapping("/{projectId}/access")
     public ResponseEntity<?> addAccessToProject(@RequestBody @Valid ProjectUsersAddAccessDTO projectUsersAddAccessDTO,
                                                 @PathVariable String projectId) {
         log.info("Adding access to project {} for users: {}", projectId, projectUsersAddAccessDTO);
@@ -125,7 +125,7 @@ public class ProjectController {
         }
     }
 
-    @PostMapping(path = "/projects/{projectId}/access/remove")
+    @PostMapping(path = "/{projectId}/access/remove")
     public ResponseEntity<?> removeAccessToProject(@RequestParam String userId,
                                                    @PathVariable String projectId) {
         log.info("Removing access for user {} from project {}", userId, projectId);
@@ -146,7 +146,7 @@ public class ProjectController {
         }
     }
 
-    @PutMapping("/projects/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<?> updateProject(@RequestBody @Valid ProjectDTO projectDTO, @PathVariable String id) {
         log.info("Updating project with id {}", id);
         try {
@@ -168,7 +168,7 @@ public class ProjectController {
         }
     }
 
-    @DeleteMapping("/projects/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteProject(@PathVariable String id) {
         log.info("Deleting project with id {}", id);
         try {
@@ -186,7 +186,7 @@ public class ProjectController {
         }
     }
 
-    @GetMapping("/projects/{projectId}/project-admins")
+    @GetMapping("/{projectId}/project-admins")
     public ResponseEntity<?> getUsersWithProjectAdminRole(@PathVariable String projectId) {
         log.info("Fetching project admins for project {}", projectId);
         try {

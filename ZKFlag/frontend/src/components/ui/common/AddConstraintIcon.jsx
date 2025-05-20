@@ -1,7 +1,7 @@
 import React from 'react';
 import Tooltip from "@mui/material/Tooltip";
 
-function AddConstraintIcon({ onClick }) {
+function AddConstraintIcon({ onClick,text }) {
     return (
         <div
             onClick={(event) => {
@@ -9,7 +9,7 @@ function AddConstraintIcon({ onClick }) {
                 onClick();
             }}
             style={{display:"flex",justifyContent:"center"}}>
-            <Tooltip title={"Add an AND constraint"} arrow>
+            <Tooltip title={text || "Add an AND constraint"} arrow>
                 <img src={"/images/add_constraint.png"}
                      alt={"Add"}
                      className={"small-icon"} />

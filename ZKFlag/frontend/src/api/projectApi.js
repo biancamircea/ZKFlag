@@ -42,6 +42,7 @@ export async function getAllConstraintsInToggle(projectId, toggleId) {
 }
 
 export async function getProjectOverview(id){
+    console.log("intra aici")
     const url = `${baseUrl}/${id}`
     try {
         const responseData  = await getResource(url)

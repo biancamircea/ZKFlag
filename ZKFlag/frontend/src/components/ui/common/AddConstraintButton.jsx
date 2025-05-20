@@ -5,7 +5,7 @@ import Tooltip from "@mui/material/Tooltip";
 import { useState, useEffect } from "react";
 import {getTypeByToggleId} from "../../../api/featureToggleApi.js";
 
-function AddConstraintButton({ submitHandler, toggleId }) {
+function AddConstraintButton({ submitHandler, toggleId, disabled = false, tooltip = "" }) {
     const { contextFields } = useOutletContext();
     const [open, setOpen] = useState(false);
     const [filteredContextFields, setFilteredContextFields] = useState([]);
@@ -31,7 +31,9 @@ function AddConstraintButton({ submitHandler, toggleId }) {
     }, [toggleId, contextFields]);
 
     const handleClickOpen = () => {
-        setOpen(true);
+        if (!disabled) {
+            setOpen(true);
+        }
     };
 
     const handleClose = (event, reason) => {
@@ -42,11 +44,20 @@ function AddConstraintButton({ submitHandler, toggleId }) {
 
     return (
         <>
-            <Tooltip title="Add a group of constraints" arrow>
-                <button className="center-aligned-button" onClick={handleClickOpen}>
+            <Tooltip title={disabled ? tooltip : "Add a group of constraints"} arrow>
+                <button
+                    className="center-aligned-button"
+                    onClick={handleClickOpen}
+                    disabled={disabled}
+                    style={{
+                        cursor: disabled ? "not-allowed" : "pointer",
+                        opacity: disabled ? 0.5 : 1
+                    }}
+                >
                     + Add constraint
                 </button>
             </Tooltip>
+
             <FeatureToggleAddConstraintDialog
                 open={open}
                 onClose={handleClose}

@@ -92,8 +92,9 @@ function EnvironmentsCreate() {
                                     name={"type"}
                                     value={"DEVELOPMENT"}
                                     type={"radio"}
+                                    style={{width:"50px"}}
                                 />
-                                <label htmlFor={"development"} style={{marginLeft:"-140px"}}>Development</label>
+                                <label htmlFor={"development"} >Development</label>
                             </div>
                             <div className={"field-item-select"}>
                                 <input
@@ -101,8 +102,9 @@ function EnvironmentsCreate() {
                                     name={"type"}
                                     value={"TEST"}
                                     type={"radio"}
+                                    style={{width:"50px"}}
                                 />
-                                <label htmlFor={"test"} style={{marginLeft:"-140px"}}>Test</label>
+                                <label htmlFor={"test"}>Test</label>
                             </div>
                             <div className={"field-item-select"}>
                                 <input
@@ -110,8 +112,9 @@ function EnvironmentsCreate() {
                                     name={"type"}
                                     value={"PRE_PRODUCTION"}
                                     type={"radio"}
+                                    style={{width:"50px"}}
                                 />
-                                <label htmlFor={"pre-production"} style={{marginLeft:"-140px"}}>Pre-Production</label>
+                                <label htmlFor={"pre-production"}>Pre-Production</label>
                             </div>
                             <div className={"field-item-select"}>
                                 <input
@@ -119,8 +122,9 @@ function EnvironmentsCreate() {
                                     name={"type"}
                                     value={"PRODUCTION"}
                                     type={"radio"}
+                                    style={{width:"50px"}}
                                 />
-                                <label htmlFor={"production"} style={{marginLeft:"-140px"}}>Production</label>
+                                <label htmlFor={"production"}>Production</label>
                             </div>
 
                         </fieldset>
