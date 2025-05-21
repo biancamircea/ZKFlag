@@ -16,14 +16,6 @@ COPY nginx.conf /etc/nginx/conf.d/default.conf
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
-RUN mkdir -p /etc/nginx/certs
-COPY server.crt /etc/nginx/certs/
-COPY server.key /etc/nginx/certs/
-
-RUN ls -la /etc/nginx/certs/ && \
-    [ -f /etc/nginx/certs/server.crt ] && \
-    [ -f /etc/nginx/certs/server.key ]
-
-EXPOSE 443
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]

@@ -60,6 +60,7 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
 
                     const structuredValues = filteredValues.map(value => value.value);
 
+                    console.log("structured values inainte de reverse:", structuredValues)
                     structuredValues.reverse();
 
                     setPValues(structuredValues);

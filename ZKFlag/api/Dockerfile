@@ -19,8 +19,6 @@ WORKDIR /app
 
 COPY --from=build --chown=appuser:appuser /app/target/*.jar app.jar
 
-COPY --chown=appuser:appuser src/main/resources/server.p12 /app/resources/server.p12
-
 COPY --chown=appuser:appuser zkp-verifier/ /app/zkp-verifier/
 WORKDIR /app/zkp-verifier
 RUN npm install && chown -R appuser:appuser /app/zkp-verifier
@@ -28,7 +26,7 @@ RUN npm install && chown -R appuser:appuser /app/zkp-verifier
 USER appuser
 
 WORKDIR /app
-EXPOSE 8443 4000
+EXPOSE 8080 4000
 RUN mkdir -p logs && chmod -R 777 logs
 
 

@@ -7,6 +7,7 @@ function ConstraintListItem({contextName, operator, values, remove, update, inst
 
     if (values) {
         if (isConfidential === 2) {
+            console.log("values in constraint list item: ", values)
             const [radius, latitude, longitude] = values;
             let radiusText = '';
 

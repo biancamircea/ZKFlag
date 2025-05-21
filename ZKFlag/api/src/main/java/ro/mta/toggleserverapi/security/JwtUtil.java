@@ -95,7 +95,7 @@ public class JwtUtil {
                 .secure(true)
                 .path("/")
                 .maxAge(accessTokenExpirationMs / 1000)
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
     }
@@ -106,7 +106,7 @@ public class JwtUtil {
                 .secure(true)
                 .path("/auth/refresh")
                 .maxAge(refreshTokenExpirationMs / 1000)
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
     }
@@ -132,7 +132,7 @@ public class JwtUtil {
                 .secure(true)
                 .path("/")
                 .maxAge(accessTokenExpirationMs / 1000)
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
     }
 }

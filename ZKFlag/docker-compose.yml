@@ -9,8 +9,24 @@ volumes:
   minio_data:
   certs:
   backend_logs:
+  caddy_data:
+  caddy_config:
 
 services:
+  caddy:
+    image: caddy:latest
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - app_network
+
   postgresql:
     image: postgres:13
     container_name: postgres
@@ -40,13 +56,14 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgresql:5432/toggle_system
       SPRING_DATASOURCE_USERNAME: bianca
       SPRING_DATASOURCE_PASSWORD: 1234
-      SERVER_SSL_ENABLED: "true"
+      SERVER_SSL_ENABLED: "false"   
+      SERVER_PORT: 8080              
       MINIO_ENDPOINT: http://minio:9000
       MINIO_ACCESS_KEY: admin
       MINIO_SECRET_KEY: admin123
       MINIO_BUCKET_NAME: my-bucket
     ports:
-      - "8443:8443"
+      - "8080:8080"                   
     volumes:
       - backend_logs:/app/logs
     depends_on:
@@ -60,11 +77,12 @@ services:
       context: ./frontend
     container_name: frontend
     ports:
-      - "443:443"
+      - "5173:80"                     
     depends_on:
       - backend
     networks:
       - app_network
+
 
   minio:
     image: quay.io/minio/minio

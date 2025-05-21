@@ -38,7 +38,8 @@ public class MinioService {
                         .build()
         );
 
-        return "http://localhost:9000/" + bucketName + "/" + fileName;
+        return "https://files.zkflag.ro/public-bucket/" + fileName;
+
     }
 
     public void deleteFile(String fileName) throws Exception {

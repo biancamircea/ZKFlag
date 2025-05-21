@@ -35,6 +35,7 @@ public class ContextFieldController {
             Project project = projectRepository.findByHashId(projectId)
                     .orElseThrow(() -> new NoSuchElementException("Project not found"));
             ContextFieldsResponseDTO response = contextFieldService.getAllFromProject(project.getId());
+            System.out.println("response = " + response);
             return ResponseEntity.ok(response);
         } catch (NoSuchElementException e) {
             log.warn("Project not found: {}", projectId);
@@ -44,6 +45,7 @@ public class ContextFieldController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Unexpected error");
         }
     }
+
 
     @GetMapping(path = "/{contextFieldId}")
     public ResponseEntity<?> getContextField(@PathVariable String projectId, @PathVariable String contextFieldId) {

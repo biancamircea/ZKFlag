@@ -3,6 +3,7 @@ import CONFIG from '../Config'
 const projectBaseUrl = `/api/projects`
 
 export async function getContextFields(projectId){
+    console.log("projectId in context field api: "+projectId)
     const url =  `${projectBaseUrl}/${projectId}/context-fields`
     try {
         const response  = await fetch(url,{credentials: "include"})
@@ -13,6 +14,7 @@ export async function getContextFields(projectId){
             }
         }
         const data = await response.json()
+        console.log("data in context field api: ",data)
         return data
     } catch (error) {
         if (error instanceof TypeError) {

@@ -1,0 +1,21 @@
+zkflag.ro {
+    handle_path /api/* {
+        reverse_proxy backend:8080
+    }
+
+    handle /* {
+        reverse_proxy frontend:80
+    }
+}
+
+api.zkflag.ro {
+    reverse_proxy backend:8080
+}
+
+minio.zkflag.ro {
+    reverse_proxy minio:9001
+}
+
+files.zkflag.ro {
+    reverse_proxy minio:9000
+}

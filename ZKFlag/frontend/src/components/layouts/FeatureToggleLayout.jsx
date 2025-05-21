@@ -24,21 +24,6 @@ function FeatureToggleLayout(props) {
     const [toggle, setToggle] = useState(null)
     const [projectName, setProjectName] = useState("")
 
-    function enableDisableToggleEnvironment(environmentId, enabled){
-        const targetEnvironment = toggle.environments.find(env => env.id === environmentId);
-
-        if (targetEnvironment) {
-            const updatedEnvironment = { ...targetEnvironment, enabled };
-            const updatedEnvironments = toggle.environments.map(env =>
-                env.id === environmentId ? updatedEnvironment : env
-            );
-
-            setToggle(prevState => ({
-                ...prevState,
-                environments: updatedEnvironments
-            }));
-        }
-    };
     function addFeatureTag(id){
         const newTag = tags.find((item) => item.id === id);
         const updatedTags = [...toggle.tags, newTag];
@@ -46,102 +31,6 @@ function FeatureToggleLayout(props) {
             ...prevState,
             tags: updatedTags
         }));
-    }
-    function removeFeatureTag(id){
-        const updatedTags = toggle.tags.filter(tag => tag.id !== id)
-        setToggle(prevState => ({
-            ...prevState,
-            tags: updatedTags
-        }));
-    }
-    function addConstraint(environmentId, newConstraint){
-        const targetEnvironment = toggle.environments.find(env => env.id === environmentId);
-
-        if(targetEnvironment){
-            const updatedConstraints = [...targetEnvironment.constraints, newConstraint];
-
-            const updatedEnvironments = toggle.environments.map(env =>
-                env.id === environmentId ? { ...env, constraints: updatedConstraints } : env
-            );
-
-            setToggle(prevState => ({
-                ...prevState,
-                environments: updatedEnvironments
-            }));
-
-        }
-    }
-    function updateConstraint(environmentId, constraintId, updatedConstraint){
-        const targetEnvironment = toggle.environments.find(env => env.id === environmentId);
-
-        if (targetEnvironment) {
-            const constraintIndex = targetEnvironment.constraints.findIndex(constraint => constraint.id === constraintId);
-
-            if (constraintIndex !== -1) {
-                const updatedConstraints = [
-                    ...targetEnvironment.constraints.slice(0, constraintIndex),
-                    updatedConstraint,
-                    ...targetEnvironment.constraints.slice(constraintIndex + 1)
-                ];
-
-                const updatedEnvironments = toggle.environments.map(env =>
-                    env.id === environmentId ? { ...env, constraints: updatedConstraints } : env
-                );
-                setToggle(prevState => ({
-                    ...prevState,
-                    environments: updatedEnvironments
-                }));
-            }
-        }
-    }
-    function deleteConstraint(environmentId, constraintId){
-        const targetEnvironment = toggle.environments.find(env => env.id === environmentId);
-
-        if (targetEnvironment) {
-            const updatedConstraints = targetEnvironment.constraints.filter(constraint => constraint.id !== constraintId);
-            const updatedEnvironments = toggle.environments.map(env =>
-                env.id === environmentId ? { ...env, constraints: updatedConstraints } : env
-            );
-
-            setToggle(prevState => ({
-                ...prevState,
-                environments: updatedEnvironments
-            }));
-        }
-    }
-    function deleteAllConstraints(environmentId){
-        const targetEnvironment = toggle.environments.find(env => env.id === environmentId);
-
-        if (targetEnvironment) {
-            const updatedEnvironments = toggle.environments.map(env =>
-                env.id === environmentId ? { ...env, constraints: [] } : env
-            );
-
-            setToggle(prevState => ({
-                ...prevState,
-                environments: updatedEnvironments
-            }));
-        }
-    }
-
-    function addPayload(updatedToggleEnvironment){
-        const newToggle = { ...toggle };
-        const environmentIndex = newToggle.environments.findIndex(env => env.id === updatedToggleEnvironment.id);
-
-        if (environmentIndex !== -1) {
-            newToggle.environments[environmentIndex] = updatedToggleEnvironment;
-            setToggle(newToggle);
-        }
-    }
-    function removePayload(environmentId){
-        const newState = { ...toggle };
-        const environmentIndex = newState.environments.findIndex(env => env.id === environmentId);
-
-        if (environmentIndex !== -1) {
-            newState.environments[environmentIndex].enabledValue = null;
-            newState.environments[environmentIndex].disabledValue = null;
-            setToggle(newState);
-        }
     }
 
     useEffect(() => {

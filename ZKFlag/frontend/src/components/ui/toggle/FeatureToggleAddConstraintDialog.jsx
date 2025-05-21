@@ -113,7 +113,7 @@ function FeatureToggleAddConstraintDialog({
             }
 
             const finalValues = isLocation
-                ? [longitude, latitude, radius]
+                ? [radius, latitude,longitude ]
                 : values;
 
             submitHandler({
@@ -123,7 +123,7 @@ function FeatureToggleAddConstraintDialog({
             }, elementWithId?.isConfidential);
         } else {
             const finalValues = isLocation
-                ? [longitude,latitude,radius]
+                ? [radius,latitude,longitude]
                 : values;
 
             submitHandler({
