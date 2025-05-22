@@ -10,7 +10,7 @@ import {
 import LoadingBanner from "../common/LoadingBanner.jsx";
 import {getToggleEnvironment} from "../../../api/featureToggleApi.js";
 
-function EditConstraintDialog({context, operator, values, submitHandler, instanceId, constraintId,environmentId,toggleId}) {
+function EditConstraintDialog({context, operator, values, submitHandler, instanceId, constraintId,environmentId,toggleId,isConfidential}) {
     const { contextFields } = useOutletContext()
     const [open, setOpen] = useState(false);
     const [pvalues, setPValues] = useState(values);
@@ -60,12 +60,30 @@ function EditConstraintDialog({context, operator, values, submitHandler, instanc
 
                     const structuredValues = filteredValues.map(value => value.value);
 
-                    console.log("structured values inainte de reverse:", structuredValues)
-                    structuredValues.reverse();
+                    if(isConfidential===2){
+                        const parts = structuredValues[0].split(":");
+                        if (parts.length !== 3) {
+                            throw new Error("Invalid location format. Expected 'longitude:latitude:radius'");
+                        }
 
-                    setPValues(structuredValues);
+                       setPValues(parts);
+                    }else{
+                        setPValues(structuredValues);
+                    }
+
+                    console.log("edit constraint values instance:",pvalues)
                 } else {
-                    setPValues(values);
+                    if(isConfidential===2){
+                        const parts = values[0].split(":");
+                        if (parts.length !== 3) {
+                            throw new Error("Invalid location format. Expected 'longitude:latitude:radius'");
+                        }
+
+                        setPValues(parts);
+                    }else{
+                        setPValues(values);
+                    }
+                    console.log("edit constraint values project: ",values);
                 }
             } catch (error) {
                 console.error("Failed to fetch constraint values:", error);

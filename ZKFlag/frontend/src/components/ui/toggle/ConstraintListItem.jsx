@@ -7,8 +7,13 @@ function ConstraintListItem({contextName, operator, values, remove, update, inst
 
     if (values) {
         if (isConfidential === 2) {
-            console.log("values in constraint list item: ", values)
-            const [radius, latitude, longitude] = values;
+            const parts = values[0].split(":");
+            if (parts.length !== 3) {
+                throw new Error("Invalid location format. Expected 'longitude:latitude:radius'");
+            }
+
+            const [longitude, latitude, radius] = parts;
+            console.log("values in constraint list item: radius: ", radius," latitude: ", latitude, " longitude: ", longitude);
             let radiusText = '';
 
             if (radius === "0") {
@@ -57,6 +62,7 @@ function ConstraintListItem({contextName, operator, values, remove, update, inst
                     constraintId={constraintId}
                     toggleId={toggleId}
                     environmentId={environmentId}
+                    isConfidential={isConfidential}
                 />
                 {instanceId == null &&  <DeleteIconNoDialog
                     deleteHandler={remove}

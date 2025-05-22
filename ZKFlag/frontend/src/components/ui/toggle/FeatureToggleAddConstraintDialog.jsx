@@ -38,9 +38,9 @@ function FeatureToggleAddConstraintDialog({
         if ( edit &&  pValues) {
 
             if (isConfidential===2 && pValues.length >= 3) {
-                const [rad, lat, lng] = pValues;
+                const [lng, lat, rad] = pValues;
 
-                console.log("lat:", lat, " lng: ", lng, " rad:", rad);
+                console.log("edit constraint valori incarcate: lng:", lng, " lat: ", lat, " rad:", rad);
 
                 setLatitude(lat === "0" ? '' : lat);
                 setLongitude(lng === "0" ? '' : lng)
@@ -113,7 +113,7 @@ function FeatureToggleAddConstraintDialog({
             }
 
             const finalValues = isLocation
-                ? [radius, latitude,longitude ]
+                ? [`${longitude}:${latitude}:${radius}`]
                 : values;
 
             submitHandler({
@@ -123,8 +123,9 @@ function FeatureToggleAddConstraintDialog({
             }, elementWithId?.isConfidential);
         } else {
             const finalValues = isLocation
-                ? [radius,latitude,longitude]
+                ? [`${longitude}:${latitude}:${radius}`]
                 : values;
+
 
             submitHandler({
                 contextName: pContext.name,
